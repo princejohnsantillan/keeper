@@ -7,6 +7,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Context;
@@ -67,5 +68,13 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->belongsToMany(Organization::class)
             ->using(OrganizationUser::class);
+    }
+
+    /**
+     * @return HasOne<Keeper, $this>
+     */
+    public function keeper(): HasOne
+    {
+        return $this->hasOne(Keeper::class);
     }
 }

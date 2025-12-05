@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 /**
  * @mixin IdeHelperOrganizationUser
  */
-class OrganizationUser extends Pivot
+final class OrganizationUser extends Pivot
 {
     /**
      * @return BelongsTo<User, $this>
