@@ -19,7 +19,7 @@ class SetOrganizationContext
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $slug = Str::beforeLast($request->host(), ".".Config::string('app.domain'));
+        $slug = Str::beforeLast($request->host(), '.'.Config::string('app.domain'));
 
         $organization = Organization::query()->where('slug', $slug)->first();
 

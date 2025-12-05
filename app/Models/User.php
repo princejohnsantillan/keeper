@@ -11,21 +11,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Context;
 
+/**
+ * @mixin IdeHelperUser
+ */
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,24 +44,25 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        $organization = Context::getHidden('organization');
-
-        if(!$organization instanceof Organization) { // Is Root Domain
-            return false;
-        }
-
-        if($panel->getId() === 'dashboard') {
-            return true;
-        }
-
-        if ($panel->getId() === 'admin' && OrganizationUser::query()->where('user_id', $this->id)->where('organization_user.organization_id', $organization->id)->exists()) {
-            return true;
-        }
-
-        return false;
+        return true;
+        //        $organization = Context::getHidden('organization');
+        //
+        //        if (! $organization instanceof Organization) { // Is Root Domain
+        //            return false;
+        //        }
+        //
+        //        if ($panel->getId() === 'dashboard') {
+        //            return true;
+        //        }
+        //
+        //        if ($panel->getId() === 'admin' && OrganizationUser::query()->where('user_id', $this->id)->where('organization_user.organization_id', $organization->id)->exists()) {
+        //            return true;
+        //        }
+        //
+        //        return false;
     }
 
-    /** @return BelongsToMany<Organization, User, OrganizationUser> */
+    /** @return BelongsToMany<Organization, $this, OrganizationUser> */
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class)

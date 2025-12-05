@@ -24,6 +24,7 @@ class KeeperPanelProvider extends PanelProvider
         return $panel
             ->id('keeper')
             ->path('dashboard')
+            ->login()
             ->colors([
                 'primary' => Color::Green,
             ])
