@@ -1,0 +1,7 @@
+name: keeper
+php: '8.4'
+secured: true
+services:
+    postgresql:
+        version: '18'
+        port: '${DB_PORT}'
