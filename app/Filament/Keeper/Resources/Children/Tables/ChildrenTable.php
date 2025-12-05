@@ -29,8 +29,6 @@ class ChildrenTable
                     ->sortable(),
                 IconColumn::make('gender')
                     ->boolean(),
-                TextColumn::make('primaryKeeper.id')
-                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -5,7 +5,6 @@ namespace App\Models;
 use Database\Factories\ChildFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
@@ -32,11 +31,5 @@ final class Child extends Model
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class, Attendance::class);
-    }
-
-    /** @return BelongsTo<Keeper, $this> */
-    public function primaryKeeper(): BelongsTo
-    {
-        return $this->belongsTo(Keeper::class, 'primary_keeper_id');
     }
 }

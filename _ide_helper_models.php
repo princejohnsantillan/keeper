@@ -16,19 +16,19 @@ namespace App\Models{
  * @property int $id
  * @property int $service_id
  * @property int $child_id
- * @property int $checkin_processed_by
- * @property int $checked_in_by
- * @property string $checked_in_at
+ * @property int|null $checkin_processed_by
+ * @property int|null $checked_in_by
+ * @property string|null $checked_in_at
  * @property int|null $checkout_processed_by
  * @property int|null $checked_out_by
  * @property string|null $checked_out_at
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Keeper $checkedInBy
- * @property-read \App\Models\Keeper $checkedInProcessedBy
+ * @property-read \App\Models\Keeper|null $checkedInBy
+ * @property-read \App\Models\User|null $checkedInProcessedBy
  * @property-read \App\Models\Keeper|null $checkedOutBy
- * @property-read \App\Models\Keeper|null $checkedOutProcessedBy
+ * @property-read \App\Models\User|null $checkedOutProcessedBy
  * @property-read \App\Models\Child $child
  * @property-read \App\Models\Service $service
  * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
@@ -63,10 +63,8 @@ namespace App\Models{
  * @property string $birth_date
  * @property bool $gender
  * @property string|null $notes
- * @property int $primary_keeper_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Keeper $primaryKeeper
  * @property-read \App\Models\Attendance|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $services
  * @property-read int|null $services_count
@@ -83,7 +81,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereMiddleName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereNickname($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child wherePrimaryKeeperId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -101,12 +98,11 @@ namespace App\Models{
  * @property bool $gender
  * @property string $email
  * @property string|null $phone
- * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Relationship|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
  * @property-read int|null $children_count
- * @property-read \App\Models\User $user
  * @method static \Database\Factories\KeeperFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newQuery()
@@ -121,7 +117,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereMiddleName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -185,6 +180,7 @@ namespace App\Models{
  * @property int $keeper_id
  * @property int $child_id
  * @property string $relationship_type
+ * @property bool $is_primary_keeper
  * @property bool $is_authorized_guardian
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -198,6 +194,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereIsAuthorizedGuardian($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereIsPrimaryKeeper($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereKeeperId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationshipType($value)
@@ -252,6 +249,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int|null $keeper_id
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -259,6 +257,8 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
+ * @property-read int|null $children_count
  * @property-read \App\Models\Keeper|null $keeper
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -273,6 +273,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereKeeperId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)

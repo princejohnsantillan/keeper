@@ -3,7 +3,6 @@
 namespace App\Filament\Keeper\Resources\Children\Schemas;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -27,9 +26,6 @@ class ChildForm
                     ->required(),
                 Textarea::make('notes')
                     ->columnSpanFull(),
-                Select::make('primary_keeper_id')
-                    ->relationship('primaryKeeper', 'id')
-                    ->required(),
             ]);
     }
 }

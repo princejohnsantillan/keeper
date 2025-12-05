@@ -25,8 +25,6 @@ class ChildInfolist
                 TextEntry::make('notes')
                     ->placeholder('-')
                     ->columnSpanFull(),
-                TextEntry::make('primaryKeeper.id')
-                    ->label('Primary keeper'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

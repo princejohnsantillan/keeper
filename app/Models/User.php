@@ -7,10 +7,10 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Context;
 
 /**
  * @mixin IdeHelperUser
@@ -76,5 +76,13 @@ class User extends Authenticatable implements FilamentUser
     public function keeper(): HasOne
     {
         return $this->hasOne(Keeper::class);
+    }
+
+    /**
+     * @return HasManyThrough<Child, Relationship, $this>
+     */
+    public function children(): HasManyThrough
+    {
+        return $this->hasManyThrough(Child::class, Relationship::class, 'keeper_id', 'id', 'keeper_id', 'child_id');
     }
 }

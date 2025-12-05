@@ -4,8 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @mixin IdeHelperKeeper
@@ -16,18 +15,11 @@ final class Keeper extends Model
     use HasFactory;
 
     /**
-     * @return BelongsTo<User, $this>
+     * @return BelongsToMany<Child, $this, Relationship>
      */
-    public function user(): BelongsTo
+    public function children(): BelongsToMany
     {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return HasMany<Child, $this>
-     */
-    public function children(): HasMany
-    {
-        return $this->hasMany(Child::class, 'primary_keeper_id');
+        return $this->belongsToMany(Child::class)
+            ->using(Relationship::class);
     }
 }

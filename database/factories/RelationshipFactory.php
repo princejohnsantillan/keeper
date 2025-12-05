@@ -22,7 +22,7 @@ class RelationshipFactory extends Factory
         return [
             'keeper_id' => Keeper::factory(),
             'child_id' => Child::factory(),
-            'relationship_type' => $this->faker->randomElement(Relationship::cases()),
+            'relationship' => $this->faker->randomElement(Relationship::cases()),
             'is_authorized_guardian' => $this->faker->boolean(),
             'notes' => $this->faker->text(),
         ];
