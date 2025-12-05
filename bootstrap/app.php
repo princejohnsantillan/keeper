@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
 
-        $middleware->web(prepend: [
+        $middleware->prepend([
             \App\Http\Middleware\SetOrganizationContext::class,
         ]);
 
