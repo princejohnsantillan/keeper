@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+
+        $middleware->prepend([
+            \App\Http\Middleware\SetOrganizationContext::class
+        ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

@@ -3,11 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Context;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -44,5 +48,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        $organization = Context::getHidden('organization');
+
+        if(!$organization instanceof Organization) { // Is Root Domain
+            return false;
+        }
+
+        if($panel->getId() === 'dashboard') {
+            return true;
+        }
+
+        if ($panel->getId() === 'admin' && OrganizationUser::query()->where('user_id', $this->id)->where('organization_user.organization_id', $organization->id)->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /** @return BelongsToMany<Organization, User, OrganizationUser> */
+    public function organizations(): BelongsToMany
+    {
+        return $this->belongsToMany(Organization::class)
+            ->using(OrganizationUser::class);
     }
 }
