@@ -15,15 +15,15 @@ class ServiceForm
             ->components([
                 TextInput::make('title')
                     ->required(),
-                TextInput::make('description'),
                 TextInput::make('location')
                     ->required(),
+                Textarea::make('description')->columnSpanFull(),
                 DateTimePicker::make('starts_at')
                     ->required(),
                 DateTimePicker::make('ends_at')
                     ->required(),
                 Textarea::make('notes')
                     ->columnSpanFull(),
-            ]);
+            ])->columns(2);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Keeper\Pages\Auth\Register;
+use App\Http\Middleware\RedirectKeeperDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -37,6 +38,7 @@ class KeeperPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Keeper/Widgets'), for: 'App\Filament\Keeper\Widgets')
             ->middleware([
+                RedirectKeeperDashboard::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,

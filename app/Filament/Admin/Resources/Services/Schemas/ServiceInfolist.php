@@ -22,17 +22,6 @@ class ServiceInfolist
                 TextEntry::make('notes')
                     ->placeholder('-')
                     ->columnSpanFull(),
-                TextEntry::make('encryption_key'),
-                TextEntry::make('organization.name')
-                    ->label('Organization'),
-                TextEntry::make('created_by')
-                    ->numeric(),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
-                    ->dateTime()
-                    ->placeholder('-'),
             ]);
     }
 }

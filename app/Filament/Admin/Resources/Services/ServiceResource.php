@@ -2,9 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Services;
 
-use App\Filament\Admin\Resources\Services\Pages\EditService;
 use App\Filament\Admin\Resources\Services\Pages\ListServices;
-use App\Filament\Admin\Resources\Services\Pages\ViewService;
 use App\Filament\Admin\Resources\Services\Schemas\ServiceForm;
 use App\Filament\Admin\Resources\Services\Schemas\ServiceInfolist;
 use App\Filament\Admin\Resources\Services\Tables\ServicesTable;
@@ -49,8 +47,6 @@ class ServiceResource extends Resource
     {
         return [
             'index' => ListServices::route('/'),
-            'view' => ViewService::route('/{record}'),
-            'edit' => EditService::route('/{record}/edit'),
         ];
     }
 }

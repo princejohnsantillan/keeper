@@ -7,7 +7,6 @@ use App\Models\Organization;
 use App\Subdomain;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Str;
 
 class ListServices extends ListRecords
@@ -30,7 +29,6 @@ class ListServices extends ListRecords
 
                     return $data;
                 }),
-
 
         ];
     }

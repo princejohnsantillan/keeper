@@ -95,7 +95,7 @@ namespace App\Models{
  * @property string|null $middle_name
  * @property string $last_name
  * @property string|null $birth_date
- * @property bool $gender
+ * @property \App\Enums\Gender $gender
  * @property string $email
  * @property string|null $phone
  * @property \Illuminate\Support\Carbon|null $created_at

@@ -2,7 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Http\Middleware\RequireOrganizationContext;
+use App\Http\Middleware\RequireOrganizationSubdomain;
+use App\Subdomain;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -25,6 +26,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->id('admin')
             ->path('admin')
+            ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
             ->colors([
                 'primary' => Color::Red,
@@ -36,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\Filament\Admin\Widgets')
             ->middleware([
-                RequireOrganizationContext::class,
+                RequireOrganizationSubdomain::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
