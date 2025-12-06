@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Keeper\Pages\Auth\Register;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -24,7 +25,7 @@ class KeeperPanelProvider extends PanelProvider
         return $panel
             ->id('keeper')
             ->path('dashboard')
-            ->registration()
+            ->registration(Register::class)
             ->login()
             ->colors([
                 'primary' => Color::Green,

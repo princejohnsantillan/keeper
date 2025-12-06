@@ -6,9 +6,9 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -71,11 +71,11 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * @return HasOne<Keeper, $this>
+     * @return BelongsTo<Keeper, $this>
      */
-    public function keeper(): HasOne
+    public function keeper(): BelongsTo
     {
-        return $this->hasOne(Keeper::class);
+        return $this->belongsTo(Keeper::class);
     }
 
     /**

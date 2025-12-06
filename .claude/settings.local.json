@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__laravel-boost__database-schema",
+      "mcp__laravel-boost__application-info",
+      "mcp__laravel-boost__search-docs",
+      "Bash(grep:*)",
+      "Bash(vendor/bin/pint:*)",
+      "mcp__laravel-boost__get-absolute-url"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "laravel-boost",
+    "herd"
+  ]
+}
