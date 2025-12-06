@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Keeper\Resources\Children\Tables;
+namespace App\Filament\Keeper\Resources\Keepers\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -10,7 +10,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ChildrenTable
+class KeepersTable
 {
     public static function configure(Table $table): Table
     {
@@ -22,13 +22,16 @@ class ChildrenTable
                     ->searchable(),
                 TextColumn::make('last_name')
                     ->searchable(),
-                TextColumn::make('nickname')
-                    ->searchable(),
                 TextColumn::make('birth_date')
                     ->date()
                     ->sortable(),
                 IconColumn::make('gender')
                     ->boolean(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -43,8 +46,7 @@ class ChildrenTable
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make()
-                    ->slideOver(),
+                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

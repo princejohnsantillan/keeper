@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Filament\Keeper\Resources\Services\Schemas;
+
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Schema;
+
+class ServiceInfolist
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextEntry::make('title'),
+                TextEntry::make('description')
+                    ->placeholder('-'),
+                TextEntry::make('location'),
+                TextEntry::make('starts_at')
+                    ->dateTime(),
+                TextEntry::make('ends_at')
+                    ->dateTime(),
+                TextEntry::make('notes')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('encryption_key'),
+                TextEntry::make('organization.name')
+                    ->label('Organization'),
+                TextEntry::make('created_by')
+                    ->numeric(),
+                TextEntry::make('created_at')
+                    ->dateTime()
+                    ->placeholder('-'),
+                TextEntry::make('updated_at')
+                    ->dateTime()
+                    ->placeholder('-'),
+            ]);
+    }
+}

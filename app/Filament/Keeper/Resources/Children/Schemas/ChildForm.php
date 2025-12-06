@@ -2,10 +2,13 @@
 
 namespace App\Filament\Keeper\Resources\Children\Schemas;
 
+use App\Enums\Gender;
+use App\Enums\Relationship;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
 
 class ChildForm
@@ -22,8 +25,15 @@ class ChildForm
                 TextInput::make('nickname'),
                 DatePicker::make('birth_date')
                     ->required(),
-                Toggle::make('gender')
+                ToggleButtons::make('gender')
+                    ->options(Gender::class)
+                    ->inline()
                     ->required(),
+                Select::make('relationship')
+                    ->options(Relationship::class)
+                    ->required()
+                    ->dehydrated(false)
+                    ->visibleOn('create'),
                 Textarea::make('notes')
                     ->columnSpanFull(),
             ]);

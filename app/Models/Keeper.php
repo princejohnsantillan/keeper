@@ -27,7 +27,9 @@ final class Keeper extends Model
      */
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(Child::class)
-            ->using(Relationship::class);
+        return $this->belongsToMany(Child::class, 'relationship')
+            ->using(Relationship::class)
+            ->withPivot('relationship')
+            ->withTimestamps();
     }
 }
