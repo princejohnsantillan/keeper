@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources\Services\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -16,23 +15,15 @@ class ServiceForm
             ->components([
                 TextInput::make('title')
                     ->required(),
-                TextInput::make('description'),
                 TextInput::make('location')
                     ->required(),
+                Textarea::make('description')->columnSpanFull(),
                 DateTimePicker::make('starts_at')
                     ->required(),
                 DateTimePicker::make('ends_at')
                     ->required(),
                 Textarea::make('notes')
                     ->columnSpanFull(),
-                TextInput::make('encryption_key')
-                    ->required(),
-                Select::make('organization_id')
-                    ->relationship('organization', 'name')
-                    ->required(),
-                TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
-            ]);
+            ])->columns(2);
     }
 }

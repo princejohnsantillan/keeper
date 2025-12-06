@@ -3,12 +3,13 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Subdomain;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -45,22 +46,20 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
-        //        $organization = Context::getHidden('organization');
-        //
-        //        if (! $organization instanceof Organization) { // Is Root Domain
-        //            return false;
-        //        }
-        //
-        //        if ($panel->getId() === 'dashboard') {
-        //            return true;
-        //        }
-        //
-        //        if ($panel->getId() === 'admin' && OrganizationUser::query()->where('user_id', $this->id)->where('organization_user.organization_id', $organization->id)->exists()) {
-        //            return true;
-        //        }
-        //
-        //        return false;
+        $organization = Subdomain::organization();
+        $panelId = $panel->getId();
+
+        if ($panelId === 'admin' && $organization !== null) {
+            return OrganizationUser::where('organization_id', $organization->id)
+                ->where('user_id', $this->id)
+                ->exists();
+        }
+
+        if ($panelId === 'keeper' && $organization === null) {
+            return $this->keeper_id !== null;
+        }
+
+        return false;
     }
 
     /** @return BelongsToMany<Organization, $this, OrganizationUser> */
@@ -71,11 +70,11 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * @return HasOne<Keeper, $this>
+     * @return BelongsTo<Keeper, $this>
      */
-    public function keeper(): HasOne
+    public function keeper(): BelongsTo
     {
-        return $this->hasOne(Keeper::class);
+        return $this->belongsTo(Keeper::class);
     }
 
     /**

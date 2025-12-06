@@ -94,8 +94,8 @@ namespace App\Models{
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
- * @property string $birth_date
- * @property bool $gender
+ * @property string|null $birth_date
+ * @property \App\Enums\Gender $gender
  * @property string $email
  * @property string|null $phone
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -179,9 +179,7 @@ namespace App\Models{
  * @property int $id
  * @property int $keeper_id
  * @property int $child_id
- * @property string $relationship_type
- * @property bool $is_primary_keeper
- * @property bool $is_authorized_guardian
+ * @property string $relationship
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -193,11 +191,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereChildId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereIsAuthorizedGuardian($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereIsPrimaryKeeper($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereKeeperId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationshipType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationship($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
  * @mixin \Eloquent
  */

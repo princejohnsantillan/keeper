@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Services\Tables;
 
+use App\Filament\Admin\Resources\Services\Schemas\ServiceInfolist;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,39 +17,27 @@ class ServicesTable
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
-                TextColumn::make('description')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('location')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('starts_at')
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('ends_at')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('encryption_key')
-                    ->searchable(),
-                TextColumn::make('organization.name')
-                    ->searchable(),
-                TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->infolist(fn ($infolist) => ServiceInfolist::configure($infolist))
+                    ->modal(),
+                EditAction::make()
+                    ->slideOver(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

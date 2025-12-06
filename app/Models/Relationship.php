@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Relationship as RelationshipEnum;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -10,6 +11,15 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 final class Relationship extends Pivot
 {
+    public $incrementing = true;
+
+    protected function casts(): array
+    {
+        return [
+            'relationship' => RelationshipEnum::class,
+        ];
+    }
+
     /** @return BelongsTo<Keeper, $this> */
     public function keeper(): BelongsTo
     {
