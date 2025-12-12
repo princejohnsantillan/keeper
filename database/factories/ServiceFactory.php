@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Service>
@@ -19,14 +18,15 @@ class ServiceFactory extends Factory
      */
     public function definition(): array
     {
+        $startsAt = $this->faker->dateTimeBetween('now', '+1 month');
+
         return [
-            'title' => $this->faker->sentence(),
-            'description' => $this->faker->paragraph(),
-            'location' => $this->faker->address(),
-            'starts_at' => now(),
-            'ends_at' => now()->addHours(2),
-            'notes' => $this->faker->text(),
-            'encryption_key' => Str::random(),
+            'title' => $this->faker->sentence(3),
+            'description' => $this->faker->optional()->sentence(),
+            'location' => $this->faker->optional()->address(),
+            'starts_at' => $startsAt,
+            'ends_at' => (clone $startsAt)->modify('+2 hours'),
+            'notes' => $this->faker->optional()->sentence(),
             'organization_id' => Organization::factory(),
             'created_by' => User::factory(),
         ];

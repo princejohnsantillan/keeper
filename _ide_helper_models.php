@@ -180,6 +180,7 @@ namespace App\Models{
  * @property-read int|null $checkout_attendance_count
  * @property-read \App\Models\Organization $organization
  * @property-read \App\Models\User $user
+ * @method static \Database\Factories\KeeperFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper query()

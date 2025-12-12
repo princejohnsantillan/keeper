@@ -6,12 +6,13 @@
       "mcp__laravel-boost__search-docs",
       "Bash(grep:*)",
       "Bash(vendor/bin/pint:*)",
-      "mcp__laravel-boost__get-absolute-url"
+      "mcp__laravel-boost__get-absolute-url",
+      "Bash(php artisan:*)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "laravel-boost",
     "herd"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

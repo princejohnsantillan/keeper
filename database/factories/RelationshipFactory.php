@@ -20,10 +20,10 @@ class RelationshipFactory extends Factory
     public function definition(): array
     {
         return [
-            'keeper_id' => Guardian::factory(),
+            'guardian_id' => Guardian::factory(),
             'child_id' => Child::factory(),
             'relationship' => $this->faker->randomElement(Relationship::cases()),
-            'notes' => $this->faker->text(),
+            'notes' => $this->faker->optional()->sentence(),
         ];
     }
 }

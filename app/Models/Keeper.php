@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\KeeperFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +13,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 final class Keeper extends Model
 {
+    /** @use HasFactory<KeeperFactory> */
+    use HasFactory;
+
     /**
      * @return BelongsTo<User, $this>
      */
