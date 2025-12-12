@@ -16,22 +16,25 @@ final class Child extends Model
     /** @use HasFactory<ChildFactory> */
     use HasFactory;
 
-    /** @return BelongsToMany<Guardian, $this> */
-    public function keepers(?bool $authorized = null): BelongsToMany
+    /**
+     * @return BelongsToMany<Guardian, $this, Relationship>
+     */
+    public function guardians(): BelongsToMany
     {
-        $keepers = $this->belongsToMany(Guardian::class, Relationship::class);
-
-        if ($authorized !== null) {
-            return $keepers->wherePivot('is_authorized_guardian', $authorized);
-        }
-
-        return $keepers;
+        return $this->belongsToMany(Guardian::class, 'relationship')
+            ->using(Relationship::class)
+            ->withPivot('relationship')
+            ->withTimestamps();
     }
 
-    /** @return BelongsToMany<Service, $this> */
+    /**
+     * @return BelongsToMany<Service, $this, Attendance>
+     */
     public function services(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class, Attendance::class);
+        return $this->belongsToMany(Service::class, 'attendance')
+            ->using(Attendance::class)
+            ->withTimestamps();
     }
 
     /**
@@ -40,5 +43,21 @@ final class Child extends Model
     public function relationships(): HasMany
     {
         return $this->hasMany(Relationship::class);
+    }
+
+    /**
+     * @return HasMany<Gatepass, $this>
+     */
+    public function gatepasses(): HasMany
+    {
+        return $this->hasMany(Gatepass::class);
+    }
+
+    /**
+     * @return HasMany<Attendance, $this>
+     */
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

@@ -26,4 +26,12 @@ final class Organization extends Model
     {
         return $this->hasMany(Service::class);
     }
+
+    /**
+     * @return HasMany<Keeper, $this>
+     */
+    public function keepers(): HasMany
+    {
+        return $this->hasMany(Keeper::class);
+    }
 }

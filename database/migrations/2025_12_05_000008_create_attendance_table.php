@@ -2,10 +2,8 @@
 
 use App\Models\Child;
 use App\Models\Gatepass;
-use App\Models\Guardian;
 use App\Models\Keeper;
 use App\Models\Service;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

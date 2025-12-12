@@ -23,7 +23,6 @@ class RelationshipFactory extends Factory
             'keeper_id' => Guardian::factory(),
             'child_id' => Child::factory(),
             'relationship' => $this->faker->randomElement(Relationship::cases()),
-            'is_authorized_guardian' => $this->faker->boolean(),
             'notes' => $this->faker->text(),
         ];
     }

@@ -21,7 +21,7 @@ final class Relationship extends Pivot
     }
 
     /** @return BelongsTo<Guardian, $this> */
-    public function keeper(): BelongsTo
+    public function guardian(): BelongsTo
     {
         return $this->belongsTo(Guardian::class);
     }

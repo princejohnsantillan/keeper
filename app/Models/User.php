@@ -7,10 +7,8 @@ use App\Subdomain;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -50,47 +48,48 @@ class User extends Authenticatable implements FilamentUser
         $organization = Subdomain::organization();
         $panelId = $panel->getId();
 
-        if ($panelId === 'admin' && $organization !== null) {
+        if ($panelId === 'keeper' && $organization !== null) {
             return Keeper::where('organization_id', $organization->id)
                 ->where('user_id', $this->id)
                 ->exists();
         }
 
-        if ($panelId === 'keeper' && $organization === null) {
-            return $this->keeper_id !== null;
+        if ($panelId === 'guardian' && $organization === null) {
+            return $this->guardian()->exists();
         }
 
         return false;
     }
 
-    /** @return BelongsToMany<Organization, $this, Keeper> */
-    public function organizations(): BelongsToMany
+    /**
+     * @return HasMany<Keeper, $this>
+     */
+    public function keepers(): HasMany
     {
-        return $this->belongsToMany(Organization::class)
-            ->using(Keeper::class);
+        return $this->hasMany(Keeper::class);
     }
 
     /**
-     * @return BelongsTo<Keeper, $this>
+     * @return HasMany<Organization, $this>
      */
-    public function keeper(): BelongsTo
+    public function ownedOrganizations(): HasMany
     {
-        return $this->belongsTo(Keeper::class);
+        return $this->hasMany(Organization::class, 'owner_id');
     }
 
     /**
-     * @return HasMany<Guardian, $this>
+     * @return HasOne<Guardian, $this>
      */
-    public function guardians(): HasMany
+    public function guardian(): HasOne
     {
-        return $this->hasMany(Guardian::class);
+        return $this->hasOne(Guardian::class);
     }
 
     /**
-     * @return HasManyThrough<Child, Relationship, $this>
+     * @return HasMany<Service, $this>
      */
-    public function children(): HasManyThrough
+    public function createdServices(): HasMany
     {
-        return $this->hasManyThrough(Child::class, Relationship::class, 'guardian_id', 'id', 'guardian_id', 'child_id');
+        return $this->hasMany(Service::class, 'created_by');
     }
 }

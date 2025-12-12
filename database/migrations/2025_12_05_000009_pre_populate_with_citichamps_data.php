@@ -32,8 +32,6 @@ return new class extends Migration
             'user_id' => $user->id,
         ]);
 
-
-
         $organization = Organization::create([
             'name' => 'Citichurch',
             'slug' => 'citichurch',
@@ -44,7 +42,6 @@ return new class extends Migration
             'user_id' => $user->id,
             'organization_id' => $organization->id,
         ]);
-
 
         $user2 = User::create([
             'name' => 'Pearl',
@@ -63,8 +60,6 @@ return new class extends Migration
             'phone' => '+639',
             'user_id' => $user2->id,
         ]);
-
-
 
         $organization2 = Organization::create([
             'name' => 'Citichamps',
