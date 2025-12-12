@@ -17,7 +17,13 @@ class RedirectGuardianDashboard
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Subdomain::organization() !== null) {
+        $organization = Subdomain::organization();
+
+        if (Subdomain::defined() && $organization === null) {
+            abort(404);
+        }
+
+        if ($organization !== null) {
             return redirect(Config::string('app.url').'/guardian');
         }
 
