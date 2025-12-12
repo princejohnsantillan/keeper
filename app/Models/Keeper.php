@@ -2,34 +2,27 @@
 
 namespace App\Models;
 
-use App\Enums\Gender;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperKeeper
+ * @mixin IdeHelperOrganizationUser
  */
 final class Keeper extends Model
 {
-    /** @use HasFactory<\Database\Factories\KeeperFactory> */
-    use HasFactory;
-
-    protected function casts(): array
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
-        return [
-            'gender' => Gender::class,
-        ];
+        return $this->belongsTo(User::class);
     }
 
     /**
-     * @return BelongsToMany<Child, $this, Relationship>
+     * @return BelongsTo<Organization, $this>
      */
-    public function children(): BelongsToMany
+    public function organization(): BelongsTo
     {
-        return $this->belongsToMany(Child::class, 'relationship')
-            ->using(Relationship::class)
-            ->withPivot('relationship')
-            ->withTimestamps();
+        return $this->belongsTo(Organization::class);
     }
 }

@@ -16,10 +16,10 @@ final class Child extends Model
     /** @use HasFactory<ChildFactory> */
     use HasFactory;
 
-    /** @return BelongsToMany<Keeper, $this> */
+    /** @return BelongsToMany<Guardian, $this> */
     public function keepers(?bool $authorized = null): BelongsToMany
     {
-        $keepers = $this->belongsToMany(Keeper::class, Relationship::class);
+        $keepers = $this->belongsToMany(Guardian::class, Relationship::class);
 
         if ($authorized !== null) {
             return $keepers->wherePivot('is_authorized_guardian', $authorized);

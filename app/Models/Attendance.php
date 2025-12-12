@@ -33,10 +33,10 @@ final class Attendance extends Pivot
         return $this->belongsTo(User::class, 'checkin_processed_by');
     }
 
-    /** @return BelongsTo<Keeper, $this> */
+    /** @return BelongsTo<Guardian, $this> */
     public function checkedInBy(): BelongsTo
     {
-        return $this->belongsTo(Keeper::class, 'checked_in_by');
+        return $this->belongsTo(Guardian::class, 'checked_in_by');
     }
 
     /** @return BelongsTo<User, $this> */
@@ -45,9 +45,9 @@ final class Attendance extends Pivot
         return $this->belongsTo(User::class, 'checkout_processed_by');
     }
 
-    /** @return BelongsTo<Keeper, $this> */
+    /** @return BelongsTo<Guardian, $this> */
     public function checkedOutBy(): BelongsTo
     {
-        return $this->belongsTo(Keeper::class, 'checked_out_by');
+        return $this->belongsTo(Guardian::class, 'checked_out_by');
     }
 }

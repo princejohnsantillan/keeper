@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Child;
-use App\Models\Keeper;
+use App\Models\Guardian;
 use App\Models\Service;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,11 +14,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('passes', function (Blueprint $table) {
+        Schema::create('gatepasses', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Service::class)->constrained();
+            $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
-            $table->foreignIdFor(Keeper::class)->constrained();
+            $table->foreignIdFor(Service::class)->constrained();
             $table->string('code')->index();
             $table->timestamps();
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('passes');
+        Schema::dropIfExists('gatepasses');
     }
 };

@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('organization_user', function (Blueprint $table) {
+        Schema::create('keepers', function (Blueprint $table) {
             $table->id();
-            $table->string('role')->nullable();
             $table->foreignIdFor(User::class, 'user_id')->constrained();
             $table->foreignIdFor(Organization::class, 'organization_id')->constrained();
             $table->timestamps();
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('organization_user');
+        Schema::dropIfExists('keepers');
     }
 };

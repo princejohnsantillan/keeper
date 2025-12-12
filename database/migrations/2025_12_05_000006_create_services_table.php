@@ -21,7 +21,6 @@ return new class extends Migration
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
             $table->text('notes')->nullable(); // Internal notes
-            $table->string('encryption_key');
             $table->foreignIdFor(Organization::class, 'organization_id')->constrained();
             $table->foreignIdFor(User::class, 'created_by')->constrained();
             $table->timestamps();

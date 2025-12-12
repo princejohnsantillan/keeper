@@ -9,6 +9,7 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,7 +51,7 @@ class User extends Authenticatable implements FilamentUser
         $panelId = $panel->getId();
 
         if ($panelId === 'admin' && $organization !== null) {
-            return OrganizationUser::where('organization_id', $organization->id)
+            return Keeper::where('organization_id', $organization->id)
                 ->where('user_id', $this->id)
                 ->exists();
         }
@@ -62,11 +63,11 @@ class User extends Authenticatable implements FilamentUser
         return false;
     }
 
-    /** @return BelongsToMany<Organization, $this, OrganizationUser> */
+    /** @return BelongsToMany<Organization, $this, Keeper> */
     public function organizations(): BelongsToMany
     {
         return $this->belongsToMany(Organization::class)
-            ->using(OrganizationUser::class);
+            ->using(Keeper::class);
     }
 
     /**
@@ -78,10 +79,18 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * @return HasMany<Guardian, $this>
+     */
+    public function guardians(): HasMany
+    {
+        return $this->hasMany(Guardian::class);
+    }
+
+    /**
      * @return HasManyThrough<Child, Relationship, $this>
      */
     public function children(): HasManyThrough
     {
-        return $this->hasManyThrough(Child::class, Relationship::class, 'keeper_id', 'id', 'keeper_id', 'child_id');
+        return $this->hasManyThrough(Child::class, Relationship::class, 'guardian_id', 'id', 'guardian_id', 'child_id');
     }
 }

@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Child;
-use App\Models\Keeper;
+use App\Models\Guardian;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,12 +24,12 @@ class AttendanceFactory extends Factory
             'service_id' => Service::factory(),
             'child_id' => Child::factory(),
 
-            'checkin_processed_by' => User::factory(),
-            'checked_in_by' => Keeper::factory(),
+            'checkin_keeper_id' => User::factory(),
+            'checkin_guardian_id' => Guardian::factory(),
             'checked_in_at' => now(),
 
-            'checkout_processed_by' => User::factory(),
-            'checked_out_by' => Keeper::factory(),
+            'checkout_keeper_id' => User::factory(),
+            'checkout_guardian_id' => Guardian::factory(),
             'checked_out_at' => now(),
 
             'notes' => $this->faker->text(),

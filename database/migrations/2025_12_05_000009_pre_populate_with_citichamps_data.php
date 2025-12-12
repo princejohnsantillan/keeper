@@ -1,6 +1,10 @@
 <?php
 
 use App\Enums\Gender;
+use App\Models\Guardian;
+use App\Models\Keeper;
+use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
@@ -10,64 +14,67 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $keeper = \App\Models\Keeper::create([
-            'first_name' => 'Prince John',
-            'middle_name' => 'Jainar',
-            'last_name' => 'Santillan',
+        $user = User::create([
+            'name' => 'Prince',
             'email' => 'prince@keeper.kids',
-            'gender' => Gender::Male,
-            'birth_date' => '1988-08-12',
-            'phone' => '+639399308514',
-        ]);
-
-        $user = \App\Models\User::create([
-            'keeper_id' => $keeper->id,
-            'name' => $keeper->first_name,
-            'email' => $keeper->email,
             'email_verified_at' => now(),
             'password' => bcrypt('secret'),
         ]);
 
-        $organization = \App\Models\Organization::create([
+        Guardian::create([
+            'first_name' => 'Prince John',
+            'middle_name' => 'Jainar',
+            'last_name' => 'Santillan',
+            'email' => $user->email,
+            'gender' => Gender::Male,
+            'birth_date' => '1988-08-12',
+            'phone' => '+639399308514',
+            'user_id' => $user->id,
+        ]);
+
+
+
+        $organization = Organization::create([
             'name' => 'Citichurch',
             'slug' => 'citichurch',
             'owner_id' => $user->id,
         ]);
 
-        \App\Models\OrganizationUser::create([
+        Keeper::create([
             'user_id' => $user->id,
             'organization_id' => $organization->id,
-            'role' => 'admin',
         ]);
 
-        $keeper2 = \App\Models\Keeper::create([
-            'first_name' => 'Pearl',
-            'middle_name' => 'Ocenar',
-            'last_name' => 'Lao',
+
+        $user2 = User::create([
+            'name' => 'Pearl',
             'email' => 'pearl@keeper.kids',
-            'gender' => Gender::Female,
-            'birth_date' => '2025-01-01',
-            'phone' => '+639',
-        ]);
-
-        $user2 = \App\Models\User::create([
-            'keeper_id' => $keeper2->id,
-            'name' => $keeper2->first_name,
-            'email' => $keeper2->email,
             'email_verified_at' => now(),
             'password' => bcrypt('secret'),
         ]);
 
-        $organization2 = \App\Models\Organization::create([
+        Guardian::create([
+            'first_name' => 'Pearl',
+            'middle_name' => 'Ocenar',
+            'last_name' => 'Lao',
+            'email' => $user2->email,
+            'gender' => Gender::Female,
+            'birth_date' => '2025-01-01',
+            'phone' => '+639',
+            'user_id' => $user2->id,
+        ]);
+
+
+
+        $organization2 = Organization::create([
             'name' => 'Citichamps',
             'slug' => 'citichamps',
             'owner_id' => $user->id,
         ]);
 
-        \App\Models\OrganizationUser::create([
+        Keeper::create([
             'user_id' => $user2->id,
             'organization_id' => $organization2->id,
-            'role' => 'admin',
         ]);
 
     }

@@ -25,9 +25,9 @@ namespace App\Models{
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Keeper|null $checkedInBy
+ * @property-read \App\Models\Guardian|null $checkedInBy
  * @property-read \App\Models\User|null $checkedInProcessedBy
- * @property-read \App\Models\Keeper|null $checkedOutBy
+ * @property-read \App\Models\Guardian|null $checkedOutBy
  * @property-read \App\Models\User|null $checkedOutProcessedBy
  * @property-read \App\Models\Child $child
  * @property-read \App\Models\Service $service
@@ -103,20 +103,20 @@ namespace App\Models{
  * @property-read \App\Models\Relationship|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
  * @property-read int|null $children_count
- * @method static \Database\Factories\KeeperFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereBirthDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereFirstName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereGender($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereLastName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereMiddleName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper wherePhone($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUpdatedAt($value)
+ * @method static \Database\Factories\GuardianFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereBirthDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereFirstName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereGender($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereLastName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereMiddleName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -159,15 +159,15 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Organization $organization
  * @property-read \App\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser whereOrganizationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser whereRole($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|OrganizationUser whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUserId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -183,17 +183,17 @@ namespace App\Models{
  * @property int $keeper_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Database\Factories\PassFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereChildId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereKeeperId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereServiceId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereUpdatedAt($value)
+ * @method static \Database\Factories\GatepassFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereChildId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereKeeperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereServiceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
@@ -210,7 +210,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Child $child
- * @property-read \App\Models\Keeper $keeper
+ * @property-read \App\Models\Guardian $keeper
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship query()
@@ -281,10 +281,10 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
  * @property-read int|null $children_count
- * @property-read \App\Models\Keeper|null $keeper
+ * @property-read \App\Models\Guardian|null $keeper
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
- * @property-read \App\Models\OrganizationUser|null $pivot
+ * @property-read \App\Models\Keeper|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Organization> $organizations
  * @property-read int|null $organizations_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectKeeperDashboard
+class RedirectGuardianDashboard
 {
     /**
      * Handle an incoming request.
@@ -18,7 +18,7 @@ class RedirectKeeperDashboard
     public function handle(Request $request, Closure $next): Response
     {
         if (Subdomain::organization() !== null) {
-            return redirect(Config::string('app.url').'/dashboard');
+            return redirect(Config::string('app.url').'/guardian');
         }
 
         return $next($request);

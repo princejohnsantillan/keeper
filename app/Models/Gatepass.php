@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @mixin IdeHelperPass
  */
-class Pass extends Model
+class Gatepass extends Model
 {
-    /** @use HasFactory<\Database\Factories\PassFactory> */
+    /** @use HasFactory<\Database\Factories\GatepassFactory> */
     use HasFactory;
 }

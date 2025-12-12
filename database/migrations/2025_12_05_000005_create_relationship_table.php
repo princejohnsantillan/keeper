@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Child;
-use App\Models\Keeper;
+use App\Models\Guardian;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('relationship', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Keeper::class)->constrained();
+            $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
             $table->string('relationship')->index();
             $table->text('notes')->nullable();

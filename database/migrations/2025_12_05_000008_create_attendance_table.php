@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Child;
+use App\Models\Gatepass;
+use App\Models\Guardian;
 use App\Models\Keeper;
 use App\Models\Service;
 use App\Models\User;
@@ -20,12 +22,12 @@ return new class extends Migration
             $table->foreignIdFor(Service::class, 'service_id')->constrained();
             $table->foreignIdFor(Child::class, 'child_id')->constrained();
 
-            $table->foreignIdFor(User::class, 'checkin_processed_by')->nullable()->constrained();
-            $table->foreignIdFor(Keeper::class, 'checked_in_by')->nullable()->constrained();
+            $table->foreignIdFor(Keeper::class, 'checkin_keeper_id')->nullable()->constrained();
+            $table->foreignIdFor(Gatepass::class, 'checkin_gatepass_id')->nullable()->constrained();
             $table->timestamp('checked_in_at')->nullable();
 
-            $table->foreignIdFor(User::class, 'checkout_processed_by')->nullable()->constrained();
-            $table->foreignIdFor(Keeper::class, 'checked_out_by')->nullable()->constrained();
+            $table->foreignIdFor(Keeper::class, 'checkout_keeper_id')->nullable()->constrained();
+            $table->foreignIdFor(Gatepass::class, 'checkout_gatepass_id')->nullable()->constrained();
             $table->timestamp('checked_out_at')->nullable();
 
             $table->text('notes')->nullable();

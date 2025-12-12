@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Keeper;
+use App\Models\Guardian;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,7 +25,7 @@ class ChildFactory extends Factory
             'birth_date' => $this->faker->date(),
             'gender' => $this->faker->boolean(),
             'notes' => $this->faker->text(),
-            'primary_keeper_id' => Keeper::factory(),
+            'primary_keeper_id' => Guardian::factory(),
         ];
     }
 }
