@@ -24,6 +24,7 @@ class ChildForm
                     ->required(),
                 TextInput::make('nickname'),
                 DatePicker::make('birth_date')
+                    ->maxDate(now())
                     ->required(),
                 ToggleButtons::make('gender')
                     ->options(Gender::class)
@@ -32,7 +33,6 @@ class ChildForm
                 Select::make('relationship')
                     ->options(Relationship::class)
                     ->required()
-                    ->dehydrated(false)
                     ->visibleOn('create'),
                 Textarea::make('notes')
                     ->columnSpanFull(),

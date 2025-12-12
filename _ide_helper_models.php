@@ -177,9 +177,35 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $code
+ * @property int $service_id
+ * @property int $child_id
+ * @property int $keeper_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\PassFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereChildId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereKeeperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereServiceId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Pass whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	class IdeHelperPass {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $keeper_id
  * @property int $child_id
- * @property string $relationship
+ * @property \App\Enums\Relationship $relationship
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

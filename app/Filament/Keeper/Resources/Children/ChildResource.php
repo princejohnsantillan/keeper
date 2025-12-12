@@ -2,8 +2,6 @@
 
 namespace App\Filament\Keeper\Resources\Children;
 
-use App\Filament\Keeper\Resources\Children\Pages\CreateChild;
-use App\Filament\Keeper\Resources\Children\Pages\EditChild;
 use App\Filament\Keeper\Resources\Children\Pages\ListChildren;
 use App\Filament\Keeper\Resources\Children\Pages\ViewChild;
 use App\Filament\Keeper\Resources\Children\Schemas\ChildForm;
@@ -50,9 +48,7 @@ class ChildResource extends Resource
     {
         return [
             'index' => ListChildren::route('/'),
-            'create' => CreateChild::route('/create'),
             'view' => ViewChild::route('/{record}'),
-            'edit' => EditChild::route('/{record}/edit'),
         ];
     }
 }

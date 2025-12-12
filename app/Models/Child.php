@@ -6,6 +6,7 @@ use Database\Factories\ChildFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperChild
@@ -31,5 +32,13 @@ final class Child extends Model
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class, Attendance::class);
+    }
+
+    /**
+     * @return HasMany<Relationship, $this>
+     */
+    public function relationships(): HasMany
+    {
+        return $this->hasMany(Relationship::class);
     }
 }

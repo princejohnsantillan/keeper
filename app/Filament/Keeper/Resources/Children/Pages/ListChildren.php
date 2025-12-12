@@ -12,17 +12,26 @@ class ListChildren extends ListRecords
 {
     protected static string $resource = ChildResource::class;
 
+    protected ?string $relationshipValue = null;
+
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make()
                 ->slideOver()
-                ->after(function (Child $record, array $data): void {
+                ->createAnother(false)
+                ->mutateFormDataUsing(function (array $data): array {
+                    $this->relationshipValue = $data['relationship'] ?? null;
+                    unset($data['relationship']);
+
+                    return $data;
+                })
+                ->after(function (Child $record): void {
                     /** @var \App\Models\User $user */
                     $user = Auth::user();
 
-                    $user->keeper->children()->attach($record->id, [
-                        'relationship' => $data['relationship'],
+                    $user->keeper?->children()->attach($record->id, [
+                        'relationship' => $this->relationshipValue,
                     ]);
                 }),
         ];
