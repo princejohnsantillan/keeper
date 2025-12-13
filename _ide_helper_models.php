@@ -14,6 +14,49 @@
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $title
+ * @property string|null $description
+ * @property string $location
+ * @property string $starts_at
+ * @property string $ends_at
+ * @property string|null $notes
+ * @property int $organization_id
+ * @property int $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attendance> $attendance
+ * @property-read int|null $attendance_count
+ * @property-read \App\Models\Attendance|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
+ * @property-read int|null $children_count
+ * @property-read \App\Models\User $creator
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
+ * @property-read int|null $gatepasses_count
+ * @property-read \App\Models\Organization $organization
+ * @method static \Database\Factories\ActivityFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereEndsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereStartsAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	final class IdeHelperActivity {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $service_id
  * @property int $child_id
  * @property int|null $checkin_keeper_id
@@ -25,12 +68,12 @@ namespace App\Models{
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Activity|null $activity
  * @property-read \App\Models\Gatepass|null $checkinGatepass
  * @property-read \App\Models\Keeper|null $checkinKeeper
  * @property-read \App\Models\Gatepass|null $checkoutGatepass
  * @property-read \App\Models\Keeper|null $checkoutKeeper
  * @property-read \App\Models\Child $child
- * @property-read \App\Models\Service $service
  * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
@@ -65,17 +108,17 @@ namespace App\Models{
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Relationship|\App\Models\Attendance|null $pivot
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
+ * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attendance> $attendance
  * @property-read int|null $attendance_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
  * @property-read int|null $gatepasses_count
- * @property-read \App\Models\Attendance|\App\Models\Relationship|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Guardian> $guardians
  * @property-read int|null $guardians_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
  * @property-read int|null $relationships_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $services
- * @property-read int|null $services_count
  * @method static \Database\Factories\ChildFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child newQuery()
@@ -101,23 +144,23 @@ namespace App\Models{
  * @property int $id
  * @property int $guardian_id
  * @property int $child_id
- * @property int $service_id
+ * @property int $activity_id
  * @property string $code
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Activity $activity
  * @property-read \App\Models\Child $child
  * @property-read \App\Models\Guardian $guardian
- * @property-read \App\Models\Service $service
  * @method static \Database\Factories\GatepassFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereChildId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereGuardianId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereServiceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -170,8 +213,9 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
- * @property int $user_id
  * @property int $organization_id
+ * @property int $user_id
+ * @property string|null $permissions
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attendance> $checkinAttendance
@@ -187,6 +231,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper wherePermissions($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUserId($value)
  * @mixin \Eloquent
@@ -203,11 +248,11 @@ namespace App\Models{
  * @property int $owner_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
+ * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Keeper> $keepers
  * @property-read int|null $keepers_count
  * @property-read \App\Models\User $owner
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $services
- * @property-read int|null $services_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization query()
@@ -225,72 +270,16 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $guardian_id
- * @property int $child_id
  * @property \App\Enums\Relationship $relationship
- * @property string|null $notes
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Child $child
- * @property-read \App\Models\Guardian $guardian
+ * @property-read \App\Models\Child|null $child
+ * @property-read \App\Models\Guardian|null $guardian
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereChildId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereGuardianId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationship($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
 	final class IdeHelperRelationship {}
-}
-
-namespace App\Models{
-/**
- * @property int $id
- * @property string $title
- * @property string|null $description
- * @property string $location
- * @property string $starts_at
- * @property string $ends_at
- * @property string|null $notes
- * @property int $organization_id
- * @property int $created_by
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attendance> $attendance
- * @property-read int|null $attendance_count
- * @property-read \App\Models\Attendance|null $pivot
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
- * @property-read int|null $children_count
- * @property-read \App\Models\User $creator
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
- * @property-read int|null $gatepasses_count
- * @property-read \App\Models\Organization $organization
- * @method static \Database\Factories\ServiceFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereEndsAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereLocation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereOrganizationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereStartsAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereTitle($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Service whereUpdatedAt($value)
- * @mixin \Eloquent
- */
-	#[\AllowDynamicProperties]
-	final class IdeHelperService {}
 }
 
 namespace App\Models{
@@ -303,8 +292,8 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Service> $createdServices
- * @property-read int|null $created_services_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $createdActivities
+ * @property-read int|null $created_activities_count
  * @property-read \App\Models\Guardian|null $guardian
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Keeper> $keepers
  * @property-read int|null $keepers_count

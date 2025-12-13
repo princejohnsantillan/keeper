@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('relationship', function (Blueprint $table) {
+        Schema::create('relationships', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('relationship');
+        Schema::dropIfExists('relationships');
     }
 };

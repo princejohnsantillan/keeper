@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Keeper;
-use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +21,7 @@ class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'service_id' => Service::factory(),
+            'activity_id' => Activity::factory(),
             'child_id' => Child::factory(),
             'checkin_keeper_id' => Keeper::factory(),
             'checkin_gatepass_id' => Gatepass::factory(),

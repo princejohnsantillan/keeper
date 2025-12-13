@@ -17,10 +17,10 @@ final class Attendance extends Pivot
 
     public $incrementing = true;
 
-    /** @return BelongsTo<Service, $this> */
-    public function service(): BelongsTo
+    /** @return BelongsTo<Activity, $this> */
+    public function activity(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Activity::class);
     }
 
     /** @return BelongsTo<Child, $this> */

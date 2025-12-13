@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('keepers', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'user_id')->constrained();
             $table->foreignIdFor(Organization::class, 'organization_id')->constrained();
+            $table->foreignIdFor(User::class, 'user_id')->constrained();
+            $table->json('permissions')->nullable();
             $table->timestamps();
         });
     }

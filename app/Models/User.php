@@ -86,10 +86,10 @@ class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * @return HasMany<Service, $this>
+     * @return HasMany<Activity, $this>
      */
-    public function createdServices(): HasMany
+    public function createdActivities(): HasMany
     {
-        return $this->hasMany(Service::class, 'created_by');
+        return $this->hasMany(Activity::class, 'created_by');
     }
 }

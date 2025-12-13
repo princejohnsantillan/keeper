@@ -28,11 +28,11 @@ final class Child extends Model
     }
 
     /**
-     * @return BelongsToMany<Service, $this, Attendance>
+     * @return BelongsToMany<Activity, $this, Attendance>
      */
-    public function services(): BelongsToMany
+    public function activities(): BelongsToMany
     {
-        return $this->belongsToMany(Service::class, 'attendance')
+        return $this->belongsToMany(Activity::class, 'attendance')
             ->using(Attendance::class)
             ->withTimestamps();
     }

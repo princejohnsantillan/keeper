@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Keeper;
-use App\Models\Service;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +17,7 @@ return new class extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Service::class, 'service_id')->constrained();
+            $table->foreignIdFor(Activity::class, 'service_id')->constrained();
             $table->foreignIdFor(Child::class, 'child_id')->constrained();
 
             $table->foreignIdFor(Keeper::class, 'checkin_keeper_id')->nullable()->constrained();

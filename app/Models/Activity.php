@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperService
+ * @mixin IdeHelperActivity
  */
 #[ScopedBy(OrganizationScope::class)]
-final class Service extends Model
+final class Activity extends Model
 {
-    /** @use HasFactory<\Database\Factories\ServiceFactory> */
+    /** @use HasFactory<\Database\Factories\ActivityFactory> */
     use HasFactory;
 
     /**

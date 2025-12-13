@@ -31,10 +31,10 @@ final class Gatepass extends Model
     }
 
     /**
-     * @return BelongsTo<Service, $this>
+     * @return BelongsTo<Activity, $this>
      */
-    public function service(): BelongsTo
+    public function activity(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Activity::class);
     }
 }

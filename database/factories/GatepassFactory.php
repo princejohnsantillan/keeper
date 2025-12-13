@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Guardian;
-use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -23,7 +23,7 @@ class GatepassFactory extends Factory
         return [
             'guardian_id' => Guardian::factory(),
             'child_id' => Child::factory(),
-            'service_id' => Service::factory(),
+            'activity_id' => Activity::factory(),
             'code' => Str::upper(Str::random(6)),
         ];
     }
