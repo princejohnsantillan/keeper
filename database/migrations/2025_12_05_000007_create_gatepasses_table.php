@@ -19,10 +19,10 @@ return new class extends Migration
             $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
             $table->foreignIdFor(Activity::class)->constrained();
-            $table->string('code')->index();
+            $table->string('code');
             $table->timestamps();
 
-            $table->unique(['activity_id', 'code']);
+            $table->unique(['code', 'activity_id']);
         });
     }
 

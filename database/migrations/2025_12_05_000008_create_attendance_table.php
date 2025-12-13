@@ -17,8 +17,8 @@ return new class extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Activity::class, 'service_id')->constrained();
-            $table->foreignIdFor(Child::class, 'child_id')->constrained();
+            $table->foreignIdFor(Activity::class,)->constrained();
+            $table->foreignIdFor(Child::class)->constrained();
 
             $table->foreignIdFor(Keeper::class, 'checkin_keeper_id')->nullable()->constrained();
             $table->foreignIdFor(Gatepass::class, 'checkin_gatepass_id')->nullable()->constrained();

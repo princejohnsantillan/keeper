@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
             $table->string('relationship')->index();
-            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

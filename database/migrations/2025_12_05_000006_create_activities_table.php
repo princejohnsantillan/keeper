@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->index();
             $table->string('description')->nullable();
-            $table->string('location');
-            $table->timestamp('starts_at');
-            $table->timestamp('ends_at');
+            $table->string('location')->index();
+            $table->timestamp('starts_at')->index();
+            $table->timestamp('ends_at')->index();
             $table->text('notes')->nullable(); // Internal notes
-            $table->foreignIdFor(Organization::class, 'organization_id')->constrained();
+            $table->foreignIdFor(Organization::class,)->constrained();
             $table->foreignIdFor(User::class, 'created_by')->constrained();
             $table->timestamps();
         });
