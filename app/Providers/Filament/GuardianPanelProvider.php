@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Guardian\Pages\Register;
 use App\Http\Middleware\RedirectGuardianDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -25,6 +26,7 @@ class GuardianPanelProvider extends PanelProvider
         return $panel
             ->id('guardian')
             ->path('guardian')
+            ->registration(Register::class)
             ->login()
             ->colors([
                 'primary' => Color::Green,
