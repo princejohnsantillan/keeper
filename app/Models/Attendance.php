@@ -15,10 +15,12 @@ final class Attendance extends Pivot
     /** @use HasFactory<AttendanceFactory> */
     use HasFactory;
 
-    /** @return BelongsTo<Service, $this> */
-    public function service(): BelongsTo
+    public $incrementing = true;
+
+    /** @return BelongsTo<Activity, $this> */
+    public function activity(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Activity::class);
     }
 
     /** @return BelongsTo<Child, $this> */
@@ -27,27 +29,27 @@ final class Attendance extends Pivot
         return $this->belongsTo(Child::class);
     }
 
-    /** @return BelongsTo<User, $this> */
-    public function checkedInProcessedBy(): BelongsTo
+    /** @return BelongsTo<Keeper, $this> */
+    public function checkinKeeper(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'checkin_processed_by');
+        return $this->belongsTo(Keeper::class, 'checkin_keeper_id');
+    }
+
+    /** @return BelongsTo<Gatepass, $this> */
+    public function checkinGatepass(): BelongsTo
+    {
+        return $this->belongsTo(Gatepass::class, 'checkin_gatepass_id');
     }
 
     /** @return BelongsTo<Keeper, $this> */
-    public function checkedInBy(): BelongsTo
+    public function checkoutKeeper(): BelongsTo
     {
-        return $this->belongsTo(Keeper::class, 'checked_in_by');
+        return $this->belongsTo(Keeper::class, 'checkout_keeper_id');
     }
 
-    /** @return BelongsTo<User, $this> */
-    public function checkedOutProcessedBy(): BelongsTo
+    /** @return BelongsTo<Gatepass, $this> */
+    public function checkoutGatepass(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'checkout_processed_by');
-    }
-
-    /** @return BelongsTo<Keeper, $this> */
-    public function checkedOutBy(): BelongsTo
-    {
-        return $this->belongsTo(Keeper::class, 'checked_out_by');
+        return $this->belongsTo(Gatepass::class, 'checkout_gatepass_id');
     }
 }

@@ -20,10 +20,18 @@ final class Organization extends Model
     }
 
     /**
-     * @return HasMany<Service, $this>
+     * @return HasMany<Activity, $this>
      */
-    public function services(): HasMany
+    public function activities(): HasMany
     {
-        return $this->hasMany(Service::class);
+        return $this->hasMany(Activity::class);
+    }
+
+    /**
+     * @return HasMany<Keeper, $this>
+     */
+    public function keepers(): HasMany
+    {
+        return $this->hasMany(Keeper::class);
     }
 }

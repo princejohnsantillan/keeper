@@ -13,5 +13,8 @@ enum Relationship: string
     case Uncle = 'uncle';
     case Aunt = 'aunt';
     case Relative = 'relative';
+    case Godfather = 'godfather';
+    case Godmother = 'godmother';
+    case FamilyFriend = 'family_friend';
     case Guardian = 'guardian';
 }

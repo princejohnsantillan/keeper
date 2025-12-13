@@ -20,10 +20,10 @@ final class Relationship extends Pivot
         ];
     }
 
-    /** @return BelongsTo<Keeper, $this> */
-    public function keeper(): BelongsTo
+    /** @return BelongsTo<Guardian, $this> */
+    public function guardian(): BelongsTo
     {
-        return $this->belongsTo(Keeper::class);
+        return $this->belongsTo(Guardian::class);
     }
 
     /**
