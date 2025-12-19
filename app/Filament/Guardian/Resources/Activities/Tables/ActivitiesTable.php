@@ -1,37 +1,36 @@
 <?php
 
-namespace App\Filament\Guardian\Resources\Guardians\Tables;
+namespace App\Filament\Guardian\Resources\Activities\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class GuardiansTable
+class ActivitiesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('first_name')
+                TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('middle_name')
+                TextColumn::make('description')
                     ->searchable(),
-                TextColumn::make('last_name')
+                TextColumn::make('location')
                     ->searchable(),
-                TextColumn::make('birth_date')
-                    ->date()
+                TextColumn::make('starts_at')
+                    ->dateTime()
                     ->sortable(),
-                IconColumn::make('gender')->sortable()->alignCenter(),
-                TextColumn::make('email')
-                    ->label('Email address')
+                TextColumn::make('ends_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('organization.name')
                     ->searchable(),
-                TextColumn::make('phone')
-                    ->searchable(),
-                TextColumn::make('user.name')
-                    ->searchable(),
+                TextColumn::make('created_by')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

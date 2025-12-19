@@ -57,7 +57,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
- * @property int $service_id
+ * @property int $activity_id
  * @property int $child_id
  * @property int|null $checkin_keeper_id
  * @property int|null $checkin_gatepass_id
@@ -68,7 +68,7 @@ namespace App\Models{
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Activity|null $activity
+ * @property-read \App\Models\Activity $activity
  * @property-read \App\Models\Gatepass|null $checkinGatepass
  * @property-read \App\Models\Keeper|null $checkinKeeper
  * @property-read \App\Models\Gatepass|null $checkoutGatepass
@@ -78,6 +78,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereActivityId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedInAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedOutAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckinGatepassId($value)
@@ -88,7 +89,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereNotes($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereServiceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -103,8 +103,8 @@ namespace App\Models{
  * @property string|null $middle_name
  * @property string $last_name
  * @property string|null $nickname
- * @property string $birth_date
- * @property bool $gender
+ * @property \Carbon\CarbonImmutable $birth_date
+ * @property \App\Enums\Gender $gender
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -270,12 +270,23 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property int $id
+ * @property int $guardian_id
+ * @property int $child_id
  * @property \App\Enums\Relationship $relationship
- * @property-read \App\Models\Child|null $child
- * @property-read \App\Models\Guardian|null $guardian
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Child $child
+ * @property-read \App\Models\Guardian $guardian
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereChildId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereGuardianId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationship($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

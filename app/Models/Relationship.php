@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 final class Relationship extends Pivot
 {
+    protected $table = 'relationships';
+
     public $incrementing = true;
 
     protected function casts(): array

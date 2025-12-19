@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->index();
             $table->text('notes')->nullable(); // Internal notes
-            $table->foreignIdFor(Organization::class,)->constrained();
+            $table->foreignIdFor(Organization::class)->constrained();
             $table->foreignIdFor(User::class, 'created_by')->constrained();
             $table->timestamps();
         });

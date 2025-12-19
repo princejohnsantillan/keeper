@@ -1,36 +1,26 @@
 <?php
 
-namespace App\Filament\Guardian\Resources\Guardians\Tables;
+namespace App\Filament\Guardian\Resources\Gatepasses\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class GuardiansTable
+class GatepassesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('first_name')
+                TextColumn::make('guardian.id')
                     ->searchable(),
-                TextColumn::make('middle_name')
+                TextColumn::make('child.id')
                     ->searchable(),
-                TextColumn::make('last_name')
+                TextColumn::make('activity.title')
                     ->searchable(),
-                TextColumn::make('birth_date')
-                    ->date()
-                    ->sortable(),
-                IconColumn::make('gender')->sortable()->alignCenter(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('phone')
-                    ->searchable(),
-                TextColumn::make('user.name')
+                TextColumn::make('code')
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Guardian;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('children', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name')->index();
-            $table->string('middle_name')->nullable();
-            $table->string('last_name')->index();
-            $table->string('nickname')->nullable()->index();
+            $table->string('first_name', 80)->index();
+            $table->string('middle_name', 80)->nullable();
+            $table->string('last_name', 80)->index();
+            $table->string('nickname', 40)->nullable()->index();
             $table->date('birth_date')->index();
             $table->boolean('gender')->index();
             $table->text('notes')->nullable();

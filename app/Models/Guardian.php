@@ -37,7 +37,7 @@ final class Guardian extends Model
      */
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(Child::class, 'relationship')
+        return $this->belongsToMany(Child::class, 'relationships')
             ->using(Relationship::class)
             ->withPivot('relationship')
             ->withTimestamps();

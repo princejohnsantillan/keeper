@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Gender;
 use Database\Factories\ChildFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,12 +17,20 @@ final class Child extends Model
     /** @use HasFactory<ChildFactory> */
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'gender' => Gender::class,
+            'birth_date' => 'immutable_datetime',
+        ];
+    }
+
     /**
      * @return BelongsToMany<Guardian, $this, Relationship>
      */
     public function guardians(): BelongsToMany
     {
-        return $this->belongsToMany(Guardian::class, 'relationship')
+        return $this->belongsToMany(Guardian::class, 'relationships')
             ->using(Relationship::class)
             ->withPivot('relationship')
             ->withTimestamps();

@@ -29,12 +29,14 @@ class GuardianPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->login()
             ->colors([
-                'primary' => Color::Green,
+                'primary' => Color::Lime,
+                'gray' => Color::Stone,
+                'info' => Color::Sky,
             ])
             ->discoverResources(in: app_path('Filament/Guardian/Resources'), for: 'App\Filament\Guardian\Resources')
             ->discoverPages(in: app_path('Filament/Guardian/Pages'), for: 'App\Filament\Guardian\Pages')
             ->pages([
-                Dashboard::class,
+                //                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Guardian/Widgets'), for: 'App\Filament\Guardian\Widgets')
             ->middleware([
