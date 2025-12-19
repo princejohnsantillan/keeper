@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Guardian\Resources\Children;
 
 use App\Filament\Guardian\Resources\Children\Pages\ListChildren;
@@ -13,20 +15,24 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
-class ChildResource extends Resource
+final class ChildResource extends Resource
 {
     protected static ?string $model = Child::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'fas-children';
 
+    /** @return Builder<Child> */
     public static function getEloquentQuery(): Builder
     {
-        /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        $guardian = $user?->guardian;
+
+        abort_if($guardian === null, 403);
+
         return parent::getEloquentQuery()
-            ->whereHas('relationships', function (Builder $query) use ($user): void {
-                $query->where('guardian_id', $user->guardian->id);
+            ->whereHas('relationships', function (Builder $query) use ($guardian): void {
+                $query->where('guardian_id', $guardian->id);
             });
     }
 

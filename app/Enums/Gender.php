@@ -1,20 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
-use BackedEnum;
 use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
-use Illuminate\Contracts\Support\Htmlable;
 
 enum Gender: int implements HasColor, HasIcon, HasLabel
 {
     case Male = 1;
     case Female = 0;
 
-    public function getLabel(): string|Htmlable|null
+    public function getLabel(): string
     {
         return match ($this) {
             self::Male => 'M',
@@ -22,7 +22,8 @@ enum Gender: int implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getColor(): string|array|null
+    /** @return array<int,string> */
+    public function getColor(): array
     {
         return match ($this) {
             self::Male => Color::Sky,
@@ -30,7 +31,7 @@ enum Gender: int implements HasColor, HasIcon, HasLabel
         };
     }
 
-    public function getIcon(): string|BackedEnum|Htmlable|null
+    public function getIcon(): string
     {
         return match ($this) {
             self::Male => 'fas-male',

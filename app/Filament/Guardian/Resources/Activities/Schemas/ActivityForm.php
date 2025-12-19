@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Guardian\Resources\Activities\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
@@ -8,7 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class ActivityForm
+final class ActivityForm
 {
     public static function configure(Schema $schema): Schema
     {

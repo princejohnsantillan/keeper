@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Guardian\Pages;
 
 use App\Models\Guardian;
@@ -14,7 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 
-class Register extends AuthRegister
+final class Register extends AuthRegister
 {
     public function form(Schema $schema): Schema
     {

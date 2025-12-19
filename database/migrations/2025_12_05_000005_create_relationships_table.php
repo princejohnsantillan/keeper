@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignIdFor(Child::class)->constrained();
             $table->string('relationship')->index();
             $table->timestamps();
+
+            $table->unique(['guardian_id', 'child_id']);
         });
     }
 

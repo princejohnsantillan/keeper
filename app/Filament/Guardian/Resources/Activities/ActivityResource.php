@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Guardian\Resources\Activities;
 
 use App\Filament\Guardian\Resources\Activities\Pages\ListActivities;
@@ -12,7 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
-class ActivityResource extends Resource
+final class ActivityResource extends Resource
 {
     protected static ?string $model = Activity::class;
 

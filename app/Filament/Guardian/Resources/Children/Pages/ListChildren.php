@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Guardian\Resources\Children\Pages;
 
 use App\Filament\Guardian\Resources\Children\ChildResource;
@@ -9,7 +11,7 @@ use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 
-class ListChildren extends ListRecords
+final class ListChildren extends ListRecords
 {
     protected static string $resource = ChildResource::class;
 
@@ -18,29 +20,37 @@ class ListChildren extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()
-                ->slideOver()
-                ->label('Add child')
-                ->modalHeading('Add Child')
-                ->modalSubmitActionLabel('Add')
-                ->createAnother(false)
-                ->mutateDataUsing(function (array $data): array {
+            $this->getCreateAction(),
+        ];
+    }
 
-                    $this->relationshipType = $data['relationship'];
-                    unset($data['relationship']);
+    private function getCreateAction(): CreateAction
+    {
+        return CreateAction::make()
+            ->slideOver()
+            ->label('Add child')
+            ->modalHeading('Add Child')
+            ->modalSubmitActionLabel('Add')
+            ->createAnother(false)
+            ->mutateDataUsing(function (array $data): array {
+                $this->relationshipType = $data['relationship'];
 
-                    return $data;
-                })
-                ->after(function (Child $record): void {
-                    /** @var \App\Models\User $user */
-                    $user = Auth::user();
+                unset($data['relationship']);
 
+                return $data;
+            })
+            ->after(function (Child $record): void {
+                $user = Auth::user();
+
+                $guardian = $user?->guardian;
+
+                if ($guardian !== null) {
                     Relationship::create([
-                        'guardian_id' => $user->guardian->id,
+                        'guardian_id' => $guardian->id,
                         'child_id' => $record->id,
                         'relationship' => $this->relationshipType,
                     ]);
-                }),
-        ];
+                }
+            });
     }
 }
