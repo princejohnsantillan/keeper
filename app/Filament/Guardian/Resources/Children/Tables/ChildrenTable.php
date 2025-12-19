@@ -97,6 +97,7 @@ final class ChildrenTable
             ->label('Relationship')
             ->getStateUsing(function (Child $record): ?string {
                 $relationship = Relationship::where('child_id', $record->id)
+                    ->whereNotNull('guardian_id')
                     ->where('guardian_id', Auth::user()?->guardian?->id)
                     ->first();
 
@@ -124,6 +125,7 @@ final class ChildrenTable
             ->slideOver()
             ->mutateRecordDataUsing(function (array $data, Child $record): array {
                 $relationship = Relationship::where('child_id', $record->id)
+                    ->whereNotNull('guardian_id')
                     ->where('guardian_id', Auth::user()?->guardian?->id)
                     ->first();
 
@@ -141,6 +143,7 @@ final class ChildrenTable
 
                 Relationship::where('child_id', $record->id)
                     ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->whereNotNull('guardian_id')
                     ->update(['relationship' => $relationship]);
 
                 return $record;
