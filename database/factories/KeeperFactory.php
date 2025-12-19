@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,13 +19,8 @@ class KeeperFactory extends Factory
     public function definition(): array
     {
         return [
-            'first_name' => $this->faker->firstName(),
-            'middle_name' => $this->faker->randomLetter(),
-            'last_name' => $this->faker->lastName(),
-            'birth_date' => $this->faker->date(),
-            'gender' => $this->faker->boolean(),
-            'phone' => $this->faker->phoneNumber(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'user_id' => User::factory(),
+            'organization_id' => Organization::factory(),
         ];
     }
 }

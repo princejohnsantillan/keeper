@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->foreignIdFor(User::class, 'owner_id')->constrained();
             $table->timestamps();

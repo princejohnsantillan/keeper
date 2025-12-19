@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\Relationship;
 use App\Models\Child;
-use App\Models\Keeper;
+use App\Models\Guardian;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,11 +20,10 @@ class RelationshipFactory extends Factory
     public function definition(): array
     {
         return [
-            'keeper_id' => Keeper::factory(),
+            'guardian_id' => Guardian::factory(),
             'child_id' => Child::factory(),
             'relationship' => $this->faker->randomElement(Relationship::cases()),
-            'is_authorized_guardian' => $this->faker->boolean(),
-            'notes' => $this->faker->text(),
+            'notes' => $this->faker->optional()->sentence(),
         ];
     }
 }

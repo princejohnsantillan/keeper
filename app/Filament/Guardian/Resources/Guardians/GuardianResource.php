@@ -1,0 +1,43 @@
+<?php
+
+namespace App\Filament\Guardian\Resources\Guardians;
+
+use App\Filament\Guardian\Resources\Guardians\Pages\ListGuardians;
+use App\Filament\Guardian\Resources\Guardians\Schemas\GuardianForm;
+use App\Filament\Guardian\Resources\Guardians\Tables\GuardiansTable;
+use App\Models\Guardian;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+
+class GuardianResource extends Resource
+{
+    protected static ?string $model = Guardian::class;
+
+    protected static string|BackedEnum|null $navigationIcon = 'entypo-shield';
+
+    public static function form(Schema $schema): Schema
+    {
+        return GuardianForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return GuardiansTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListGuardians::route('/'),
+        ];
+    }
+}

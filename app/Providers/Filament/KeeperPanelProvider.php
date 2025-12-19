@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Keeper\Pages\Auth\Register;
-use App\Http\Middleware\RedirectKeeperDashboard;
+use App\Http\Middleware\RequireOrganizationSubdomain;
+use App\Subdomain;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -25,20 +25,20 @@ class KeeperPanelProvider extends PanelProvider
     {
         return $panel
             ->id('keeper')
-            ->path('dashboard')
-            ->registration(Register::class)
+            ->path('keeper')
+            ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
             ->colors([
-                'primary' => Color::Green,
+                'primary' => Color::Red,
             ])
-            ->discoverResources(in: app_path('Filament/Keeper/Resources'), for: 'App\Filament\Keeper\Resources')
-            ->discoverPages(in: app_path('Filament/Keeper/Pages'), for: 'App\Filament\Keeper\Pages')
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Keeper/Widgets'), for: 'App\Filament\Keeper\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->middleware([
-                RedirectKeeperDashboard::class,
+                RequireOrganizationSubdomain::class,
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,

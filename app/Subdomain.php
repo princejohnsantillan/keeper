@@ -16,4 +16,9 @@ final class Subdomain
             return Organization::query()->where('slug', $slug)->first();
         });
     }
+
+    public static function defined(): bool
+    {
+        return request()->host() !== Config::string('app.domain');
+    }
 }
