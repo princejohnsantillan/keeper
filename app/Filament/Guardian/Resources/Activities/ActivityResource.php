@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Guardian\Resources\Activities;
 
 use App\Filament\Guardian\Resources\Activities\Pages\ListActivities;
-use App\Filament\Guardian\Resources\Activities\Schemas\ActivityForm;
 use App\Filament\Guardian\Resources\Activities\Tables\ActivitiesTable;
 use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
@@ -20,10 +18,7 @@ final class ActivityResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Play;
 
-    public static function form(Schema $schema): Schema
-    {
-        return ActivityForm::configure($schema);
-    }
+    protected static ?int $navigationSort = 1;
 
     public static function table(Table $table): Table
     {

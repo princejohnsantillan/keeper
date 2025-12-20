@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Guardian\Resources\Guardians\Tables;
 
+use App\Models\Guardian;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -16,6 +17,8 @@ final class GuardiansTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->searchable(false)
+            ->paginated(false)
             ->columns([
                 TextColumn::make('first_name')
                     ->searchable(),
@@ -24,7 +27,12 @@ final class GuardiansTable
                 TextColumn::make('last_name')
                     ->searchable(),
                 TextColumn::make('birth_date')
-                    ->date()
+                    ->date('d M Y')
+                    ->description(function (Guardian $record): ?string {
+                        $age = $record->birth_date?->age;
+
+                        return $age === null ? null : "{$age} yrs";
+                    })
                     ->sortable(),
                 IconColumn::make('gender')->sortable()->alignCenter(),
                 TextColumn::make('email')
@@ -32,16 +40,6 @@ final class GuardiansTable
                     ->searchable(),
                 TextColumn::make('phone')
                     ->searchable(),
-                TextColumn::make('user.name')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

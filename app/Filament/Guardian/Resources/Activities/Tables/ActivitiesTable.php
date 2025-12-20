@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Guardian\Resources\Activities\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use App\Models\Activity;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,43 +14,31 @@ final class ActivitiesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->searchable(false)
+            ->paginated(false)
+            ->defaultSort('starts_at', 'asc')
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
-                TextColumn::make('description')
-                    ->searchable(),
+                    ->description(fn (Activity $activity): ?string => $activity->description)
+                    ->sortable(),
                 TextColumn::make('location')
-                    ->searchable(),
+                    ->sortable(),
                 TextColumn::make('starts_at')
-                    ->dateTime()
+                    ->dateTime('D - h:i A')
+                    ->description(fn (Activity $record) => $record->starts_at->format('F d'))
                     ->sortable(),
                 TextColumn::make('ends_at')
-                    ->dateTime()
+                    ->dateTime('D - h:i A')
+                    ->description(fn (Activity $record) => $record->ends_at->format('F d'))
                     ->sortable(),
                 TextColumn::make('organization.name')
-                    ->searchable(),
-                TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                    ->label('Organized by'),
+
             ])
             ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                Action::make('gatepass')
+                    ->icon('entypo-lock')
+                    ->label('Create gatepass'),
             ]);
     }
 }

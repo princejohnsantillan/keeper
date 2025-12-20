@@ -25,7 +25,28 @@ final class ChildResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'fas-children';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $recordTitleAttribute = 'full_name';
+
+    /**
+     * Scope to only the children whose guardian is the authenticated user.
+     *
+     * @return Builder<Child>
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        $user = Auth::user();
+
+        $guardian = $user?->guardian;
+
+        abort_if($guardian === null, 403);
+
+        return parent::getEloquentQuery()
+            ->whereHas('relationships', function (Builder $query) use ($guardian): void {
+                $query->where('guardian_id', $guardian->id);
+            });
+    }
 
     public static function getGloballySearchableAttributes(): array
     {
@@ -42,21 +63,6 @@ final class ChildResource extends Resource
             'Nickname' => $record->nickname ?? Str::before($record->first_name, ' '),
             'Birth date' => $record->birth_date->format('d M Y').' ('.$record->birth_date->age.' yrs)',
         ];
-    }
-
-    /** @return Builder<Child> */
-    public static function getEloquentQuery(): Builder
-    {
-        $user = Auth::user();
-
-        $guardian = $user?->guardian;
-
-        abort_if($guardian === null, 403);
-
-        return parent::getEloquentQuery()
-            ->whereHas('relationships', function (Builder $query) use ($guardian): void {
-                $query->where('guardian_id', $guardian->id);
-            });
     }
 
     public static function form(Schema $schema): Schema

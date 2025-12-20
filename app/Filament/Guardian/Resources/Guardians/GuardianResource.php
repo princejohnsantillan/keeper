@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Guardian\Resources\Guardians;
 
+use App\AuthUser;
 use App\Filament\Guardian\Resources\Guardians\Pages\ListGuardians;
 use App\Filament\Guardian\Resources\Guardians\Schemas\GuardianForm;
 use App\Filament\Guardian\Resources\Guardians\Tables\GuardiansTable;
@@ -12,6 +13,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 final class GuardianResource extends Resource
@@ -20,7 +22,22 @@ final class GuardianResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'entypo-shield';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $recordTitleAttribute = 'full_name';
+
+    /**
+     * Scope to only the guardians of the authenticated user's children.
+     *
+     * @return Builder<Guardian>
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereHas('relationships', function (Builder $query): void {
+                $query->whereIn('child_id', AuthUser::guardian()->children()->pluck('children.id'));
+            });
+    }
 
     public static function getGloballySearchableAttributes(): array
     {

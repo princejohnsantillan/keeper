@@ -21,6 +21,14 @@ final class Activity extends Model
     /** @use HasFactory<\Database\Factories\ActivityFactory> */
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'starts_at' => 'immutable_datetime',
+            'ends_at' => 'immutable_datetime',
+        ];
+    }
+
     /**
      * @return BelongsTo<User, $this>
      */

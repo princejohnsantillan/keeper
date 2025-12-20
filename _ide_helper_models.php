@@ -17,8 +17,8 @@ namespace App\Models{
  * @property string $title
  * @property string|null $description
  * @property string $location
- * @property string $starts_at
- * @property string $ends_at
+ * @property \Carbon\CarbonImmutable $starts_at
+ * @property \Carbon\CarbonImmutable $ends_at
  * @property string|null $notes
  * @property int $organization_id
  * @property int $created_by
