@@ -9,7 +9,6 @@ use App\Filament\Guardian\Resources\Guardians\GuardianResource;
 use App\Models\Child;
 use App\Models\Guardian;
 use Filament\Actions\CreateAction;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 final class ListGuardians extends ListRecords
@@ -21,6 +20,8 @@ final class ListGuardians extends ListRecords
         return [
             CreateAction::make()
                 ->label('Add guardian')
+                ->modalSubmitActionLabel('Add')
+                ->createAnother(false)
                 ->slideOver()
                 ->fillForm(function (): array {
                     $children = AuthUser::guardian()->children;
