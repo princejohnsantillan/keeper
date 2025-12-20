@@ -12,7 +12,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
 
 final class GuardianForm
@@ -21,7 +21,7 @@ final class GuardianForm
     {
         return $schema
             ->components([
-                Section::make('Guardian Information')
+                Fieldset::make('Guardian Details')
                     ->schema([
                         TextInput::make('first_name')
                             ->required()
@@ -48,7 +48,7 @@ final class GuardianForm
                             ->tel()->columnSpan(3),
                     ])
                     ->columns(6)->columnSpanFull(),
-                Section::make('Relationships with Children')
+                Fieldset::make('Relationships with Children')
                     ->schema([
                         Repeater::make('children')
                             ->hiddenLabel()
@@ -60,12 +60,14 @@ final class GuardianForm
                                     ->required(),
                                 TextInput::make('child_name')
                                     ->label('Child')
-                                    ->disabled(),
+                                    ->disabled()
+                                ->columnSpan(1),
                                 Select::make('relationship')
                                     ->options(Relationship::class)
                                     ->placeholder('Select a relationship')
-                                    ->native(false),
-                            ])->columnSpanFull(),
+                                    ->native(false)
+                            ->columnSpan(1),
+                            ])->columns(2)->columnSpanFull(),
                     ])
                     ->columnSpanFull(),
             ]);

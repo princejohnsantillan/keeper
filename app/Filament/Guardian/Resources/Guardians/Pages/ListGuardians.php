@@ -20,6 +20,7 @@ final class ListGuardians extends ListRecords
     {
         return [
             CreateAction::make()
+                ->label('Add guardian')
                 ->slideOver()
                 ->fillForm(function (): array {
                     $children = AuthUser::guardian()->children;

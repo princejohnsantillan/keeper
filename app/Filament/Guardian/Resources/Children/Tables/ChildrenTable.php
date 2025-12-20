@@ -150,7 +150,7 @@ final class ChildrenTable
             ->label('Guardians')
             ->icon('entypo-shield')
             ->modalHeading(fn (Child $record): string => "Guardians of {$record->full_name}")
-            ->modalSubmitActionLabel('Set')
+            ->modalSubmitActionLabel('Save changes')
             ->fillForm(function (Child $record): array {
                 $guardians = Guardian::query()
                     ->whereHas('relationships', function (Builder $query): void {

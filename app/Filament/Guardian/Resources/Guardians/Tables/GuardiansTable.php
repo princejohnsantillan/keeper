@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Guardian\Resources\Guardians\Tables;
 
+use App\AuthUser;
+use App\Models\Child;
 use App\Models\Guardian;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Models\Relationship;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -43,8 +46,69 @@ final class GuardiansTable
                     ->sortable(),
             ])
             ->recordActions([
-                EditAction::make()->slideOver(),
-            ]);
+                EditAction::make()
+                    ->slideOver()
+                    ->hiddenLabel()
+                    ->mutateRecordDataUsing(function (array $data, Guardian $record): array {
+                        $children = AuthUser::guardian()->children;
 
+                        $relationshipsByChildId = Relationship::query()
+                            ->where('guardian_id', $record->id)
+                            ->whereIn('child_id', $children->pluck('id'))
+                            ->get()
+                            ->keyBy('child_id');
+
+                        $data['children'] = $children
+                            ->map(fn (Child $child): array => [
+                                'child_id' => $child->id,
+                                'child_name' => $child->full_name,
+                                'relationship' => $relationshipsByChildId->get($child->id)?->relationship?->value,
+                            ])
+                            ->all();
+
+                        return $data;
+                    })
+                    ->using(function (Guardian $record, array $data): Guardian {
+                        /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
+                        $rows = $data['children'] ?? [];
+
+                        unset($data['children']);
+
+                        $record->update($data);
+
+                        $syncData = [];
+
+                        foreach ($rows as $row) {
+                            $childId = (int) ($row['child_id'] ?? 0);
+                            $relationship = $row['relationship'] ?? null;
+
+                            if ($childId <= 0) {
+                                continue;
+                            }
+
+                            if ($relationship === null || $relationship === '') {
+                                continue;
+                            }
+
+                            $syncData[$childId] = [
+                                'relationship' => $relationship,
+                            ];
+                        }
+
+                        $record->children()->sync($syncData);
+
+                        return $record;
+                    }),
+                DeleteAction::make()
+                    ->hiddenLabel()
+                    ->using(function (Child $record) {
+                        //TODO
+
+                        Notification::make()
+                            ->title('Deleted')
+                            ->danger()
+                            ->send();
+                    })
+            ]);
     }
 }
