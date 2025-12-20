@@ -17,6 +17,8 @@ final class GatepassForm
             ->components([
                 TextInput::make('code')
                     ->default(ReadableCode::generate())
+                    ->disabled()
+                    ->copyable()
                     ->required(),
 
                 Select::make('activity_id')
