@@ -15,7 +15,9 @@ final class ListGatepasses extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->slideOver(),
+            CreateAction::make()
+                ->label('Add gatepass')
+                ->slideOver(),
         ];
     }
 }

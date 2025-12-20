@@ -15,22 +15,20 @@ final class GatepassForm
     {
         return $schema
             ->components([
-                Select::make('child_id')
-                    ->relationship('child', 'first_name')
-                    ->required(),
-
-                Select::make('guardian_id')
-                    ->relationship('guardian', 'first_name')
-
+                TextInput::make('code')
+                    ->default(ReadableCode::generate())
                     ->required(),
 
                 Select::make('activity_id')
                     ->relationship('activity', 'title')
                     ->required(),
 
+                Select::make('guardian_id')
+                    ->relationship('guardian', 'first_name')
+                    ->required(),
 
-                TextInput::make('code')
-                    ->default(ReadableCode::generate())
+                Select::make('child_id')
+                    ->relationship('child', 'first_name')
                     ->required(),
             ])->columns(2);
     }

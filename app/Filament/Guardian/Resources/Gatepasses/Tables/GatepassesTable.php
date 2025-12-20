@@ -15,19 +15,19 @@ final class GatepassesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('guardian.full_name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('child.full_name')
+                TextColumn::make('code')
+                    ->badge()
+                    ->copyable()
+                    ->size(TextSize::Large)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('activity.title')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('code')
-                    ->badge()
-                    ->copyable()
-                    ->size(TextSize::Large)
+                TextColumn::make('guardian.full_name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('child.full_name')
                     ->searchable()
                     ->sortable(),
             ]);
