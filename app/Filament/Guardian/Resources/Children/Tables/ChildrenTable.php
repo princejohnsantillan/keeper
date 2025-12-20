@@ -4,17 +4,27 @@ declare(strict_types=1);
 
 namespace App\Filament\Guardian\Resources\Children\Tables;
 
+use App\AuthUser;
+use App\Enums\Relationship as RelationshipEnum;
 use App\Models\Child;
+use App\Models\Guardian;
 use App\Models\Relationship;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 final class ChildrenTable
@@ -34,6 +44,7 @@ final class ChildrenTable
                 ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
             ->recordActions([
+                ChildrenTable::getupdateGuardiansAction(),
                 ChildrenTable::getEditAction(),
                 ChildrenTable::getDeleteAction(),
                 ViewAction::make()->hiddenLabel(),
@@ -129,6 +140,89 @@ final class ChildrenTable
                     ->update(['relationship' => $relationship]);
 
                 return $record;
+            });
+    }
+
+    private static function getupdateGuardiansAction(): Action
+    {
+        return Action::make('update_guardians')
+            ->label('Guardians')
+            ->icon('entypo-shield')
+            ->modalHeading(fn (Child $record): string => "Guardians of {$record->full_name}")
+            ->modalSubmitActionLabel('Set')
+            ->fillForm(function (Child $record): array {
+                $guardians = Guardian::query()
+                    ->whereHas('relationships', function (Builder $query): void {
+                        $query->whereIn('child_id', AuthUser::guardian()->children()->pluck('children.id'));
+                    })->get();
+
+                $relationshipsByGuardianId = Relationship::query()
+                    ->where('child_id', $record->id)
+                    ->whereIn('guardian_id', $guardians->pluck('id'))
+                    ->get()
+                    ->keyBy('guardian_id');
+
+                return [
+                    'guardians' => $guardians
+                        ->map(fn (Guardian $guardian): array => [
+                            'guardian_id' => $guardian->id,
+                            'guardian_name' => $guardian->full_name,
+                            'relationship' => $relationshipsByGuardianId->get($guardian->id)?->relationship?->value,
+                        ])
+                        ->all(),
+                ];
+            })
+            ->schema([
+                Repeater::make('guardians')
+                    ->label('Guardians')
+                    ->addable(false)
+                    ->deletable(false)
+                    ->reorderable(false)
+                    ->table([
+                        TableColumn::make('Guardian'),
+                        TableColumn::make('Relationship'),
+                    ])
+                    ->schema([
+                        Hidden::make('guardian_id')
+                            ->required(),
+                        TextInput::make('guardian_name')
+                            ->disabled(),
+                        Select::make('relationship')
+                            ->options(RelationshipEnum::class)
+                            ->placeholder('Select a relationship')
+                            ->native(false),
+                    ])
+                    ->columnSpanFull(),
+            ])
+            ->action(function (Child $record, array $data): void {
+                /** @var array<int, array{guardian_id?: int|string, relationship?: string|null}> $rows */
+                $rows = $data['guardians'] ?? [];
+
+                $syncData = [];
+
+                foreach ($rows as $row) {
+                    $guardianId = (int) ($row['guardian_id'] ?? 0);
+                    $relationship = $row['relationship'] ?? null;
+
+                    if ($guardianId <= 0) {
+                        continue;
+                    }
+
+                    if ($relationship === null || $relationship === '') {
+                        continue;
+                    }
+
+                    $syncData[$guardianId] = [
+                        'relationship' => $relationship,
+                    ];
+                }
+
+                $record->guardians()->sync($syncData);
+
+                Notification::make()
+                    ->title('Guardians updated')
+                    ->success()
+                    ->send();
             });
     }
 
