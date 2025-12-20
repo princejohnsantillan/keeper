@@ -5,9 +5,14 @@ declare(strict_types=1);
 namespace App\Filament\Guardian\Resources\Guardians\Schemas;
 
 use App\Enums\Gender;
+use App\Enums\Relationship;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 final class GuardianForm
@@ -16,23 +21,53 @@ final class GuardianForm
     {
         return $schema
             ->components([
-                TextInput::make('first_name')
-                    ->required(),
-                TextInput::make('middle_name'),
-                TextInput::make('last_name')
-                    ->required(),
-                DatePicker::make('birth_date'),
-                Select::make('gender')
-                    ->options(Gender::class)
-                    ->required(),
-                TextInput::make('email')
-                    ->label('Email address')
-                    ->email()
-                    ->required(),
-                TextInput::make('phone')
-                    ->tel(),
-                Select::make('user_id')
-                    ->relationship('user', 'name'),
+                Section::make('Guardian Information')
+                    ->schema([
+                        TextInput::make('first_name')
+                            ->required()
+                            ->columnSpan(2),
+                        TextInput::make('middle_name')
+                            ->columnSpan(2),
+                        TextInput::make('last_name')
+                            ->required()
+                            ->columnSpan(2),
+                        DatePicker::make('birth_date')
+                            ->displayFormat('d M Y')
+                            ->native(false)
+                            ->columnSpan(3),
+                        ToggleButtons::make('gender')
+                            ->required()
+                            ->options(Gender::class)
+                            ->inline()
+                            ->columnSpan(3),
+
+                        TextInput::make('email')
+                            ->email()
+                            ->required()->columnSpan(3),
+                        TextInput::make('phone')
+                            ->tel()->columnSpan(3),
+                    ])
+                    ->columns(6)->columnSpanFull(),
+                Section::make('Relationships with Children')
+                    ->schema([
+                        Repeater::make('children')
+                            ->hiddenLabel()
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                            ->schema([
+                                Hidden::make('child_id')
+                                    ->required(),
+                                TextInput::make('child_name')
+                                    ->label('Child')
+                                    ->disabled(),
+                                Select::make('relationship')
+                                    ->options(Relationship::class)
+                                    ->placeholder('Select a relationship')
+                                    ->native(false),
+                            ])->columnSpanFull(),
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 }

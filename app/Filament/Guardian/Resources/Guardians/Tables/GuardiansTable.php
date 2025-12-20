@@ -21,11 +21,11 @@ final class GuardiansTable
             ->paginated(false)
             ->columns([
                 TextColumn::make('first_name')
-                    ->searchable(),
+                    ->sortable(),
                 TextColumn::make('middle_name')
-                    ->searchable(),
+                    ->sortable(),
                 TextColumn::make('last_name')
-                    ->searchable(),
+                    ->sortable(),
                 TextColumn::make('birth_date')
                     ->date('d M Y')
                     ->description(function (Guardian $record): ?string {
@@ -36,21 +36,15 @@ final class GuardiansTable
                     ->sortable(),
                 IconColumn::make('gender')->sortable()->alignCenter(),
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->copyable()
+                    ->sortable(),
                 TextColumn::make('phone')
-                    ->searchable(),
-            ])
-            ->filters([
-                //
+                    ->copyable()
+                    ->sortable(),
             ])
             ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                EditAction::make()->slideOver(),
             ]);
+
     }
 }

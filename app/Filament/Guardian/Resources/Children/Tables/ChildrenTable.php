@@ -44,7 +44,7 @@ final class ChildrenTable
                 ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
             ->recordActions([
-                ChildrenTable::getupdateGuardiansAction(),
+                ChildrenTable::getUpdateGuardiansAction(),
                 ChildrenTable::getEditAction(),
                 ChildrenTable::getDeleteAction(),
                 ViewAction::make()->hiddenLabel(),
@@ -143,7 +143,7 @@ final class ChildrenTable
             });
     }
 
-    private static function getupdateGuardiansAction(): Action
+    private static function getUpdateGuardiansAction(): Action
     {
         return Action::make('update_guardians')
             ->label('Guardians')
@@ -174,7 +174,7 @@ final class ChildrenTable
             })
             ->schema([
                 Repeater::make('guardians')
-                    ->label('Guardians')
+                    ->hiddenLabel()
                     ->addable(false)
                     ->deletable(false)
                     ->reorderable(false)
