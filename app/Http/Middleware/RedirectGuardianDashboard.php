@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Subdomain;
@@ -8,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Symfony\Component\HttpFoundation\Response;
 
-class RedirectGuardianDashboard
+final class RedirectGuardianDashboard
 {
     /**
      * Handle an incoming request.

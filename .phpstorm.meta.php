@@ -2639,8 +2639,10 @@ namespace PHPSTORM_META {
 'signed','throttle','verified',);
         registerArgumentsSet('routes', 
 'filament.exports.download','filament.imports.failed-rows.download','filament.guardian.auth.login','filament.guardian.auth.register','filament.guardian.auth.logout',
-'filament.guardian.home','filament.guardian.resources.activities.index','filament.guardian.resources.children.index','filament.guardian.resources.gatepasses.index','filament.guardian.resources.guardians.index',
-'filament.keeper.auth.login','filament.keeper.auth.logout','filament.keeper.pages.dashboard','boost.browser-logs','livewire.update','livewire.upload-file','livewire.preview-file','storage.local',);
+'filament.guardian.home','filament.guardian.resources.activities.index','filament.guardian.resources.children.index','filament.guardian.resources.children.view','filament.guardian.resources.gatepasses.index',
+'filament.guardian.resources.guardians.index','filament.keeper.auth.login','filament.keeper.auth.logout','filament.keeper.home','filament.keeper.resources.activities.index',
+'filament.keeper.resources.children.index','filament.keeper.resources.children.view','boost.browser-logs','livewire.update','livewire.upload-file','livewire.preview-file',
+'storage.local',);
         registerArgumentsSet('views', 
 'welcome','filament-actions::action-modal','filament-actions::components.group','filament-actions::components.modals','filament-forms::components.builder',
 'filament-forms::components.builder.block-picker','filament-forms::components.checkbox','filament-forms::components.checkbox-list','filament-forms::components.code-editor','filament-forms::components.color-picker',

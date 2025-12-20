@@ -4,18 +4,27 @@ declare(strict_types=1);
 
 namespace App\Filament\Guardian\Resources\Children\Tables;
 
+use App\AuthUser;
 use App\Enums\Relationship as RelationshipEnum;
 use App\Models\Child;
+use App\Models\Guardian;
 use App\Models\Relationship;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 final class ChildrenTable
@@ -23,6 +32,8 @@ final class ChildrenTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->searchable(false)
+            ->paginated(false)
             ->columns([
                 ChildrenTable::getFirstNameColumn(),
                 ChildrenTable::getMiddleNameColumn(),
@@ -32,17 +43,11 @@ final class ChildrenTable
                 ChildrenTable::getGenderColumn()->alignCenter(),
                 ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
-            ->filters([
-                ChildrenTable::getGenderFilter(),
-            ])
             ->recordActions([
+                ChildrenTable::getUpdateGuardiansAction(),
                 ChildrenTable::getEditAction(),
-            ])
-            ->recordAction(null)
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                ChildrenTable::getDeleteAction(),
+                ViewAction::make()->hiddenLabel(),
             ]);
     }
 
@@ -77,11 +82,11 @@ final class ChildrenTable
     public static function getBirthDateColumn(): TextColumn
     {
         return TextColumn::make('birth_date')
-            ->date()
+            ->date('d M Y')
             ->description(function (Child $record): string {
                 $age = $record->birth_date->age;
 
-                return "{$age} years old";
+                return "{$age} yrs";
             })
             ->sortable();
     }
@@ -93,28 +98,18 @@ final class ChildrenTable
 
     public static function getRelationshipColumn(): TextColumn
     {
-        return TextColumn::make('guardian_relationship')
-            ->label('Relationship')
+        return TextColumn::make('relationship')
             ->getStateUsing(function (Child $record): ?string {
                 $relationship = Relationship::where('child_id', $record->id)
+                    ->whereNotNull('guardian_id')
                     ->where('guardian_id', Auth::user()?->guardian?->id)
                     ->first();
 
-                return $relationship?->relationship?->value;
+                return $relationship?->relationship?->getLabel();
             })
-            ->formatStateUsing(fn (?string $state): ?string => $state ? RelationshipEnum::from($state)->name : null)
             ->badge()
             ->size(TextSize::Large)
             ->color(Color::Stone);
-    }
-
-    public static function getGenderFilter(): SelectFilter
-    {
-        return SelectFilter::make('gender')
-            ->options([
-                1 => 'Male',
-                0 => 'Female',
-            ]);
     }
 
     public static function getEditAction(): EditAction
@@ -124,6 +119,7 @@ final class ChildrenTable
             ->slideOver()
             ->mutateRecordDataUsing(function (array $data, Child $record): array {
                 $relationship = Relationship::where('child_id', $record->id)
+                    ->whereNotNull('guardian_id')
                     ->where('guardian_id', Auth::user()?->guardian?->id)
                     ->first();
 
@@ -132,7 +128,6 @@ final class ChildrenTable
                 return $data;
             })
             ->using(function (Child $record, array $data): Child {
-
                 $relationship = $data['relationship'];
 
                 unset($data['relationship']);
@@ -141,9 +136,110 @@ final class ChildrenTable
 
                 Relationship::where('child_id', $record->id)
                     ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->whereNotNull('guardian_id')
                     ->update(['relationship' => $relationship]);
 
                 return $record;
+            });
+    }
+
+    private static function getUpdateGuardiansAction(): Action
+    {
+        return Action::make('update_guardians')
+            ->slideOver()
+            ->label('Guardians')
+            ->icon('entypo-shield')
+            ->modalHeading(fn (Child $record): string => "Guardians of {$record->full_name}")
+            ->modalSubmitActionLabel('Save changes')
+            ->fillForm(function (Child $record): array {
+                $guardians = Guardian::query()
+                    ->whereHas('relationships', function (Builder $query): void {
+                        $query->whereIn('child_id', AuthUser::guardian()->children()->pluck('children.id'));
+                    })->get();
+
+                $relationshipsByGuardianId = Relationship::query()
+                    ->where('child_id', $record->id)
+                    ->whereIn('guardian_id', $guardians->pluck('id'))
+                    ->get()
+                    ->keyBy('guardian_id');
+
+                return [
+                    'guardians' => $guardians
+                        ->map(fn (Guardian $guardian): array => [
+                            'guardian_id' => $guardian->id,
+                            'guardian_name' => $guardian->full_name,
+                            'relationship' => $relationshipsByGuardianId->get($guardian->id)?->relationship?->value,
+                        ])
+                        ->all(),
+                ];
+            })
+            ->schema([
+                Repeater::make('guardians')
+                    ->hiddenLabel()
+                    ->addable(false)
+                    ->deletable(false)
+                    ->reorderable(false)
+                    ->table([
+                        TableColumn::make('Guardian'),
+                        TableColumn::make('Relationship'),
+                    ])
+                    ->schema([
+                        Hidden::make('guardian_id')
+                            ->required(),
+                        TextInput::make('guardian_name')
+                            ->disabled(),
+                        Select::make('relationship')
+                            ->options(RelationshipEnum::class)
+                            ->placeholder('Select a relationship')
+                            ->native(false),
+                    ])
+                    ->columnSpanFull(),
+            ])
+            ->action(function (Child $record, array $data): void {
+                /** @var array<int, array{guardian_id?: int|string, relationship?: string|null}> $rows */
+                $rows = $data['guardians'] ?? [];
+
+                $syncData = [];
+
+                foreach ($rows as $row) {
+                    $guardianId = (int) ($row['guardian_id'] ?? 0);
+                    $relationship = $row['relationship'] ?? null;
+
+                    if ($guardianId <= 0) {
+                        continue;
+                    }
+
+                    if ($relationship === null || $relationship === '') {
+                        continue;
+                    }
+
+                    $syncData[$guardianId] = [
+                        'relationship' => $relationship,
+                    ];
+                }
+
+                $record->guardians()->sync($syncData);
+
+                Notification::make()
+                    ->title('Guardians updated')
+                    ->success()
+                    ->send();
+            });
+    }
+
+    private static function getDeleteAction(): DeleteAction
+    {
+        return DeleteAction::make()
+            ->hiddenLabel()
+            ->using(function (Child $record) {
+                Relationship::where('child_id', $record->id)
+                    ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->delete();
+
+                Notification::make()
+                    ->title('Deleted')
+                    ->danger()
+                    ->send();
             });
     }
 }

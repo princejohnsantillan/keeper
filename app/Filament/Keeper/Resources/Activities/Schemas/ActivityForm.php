@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Guardian\Resources\Activities\Schemas;
+namespace App\Filament\Keeper\Resources\Activities\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;

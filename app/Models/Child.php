@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\Gender;
 use Database\Factories\ChildFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,6 +26,12 @@ final class Child extends Model
             'gender' => Gender::class,
             'birth_date' => 'immutable_datetime',
         ];
+    }
+
+    /** @return Attribute<string,never> */
+    public function fullName(): Attribute
+    {
+        return Attribute::make(fn (): string => $this->first_name.' '.$this->last_name);
     }
 
     /**

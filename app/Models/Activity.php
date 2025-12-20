@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Scopes\OrganizationScope;
@@ -18,6 +20,14 @@ final class Activity extends Model
 {
     /** @use HasFactory<\Database\Factories\ActivityFactory> */
     use HasFactory;
+
+    protected function casts(): array
+    {
+        return [
+            'starts_at' => 'immutable_datetime',
+            'ends_at' => 'immutable_datetime',
+        ];
+    }
 
     /**
      * @return BelongsTo<User, $this>

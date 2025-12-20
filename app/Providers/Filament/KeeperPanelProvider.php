@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\RequireOrganizationSubdomain;
@@ -8,7 +10,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -19,7 +20,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class KeeperPanelProvider extends PanelProvider
+final class KeeperPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
@@ -29,14 +30,18 @@ class KeeperPanelProvider extends PanelProvider
             ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
             ->colors([
-                'primary' => Color::Red,
+                'danger' => Color::Red,
+                'gray' => Color::Neutral,
+                'info' => Color::Sky,
+                'primary' => Color::Fuchsia,
+                'success' => Color::Green,
+                'warning' => Color::Orange,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
-            ->pages([
-                Dashboard::class,
-            ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->breadcrumbs(false)
+            ->discoverResources(in: app_path('Filament/Keeper/Resources'), for: 'App\Filament\Keeper\Resources')
+            ->discoverPages(in: app_path('Filament/Keeper/Pages'), for: 'App\Filament\Keeper\Pages')
+            ->pages([])
+            ->discoverWidgets(in: app_path('Filament/Keeper/Widgets'), for: 'App\Filament\Keeper\Widgets')
             ->middleware([
                 RequireOrganizationSubdomain::class,
                 EncryptCookies::class,

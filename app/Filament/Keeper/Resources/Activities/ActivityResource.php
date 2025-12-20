@@ -1,24 +1,29 @@
 <?php
 
-declare(strict_types=1);
+namespace App\Filament\Keeper\Resources\Activities;
 
-namespace App\Filament\Guardian\Resources\Activities;
-
-use App\Filament\Guardian\Resources\Activities\Pages\ListActivities;
-use App\Filament\Guardian\Resources\Activities\Tables\ActivitiesTable;
+use App\Filament\Keeper\Resources\Activities\Pages\ListActivities;
+use App\Filament\Keeper\Resources\Activities\Schemas\ActivityForm;
+use App\Filament\Keeper\Resources\Activities\Tables\ActivitiesTable;
 use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
-final class ActivityResource extends Resource
+class ActivityResource extends Resource
 {
     protected static ?string $model = Activity::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Play;
 
-    protected static ?int $navigationSort = 1;
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function form(Schema $schema): Schema
+    {
+        return ActivityForm::configure($schema);
+    }
 
     public static function table(Table $table): Table
     {
