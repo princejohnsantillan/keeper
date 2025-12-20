@@ -2,8 +2,7 @@
 
 namespace App\Filament\Keeper\Resources\Gatepasses;
 
-use App\Filament\Keeper\Resources\Gatepasses\Pages\CreateGatepass;
-use App\Filament\Keeper\Resources\Gatepasses\Pages\EditGatepass;
+
 use App\Filament\Keeper\Resources\Gatepasses\Pages\ListGatepasses;
 use App\Filament\Keeper\Resources\Gatepasses\Schemas\GatepassForm;
 use App\Filament\Keeper\Resources\Gatepasses\Tables\GatepassesTable;
@@ -45,8 +44,6 @@ class GatepassResource extends Resource
     {
         return [
             'index' => ListGatepasses::route('/'),
-            'create' => CreateGatepass::route('/create'),
-            'edit' => EditGatepass::route('/{record}/edit'),
         ];
     }
 }

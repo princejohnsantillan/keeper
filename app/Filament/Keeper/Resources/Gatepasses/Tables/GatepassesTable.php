@@ -5,42 +5,55 @@ namespace App\Filament\Keeper\Resources\Gatepasses\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class GatepassesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
-                TextColumn::make('guardian.id')
-                    ->searchable(),
-                TextColumn::make('child.id')
-                    ->searchable(),
-                TextColumn::make('activity.title')
-                    ->searchable(),
                 TextColumn::make('code')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                    ->badge()
+                    ->copyable()
+                    ->size(TextSize::Large)
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('activity.title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('guardian.full_name')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('guardian', function (Builder $query) use ($search): void {
+                            $query->where('first_name', 'ilike', "%{$search}%")
+                                ->orWhere('last_name', 'ilike', "%{$search}%");
+                        });
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->join('guardians', 'gatepasses.guardian_id', '=', 'guardians.id')
+                            ->orderBy('guardians.first_name', $direction)
+                            ->orderBy('guardians.last_name', $direction)
+                            ->select('gatepasses.*');
+                    }),
+                TextColumn::make('child.full_name')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('child', function (Builder $query) use ($search): void {
+                            $query->where('first_name', 'ilike', "%{$search}%")
+                                ->orWhere('last_name', 'ilike', "%{$search}%");
+                        });
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->join('children', 'gatepasses.child_id', '=', 'children.id')
+                            ->orderBy('children.first_name', $direction)
+                            ->orderBy('children.last_name', $direction)
+                            ->select('gatepasses.*');
+                    }),
             ]);
     }
 }

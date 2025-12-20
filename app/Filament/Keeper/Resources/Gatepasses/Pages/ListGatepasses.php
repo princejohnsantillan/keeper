@@ -13,7 +13,12 @@ class ListGatepasses extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->slideOver()
+                ->label('Add gatepass')
+                ->modalHeading('Add gatepass')
+                ->modalSubmitActionLabel('Add')
+                ->createAnother(false),
         ];
     }
 }

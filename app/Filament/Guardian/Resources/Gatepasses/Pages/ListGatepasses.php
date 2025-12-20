@@ -16,10 +16,11 @@ final class ListGatepasses extends ListRecords
     {
         return [
             CreateAction::make()
+                ->slideOver()
                 ->label('Add gatepass')
+                ->modalHeading('Add gatepass')
                 ->modalSubmitActionLabel('Add')
-                ->createAnother(false)
-                ->slideOver(),
+                ->createAnother(false),
         ];
     }
 }
