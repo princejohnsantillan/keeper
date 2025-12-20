@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Keeper\Resources\Activities\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Models\Activity;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,41 +17,28 @@ final class ActivitiesTable
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
-                TextColumn::make('description')
-                    ->searchable(),
+                    ->description(fn (Activity $activity): ?string => $activity->description)
+                    ->sortable(),
                 TextColumn::make('location')
                     ->searchable(),
                 TextColumn::make('starts_at')
-                    ->dateTime()
+                    ->dateTime('D - h:i A')
+                    ->description(fn (Activity $record) => $record->starts_at->format('F d'))
                     ->sortable(),
                 TextColumn::make('ends_at')
-                    ->dateTime()
+                    ->dateTime('D - h:i A')
+                    ->description(fn (Activity $record) => $record->ends_at->format('F d'))
                     ->sortable(),
-                TextColumn::make('organization.name')
-                    ->searchable(),
-                TextColumn::make('created_by')
+                TextColumn::make('creator.name')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                EditAction::make()->slideOver(),
+                DeleteAction::make(),
             ]);
     }
 }
