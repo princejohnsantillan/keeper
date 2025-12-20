@@ -6,6 +6,7 @@ namespace App\Filament\Guardian\Resources\Activities\Tables;
 
 use App\AuthUser;
 use App\Models\Activity;
+use App\Models\Child;
 use App\Models\Gatepass;
 use App\ReadableCode;
 use Filament\Actions\Action;
@@ -16,7 +17,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
 
 final class ActivitiesTable
 {
@@ -77,13 +77,13 @@ final class ActivitiesTable
                                     ->options(function (callable $get): array {
                                         $childId = $get('child_id');
 
-                                        if (! $childId) {
+                                        if (blank($childId)) {
                                             return [];
                                         }
 
-                                        $child = \App\Models\Child::with('guardians')->find($childId);
+                                        $child = Child::query()->with('guardians')->find($childId);
 
-                                        if (! $child) {
+                                        if ($child === null) {
                                             return [];
                                         }
 
