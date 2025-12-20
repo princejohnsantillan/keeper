@@ -1,19 +1,15 @@
 <?php
 
-declare(strict_types=1);
+namespace App\Filament\Keeper\Resources\Guardians\Tables;
 
-namespace App\Filament\Keeper\Resources\Children\Tables;
-
-use App\Models\Child;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-final class ChildrenTable
+class GuardiansTable
 {
     public static function configure(Table $table): Table
     {
@@ -25,25 +21,37 @@ final class ChildrenTable
                     ->searchable(),
                 TextColumn::make('last_name')
                     ->searchable(),
-                TextColumn::make('nickname')
-                    ->searchable(),
                 TextColumn::make('birth_date')
-                    ->date('d M Y')
-                    ->description(function (Child $record): string {
-                        $age = $record->birth_date->age;
-
-                        return "{$age} yrs";
-                    })
+                    ->date()
                     ->sortable(),
                 IconColumn::make('gender')
                     ->boolean(),
+                TextColumn::make('email')
+                    ->label('Email address')
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 }

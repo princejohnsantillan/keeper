@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 final class GatepassResource extends Resource
 {
@@ -23,6 +24,8 @@ final class GatepassResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = 'entypo-lock';
 
     protected static ?int $navigationSort = 4;
+
+    protected static ?string $recordTitleAttribute = 'code';
 
     /**
      * Scope to only the gatepasses associated to the guardians.
@@ -38,6 +41,23 @@ final class GatepassResource extends Resource
 
         return parent::getEloquentQuery()
             ->whereIn('guardian_id', $guardians->pluck('guardians.id'));
+    }
+
+    /**
+     * @param  \App\Models\Gatepass  $record
+     */
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Activity' => $record->activity->title,
+            'Guardian' => $record->guardian->full_name,
+            'Child' => $record->child->full_name,
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['activity', 'guardian', 'child']);
     }
 
     public static function form(Schema $schema): Schema
