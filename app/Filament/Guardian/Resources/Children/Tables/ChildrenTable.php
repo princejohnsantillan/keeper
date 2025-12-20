@@ -146,6 +146,7 @@ final class ChildrenTable
     private static function getUpdateGuardiansAction(): Action
     {
         return Action::make('update_guardians')
+            ->slideOver()
             ->label('Guardians')
             ->icon('entypo-shield')
             ->modalHeading(fn (Child $record): string => "Guardians of {$record->full_name}")
