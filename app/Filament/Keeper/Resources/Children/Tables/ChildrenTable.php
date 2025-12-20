@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Keeper\Resources\Children\Tables;
 
+use App\Models\Child;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -27,18 +28,15 @@ final class ChildrenTable
                 TextColumn::make('nickname')
                     ->searchable(),
                 TextColumn::make('birth_date')
-                    ->date()
+                    ->date('d M Y')
+                    ->description(function (Child $record): string {
+                        $age = $record->birth_date->age;
+
+                        return "{$age} yrs";
+                    })
                     ->sortable(),
                 IconColumn::make('gender')
                     ->boolean(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
@@ -46,11 +44,6 @@ final class ChildrenTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }
