@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Guardian\Resources\Gatepasses\Schemas;
 
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class GatepassForm
+final class GatepassForm
 {
     public static function configure(Schema $schema): Schema
     {

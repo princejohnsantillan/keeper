@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Filament\Guardian\Pages\Register;
@@ -18,7 +20,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class GuardianPanelProvider extends PanelProvider
+final class GuardianPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
@@ -35,6 +37,7 @@ class GuardianPanelProvider extends PanelProvider
                 'success' => Color::Green,
                 'warning' => Color::Orange,
             ])
+            ->breadcrumbs(false)
             ->discoverResources(in: app_path('Filament/Guardian/Resources'), for: 'App\Filament\Guardian\Resources')
             ->discoverPages(in: app_path('Filament/Guardian/Pages'), for: 'App\Filament\Guardian\Pages')
             ->pages([])

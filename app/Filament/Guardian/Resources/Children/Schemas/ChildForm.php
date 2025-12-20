@@ -59,6 +59,7 @@ final class ChildForm
     public static function getBirthDateField(): DatePicker
     {
         return DatePicker::make('birth_date')
+            ->displayFormat('d M Y')
             ->required()
             ->native(false);
     }

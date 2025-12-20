@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Guardian\Resources\Gatepasses\Tables;
+namespace App\Filament\Keeper\Resources\Activities\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -10,20 +10,29 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-final class GatepassesTable
+final class ActivitiesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('guardian.id')
+                TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('child.id')
+                TextColumn::make('description')
                     ->searchable(),
-                TextColumn::make('activity.title')
+                TextColumn::make('location')
                     ->searchable(),
-                TextColumn::make('code')
+                TextColumn::make('starts_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('ends_at')
+                    ->dateTime()
+                    ->sortable(),
+                TextColumn::make('organization.name')
                     ->searchable(),
+                TextColumn::make('created_by')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

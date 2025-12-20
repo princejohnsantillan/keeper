@@ -113,6 +113,7 @@ namespace App\Models{
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attendance> $attendance
  * @property-read int|null $attendance_count
+ * @property-read string $full_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
  * @property-read int|null $gatepasses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Guardian> $guardians
@@ -174,7 +175,7 @@ namespace App\Models{
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
- * @property string|null $birth_date
+ * @property \Carbon\CarbonImmutable|null $birth_date
  * @property \App\Enums\Gender $gender
  * @property string $email
  * @property string|null $phone
@@ -184,6 +185,7 @@ namespace App\Models{
  * @property-read \App\Models\Relationship|null $pivot
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Child> $children
  * @property-read int|null $children_count
+ * @property-read string $full_name
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
  * @property-read int|null $gatepasses_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
@@ -327,6 +329,6 @@ namespace App\Models{
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]
-	class IdeHelperUser {}
+	final class IdeHelperUser {}
 }
 

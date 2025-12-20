@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Guardian\Resources\Guardians\Schemas;
+namespace App\Filament\Keeper\Resources\Children\Schemas;
 
 use App\Enums\Gender;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-final class GuardianForm
+final class ChildForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -21,18 +22,14 @@ final class GuardianForm
                 TextInput::make('middle_name'),
                 TextInput::make('last_name')
                     ->required(),
-                DatePicker::make('birth_date'),
+                TextInput::make('nickname'),
+                DatePicker::make('birth_date')
+                    ->required(),
                 Select::make('gender')
                     ->options(Gender::class)
                     ->required(),
-                TextInput::make('email')
-                    ->label('Email address')
-                    ->email()
-                    ->required(),
-                TextInput::make('phone')
-                    ->tel(),
-                Select::make('user_id')
-                    ->relationship('user', 'name'),
+                Textarea::make('notes')
+                    ->columnSpanFull(),
             ]);
     }
 }
