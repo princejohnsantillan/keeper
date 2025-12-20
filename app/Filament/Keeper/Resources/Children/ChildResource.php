@@ -20,7 +20,12 @@ final class ChildResource extends Resource
 {
     protected static ?string $model = Child::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'fas-children';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'full_name';
+
 
     public static function form(Schema $schema): Schema
     {
