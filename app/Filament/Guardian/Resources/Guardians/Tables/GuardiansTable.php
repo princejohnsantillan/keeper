@@ -101,14 +101,19 @@ final class GuardiansTable
                     }),
                 DeleteAction::make()
                     ->hiddenLabel()
-                    ->using(function (Child $record) {
-                        //TODO
+                    ->using(function (Guardian $record): void {
+                        $childIds = AuthUser::guardian()->children()->pluck('children.id');
+
+                        Relationship::query()
+                            ->where('guardian_id', $record->id)
+                            ->whereIn('child_id', $childIds)
+                            ->delete();
 
                         Notification::make()
                             ->title('Deleted')
                             ->danger()
                             ->send();
-                    })
+                    }),
             ]);
     }
 }
