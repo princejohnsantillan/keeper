@@ -17,6 +17,8 @@ return new class extends Migration
     {
         Schema::create('attendance', function (Blueprint $table) {
             $table->id();
+
+            $table->string('attendee_code')->unique();
             $table->foreignIdFor(Activity::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
 

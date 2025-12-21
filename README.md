@@ -13,12 +13,19 @@
 
 
 ## Todos
-- When creating a child ask for a relationship and create a `Relationship` entry with the child and the user's keeper id
-- Children shown are only those that the guardian has a relationship with
-- When creating a Guardian, ask for relationships with the kids existing in the user's dashboard. Create a relationship 
-  with the Guardian and the children.
-- Only show Guardians who have a relationship with the children of the logged-in user.
-- Only show services that have not yet ended.
+- Add avatar for guardians and children
+- Add QR scanning for check in/out
+- Add Printing of attendance info
+- Add team management section for organization admins
+- Add decent homepage with links to login/register
+- figure out how to manage age group/classification
 
-- When checking in, select the child and the guardian who will check the child in. A unique auth code/QR should be 
-  generated per activity+child+keeper combination. 
+```php
+enum AgeGroup
+{
+    case Toddler;
+    case Preschool;
+    case Junior;
+    case Preteens;
+}
+```
