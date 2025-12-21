@@ -26,7 +26,7 @@ final class GuardianPanelProvider extends PanelProvider
     {
         return $panel
             ->id('guardian')
-            ->path('guardian')
+            ->path('dashboard')
             ->registration(Register::class)
             ->login()
             ->colors([

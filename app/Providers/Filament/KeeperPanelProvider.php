@@ -26,7 +26,7 @@ final class KeeperPanelProvider extends PanelProvider
     {
         return $panel
             ->id('keeper')
-            ->path('keeper')
+            ->path('admin')
             ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
             ->colors([
