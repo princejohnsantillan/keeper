@@ -232,3 +232,4 @@ final class ViewAttendance extends ManageRelatedRecords
         return $keeper;
     }
 }
+
