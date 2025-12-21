@@ -3,7 +3,6 @@
 namespace App\Filament\Keeper\Resources\Guardians\Pages;
 
 use App\Filament\Keeper\Resources\Guardians\GuardianResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListGuardians extends ListRecords
@@ -13,7 +12,7 @@ class ListGuardians extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+
         ];
     }
 }

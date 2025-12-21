@@ -19,6 +19,17 @@ final class Attendance extends Pivot
 
     public $incrementing = true;
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'checked_in_at' => 'datetime',
+            'checked_out_at' => 'datetime',
+        ];
+    }
+
     /** @return BelongsTo<Activity, $this> */
     public function activity(): BelongsTo
     {

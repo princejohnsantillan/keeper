@@ -30,6 +30,8 @@ return new class extends Migration
 
             $table->text('notes')->nullable();
 
+            $table->unique(['activity_id', 'child_id']);
+
             $table->timestamps(); // created_at is when the child is registered for the service
         });
     }

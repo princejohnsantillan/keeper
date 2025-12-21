@@ -3,6 +3,7 @@
 namespace App\Filament\Keeper\Resources\Activities;
 
 use App\Filament\Keeper\Resources\Activities\Pages\ListActivities;
+use App\Filament\Keeper\Resources\Activities\Pages\ViewAttendance;
 use App\Filament\Keeper\Resources\Activities\Schemas\ActivityForm;
 use App\Filament\Keeper\Resources\Activities\Tables\ActivitiesTable;
 use App\Models\Activity;
@@ -41,6 +42,7 @@ class ActivityResource extends Resource
     {
         return [
             'index' => ListActivities::route('/'),
+            'attendance' => ViewAttendance::route('/{record}/attendance'),
         ];
     }
 }

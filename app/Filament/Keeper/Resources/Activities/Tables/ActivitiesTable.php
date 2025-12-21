@@ -6,6 +6,7 @@ namespace App\Filament\Keeper\Resources\Activities\Tables;
 
 use App\Enums\Gender;
 use App\Enums\Relationship;
+use App\Filament\Keeper\Resources\Activities\ActivityResource;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
@@ -53,6 +55,7 @@ final class ActivitiesTable
             ])
             ->recordActions([
                 Action::make('walk_in')
+                    ->slideOver()
                     ->label('Walk-in')
                     ->icon('heroicon-o-user-plus')
                     ->color('success')
@@ -178,8 +181,14 @@ final class ActivitiesTable
                             ->success()
                             ->send();
                     }),
-                EditAction::make()->slideOver(),
-                DeleteAction::make(),
+                Action::make('attendance')
+                    ->label('Attendance')
+                    ->icon(Heroicon::ClipboardDocumentCheck)
+                    ->color('gray')
+                    ->url(fn (Activity $record): string => ActivityResource::getUrl('attendance', ['record' => $record])),
+                EditAction::make()->slideOver()
+                    ->hiddenLabel(),
+                DeleteAction::make()->hiddenLabel(),
             ]);
     }
 }

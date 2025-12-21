@@ -64,11 +64,11 @@ final class User extends Authenticatable implements FilamentUser
     }
 
     /**
-     * @return HasMany<Keeper, $this>
+     * @return HasOne<Keeper, $this>
      */
-    public function keepers(): HasMany
+    public function keeper(): HasMany
     {
-        return $this->hasMany(Keeper::class);
+        return $this->hasOne(Keeper::class);
     }
 
     /**
