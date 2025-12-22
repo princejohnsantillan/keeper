@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Children;
 
+use App\AuthUser;
 use App\Filament\Panels\Guardian\Resources\Children\Pages\ListChildren;
 use App\Filament\Panels\Guardian\Resources\Children\Pages\ViewChild;
 use App\Filament\Panels\Guardian\Resources\Children\Schemas\ChildForm;
@@ -36,15 +37,9 @@ final class ChildResource extends Resource
      */
     public static function getEloquentQuery(): Builder
     {
-        $user = Auth::user();
-
-        $guardian = $user?->guardian;
-
-        abort_if($guardian === null, 403);
-
         return parent::getEloquentQuery()
-            ->whereHas('relationships', function (Builder $query) use ($guardian): void {
-                $query->where('guardian_id', $guardian->id);
+            ->whereHas('relationships', function (Builder $query): void {
+                $query->where('guardian_id', AuthUser::guardianId());
             });
     }
 

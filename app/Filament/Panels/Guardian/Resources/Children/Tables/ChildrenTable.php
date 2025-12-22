@@ -168,7 +168,7 @@ final class ChildrenTable
                 $record->update($data);
 
                 Relationship::where('child_id', $record->id)
-                    ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->where('guardian_id', AuthUser::guardianId())
                     ->whereNotNull('guardian_id')
                     ->update(['relationship' => $relationship]);
 
