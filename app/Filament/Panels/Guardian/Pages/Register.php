@@ -49,7 +49,7 @@ final class Register extends AuthRegister
     {
         DB::beginTransaction();
 
-        try{
+        try {
             $user = User::create([
                 'name' => trim($data['first_name'].' '.$data['last_name']),
                 'email' => $data['email'],
@@ -68,7 +68,7 @@ final class Register extends AuthRegister
             ]);
 
             DB::commit();
-        }catch (Exception $exception){
+        } catch (Exception $exception) {
             DB::rollBack();
 
             throw $exception;

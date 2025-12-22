@@ -31,15 +31,15 @@ final class AppServiceProvider extends ServiceProvider
         ModalComponent::closedByEscaping(false);
         ModalComponent::closeButton(false);
 
-        Action::configureUsing(function(Action $action) {
+        Action::configureUsing(function (Action $action) {
             $action->slideOver();
         });
 
-        DeleteAction::configureUsing(function(DeleteAction $action) {
+        DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->slideOver(false);
         });
 
-        DatePicker::configureUsing(function(DatePicker $datePicker) {
+        DatePicker::configureUsing(function (DatePicker $datePicker) {
             $datePicker->native(false);
         });
     }

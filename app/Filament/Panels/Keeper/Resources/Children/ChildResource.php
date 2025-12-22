@@ -25,7 +25,6 @@ final class ChildResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
-
     public static function form(Schema $schema): Schema
     {
         return ChildForm::configure($schema);

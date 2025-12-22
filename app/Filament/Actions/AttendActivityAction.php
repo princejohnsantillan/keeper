@@ -18,7 +18,8 @@ use Filament\Forms\Components\TextInput;
 
 final class AttendActivityAction
 {
-    public static function make(?string $name = 'attend_activity', string $label = 'Attend'): Action{
+    public static function make(?string $name = 'attend_activity', string $label = 'Attend'): Action
+    {
         return Action::make($name)->label($label)
             ->slideOver()
             ->button()
@@ -69,8 +70,6 @@ final class AttendActivityAction
                 ];
             })
             ->action(function (array $data, Activity $record): void {
-                $createdCount = 0;
-
                 foreach ($data['children'] as $childData) {
                     $childId = $childData['child_id'];
                     $guardianId = $childData['guardian_id'];
@@ -89,15 +88,10 @@ final class AttendActivityAction
                         'activity_id' => $record->id,
                         'code' => $code,
                     ]);
-
-                    $createdCount++;
                 }
-
-
             })
             ->successNotification(
                 AppNotification::registeredToActivity()
             );
     }
-
 }

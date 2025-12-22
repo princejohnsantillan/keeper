@@ -49,7 +49,7 @@ enum InverseRelationship: string implements HasLabel
      */
     public function inverse(Gender $gender): Relationship
     {
-        return match ($gender) {
+        return match ($this) {
             self::Son, self::Daughter => $gender->value ? Relationship::Father : Relationship::Mother,
             self::Brother, self::Sister => $gender->value ? Relationship::Brother : Relationship::Sister,
             self::Grandson, self::Granddaughter => $gender->value ? Relationship::Grandfather : Relationship::Grandmother,

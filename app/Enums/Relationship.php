@@ -47,7 +47,8 @@ enum Relationship: string implements HasLabel
     /**
      * The inverse relationship, Child to Guardian.
      */
-    public function  inverse(Gender $gender): InverseRelationship {
+    public function inverse(Gender $gender): InverseRelationship
+    {
         return match ($this) {
             self::Father, self::Mother => $gender->value ? InverseRelationship::Son : InverseRelationship::Daughter,
             self::Brother, self::Sister => $gender->value ? InverseRelationship::Brother : InverseRelationship::Sister,

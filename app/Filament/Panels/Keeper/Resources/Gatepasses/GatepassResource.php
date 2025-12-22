@@ -2,7 +2,6 @@
 
 namespace App\Filament\Panels\Keeper\Resources\Gatepasses;
 
-
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Pages\ListGatepasses;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Schemas\GatepassForm;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Tables\GatepassesTable;

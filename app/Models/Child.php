@@ -41,8 +41,7 @@ final class Child extends Model
     {
         return $this->belongsToMany(Guardian::class, 'relationships')
             ->using(Relationship::class)
-            ->withPivot('relationship')
-            ->withTimestamps();
+            ->withPivot('relationship');
     }
 
     /**

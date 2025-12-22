@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('guardians', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name',80)->index();
-            $table->string('middle_name',80)->nullable()->index();
-            $table->string('last_name',80)->index();
+            $table->string('first_name', 80)->index();
+            $table->string('middle_name', 80)->nullable()->index();
+            $table->string('last_name', 80)->index();
             $table->date('birth_date')->index();
             $table->boolean('gender')->index();
             $table->string('email')->index();

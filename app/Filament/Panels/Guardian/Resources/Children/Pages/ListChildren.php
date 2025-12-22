@@ -15,7 +15,7 @@ final class ListChildren extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateChildAction::make()
+            CreateChildAction::make(),
         ];
     }
 }

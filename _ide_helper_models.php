@@ -17,6 +17,7 @@ namespace App\Models{
  * @property string $title
  * @property string|null $description
  * @property string $location
+ * @property string|null $location_map_link
  * @property \Carbon\CarbonImmutable $starts_at
  * @property \Carbon\CarbonImmutable $ends_at
  * @property string|null $notes
@@ -43,6 +44,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereEndsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereLocationMapLink($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereStartsAt($value)
@@ -57,14 +59,15 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $attendee_code
  * @property int $activity_id
  * @property int $child_id
  * @property int|null $checkin_keeper_id
  * @property int|null $checkin_gatepass_id
- * @property string|null $checked_in_at
+ * @property \Illuminate\Support\Carbon|null $checked_in_at
  * @property int|null $checkout_keeper_id
  * @property int|null $checkout_gatepass_id
- * @property string|null $checked_out_at
+ * @property \Illuminate\Support\Carbon|null $checked_out_at
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -79,6 +82,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereAttendeeCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedInAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedOutAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckinGatepassId($value)
@@ -175,7 +179,7 @@ namespace App\Models{
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
- * @property \Carbon\CarbonImmutable|null $birth_date
+ * @property \Carbon\CarbonImmutable $birth_date
  * @property \App\Enums\Gender $gender
  * @property string $email
  * @property string|null $phone
@@ -276,6 +280,7 @@ namespace App\Models{
  * @property int $guardian_id
  * @property int $child_id
  * @property \App\Enums\Relationship $relationship
+ * @property bool $is_primary
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Child $child
@@ -287,6 +292,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereGuardianId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereIsPrimary($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationship($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -308,8 +314,7 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $createdActivities
  * @property-read int|null $created_activities_count
  * @property-read \App\Models\Guardian|null $guardian
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Keeper> $keepers
- * @property-read int|null $keepers_count
+ * @property-read \App\Models\Keeper|null $keeper
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Organization> $ownedOrganizations

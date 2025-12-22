@@ -36,7 +36,7 @@ final class ActivitiesTable
 
             ])
             ->recordActions([
-                AttendActivityAction::make()
+                AttendActivityAction::make(),
             ]);
     }
 }
