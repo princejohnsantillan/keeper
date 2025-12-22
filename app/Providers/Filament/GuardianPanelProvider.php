@@ -30,6 +30,7 @@ final class GuardianPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->login()
             ->revealablePasswords(false)
+            ->viteTheme('resources/css/filament/guardian/theme.css')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Stone,

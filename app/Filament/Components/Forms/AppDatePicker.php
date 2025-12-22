@@ -13,7 +13,6 @@ final class AppDatePicker
         return DatePicker::make($field)->label($label)
             ->maxDate(now())
             ->displayFormat('d M Y')
-            ->native(false)
             ->required();
     }
 }

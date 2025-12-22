@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 /**
  * @mixin IdeHelperChild
@@ -31,7 +32,7 @@ final class Child extends Model
     /** @return Attribute<string,never> */
     public function fullName(): Attribute
     {
-        return Attribute::make(fn (): string => $this->first_name.' '.$this->last_name);
+        return Attribute::make(fn (): string => Str::squish("{$this->first_name} {$this->middle_name} {$this->last_name}"));
     }
 
     /**

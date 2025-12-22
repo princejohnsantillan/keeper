@@ -20,12 +20,14 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 final class ChildrenTable
 {
@@ -34,20 +36,52 @@ final class ChildrenTable
         return $table
             ->searchable(false)
             ->paginated(false)
+            ->persistSortInSession()
             ->columns([
-                ChildrenTable::getFirstNameColumn(),
-                ChildrenTable::getMiddleNameColumn(),
-                ChildrenTable::getLastNameColumn(),
-                ChildrenTable::getNicknameColumn(),
+
+//                ChildrenTable::getGenderColumn(),
+                TextColumn::make('name')
+                    ->icon(function(Child $child) {
+                        return $child->gender->getIcon();
+                    })
+                    ->iconColor(function(Child $child) {
+                        return $child->gender->getColor();
+                    })
+                ->getStateUsing(function(Child $record): string {
+                    $relationship = Relationship::where('child_id', $record->id)
+                        ->whereNotNull('guardian_id')
+                        ->where('guardian_id', AuthUser::guardianId())
+                        ->first();
+
+                    return $record->nickname ?? Str::before($record->first_name, ' ');
+                })
+                    ->size(TextSize::Large)
+                ->description(function(Child $record): string {
+                    return $record->full_name;
+                }),
+
+
+
+
+//                ChildrenTable::getFirstNameColumn(),
+//                ChildrenTable::getMiddleNameColumn(),
+//                ChildrenTable::getLastNameColumn(),
+//                ChildrenTable::getNicknameColumn(),
                 ChildrenTable::getBirthDateColumn(),
-                ChildrenTable::getGenderColumn()->alignCenter(),
-                ChildrenTable::getRelationshipColumn()->alignCenter(),
+                TextColumn::make('guardians.full_name')
+                    ->listWithLineBreaks()
+                    ->limitList(3)
+                    ->expandableLimitedList()
+                ->action(ChildrenTable::getUpdateGuardiansAction())
+                ,
+
+//                ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
+            ->recordAction('edit')
             ->recordActions([
-                ChildrenTable::getUpdateGuardiansAction(),
-                ChildrenTable::getEditAction(),
-                ChildrenTable::getDeleteAction(),
-                ViewAction::make()->hiddenLabel(),
+//                ChildrenTable::getUpdateGuardiansAction(),
+//                ChildrenTable::getEditAction(),
+//                ChildrenTable::getDeleteAction(),
             ]);
     }
 
@@ -87,13 +121,12 @@ final class ChildrenTable
                 $age = $record->birth_date->age;
 
                 return "{$age} yrs";
-            })
-            ->sortable();
+            });
     }
 
     public static function getGenderColumn(): IconColumn
     {
-        return IconColumn::make('gender');
+        return IconColumn::make('gender')->label('');
     }
 
     public static function getRelationshipColumn(): TextColumn
@@ -102,10 +135,10 @@ final class ChildrenTable
             ->getStateUsing(function (Child $record): ?string {
                 $relationship = Relationship::where('child_id', $record->id)
                     ->whereNotNull('guardian_id')
-                    ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->where('guardian_id', AuthUser::guardianId())
                     ->first();
 
-                return $relationship?->relationship?->getLabel();
+                return $relationship?->relationship->inverse($record->gender)->getLabel();
             })
             ->badge()
             ->size(TextSize::Large)
@@ -115,12 +148,12 @@ final class ChildrenTable
     public static function getEditAction(): EditAction
     {
         return EditAction::make()
-            ->hiddenLabel()
+//            ->hiddenLabel()
             ->slideOver()
             ->mutateRecordDataUsing(function (array $data, Child $record): array {
                 $relationship = Relationship::where('child_id', $record->id)
                     ->whereNotNull('guardian_id')
-                    ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->where('guardian_id', AuthUser::guardianId())
                     ->first();
 
                 $data['relationship'] = $relationship?->relationship?->value;
@@ -227,13 +260,13 @@ final class ChildrenTable
             });
     }
 
-    private static function getDeleteAction(): DeleteAction
+    public static function getDeleteAction(): DeleteAction
     {
         return DeleteAction::make()
-            ->hiddenLabel()
+//            ->hiddenLabel()
             ->using(function (Child $record) {
                 Relationship::where('child_id', $record->id)
-                    ->where('guardian_id', Auth::user()?->guardian?->id)
+                    ->where('guardian_id', AuthUser::guardianId())
                     ->delete();
 
                 Notification::make()

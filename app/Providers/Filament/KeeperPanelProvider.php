@@ -30,6 +30,7 @@ final class KeeperPanelProvider extends PanelProvider
             ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
             ->revealablePasswords(false)
+            ->viteTheme('resources/css/filament/keeper/theme.css')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Neutral,
