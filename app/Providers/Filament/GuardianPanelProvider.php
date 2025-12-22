@@ -29,6 +29,7 @@ final class GuardianPanelProvider extends PanelProvider
             ->path('dashboard')
             ->registration(Register::class)
             ->login()
+            ->revealablePasswords(false)
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Stone,

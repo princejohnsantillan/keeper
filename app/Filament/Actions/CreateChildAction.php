@@ -14,7 +14,6 @@ final class CreateChildAction
     public static function make(?string $name = null, string $label = 'Add child'): CreateAction
     {
         return CreateAction::make($name)->label($label)
-
             ->modalHeading('Add Child')
             ->modalSubmitActionLabel('Add')
             ->createAnother(false)

@@ -27,17 +27,20 @@ final class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::unguard();
+
         ModalComponent::closedByEscaping(false);
         ModalComponent::closeButton(false);
-        DeleteAction::configureUsing(function(DeleteAction $action) {
-            $action->slideOver(false);
-        });
+
         Action::configureUsing(function(Action $action) {
             $action->slideOver();
         });
+
+        DeleteAction::configureUsing(function(DeleteAction $action) {
+            $action->slideOver(false);
+        });
+
         DatePicker::configureUsing(function(DatePicker $datePicker) {
             $datePicker->native(false);
         });
-
     }
 }

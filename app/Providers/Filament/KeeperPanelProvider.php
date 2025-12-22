@@ -29,6 +29,7 @@ final class KeeperPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
+            ->revealablePasswords(false)
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Neutral,
