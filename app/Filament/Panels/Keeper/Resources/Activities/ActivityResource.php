@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Filament\Panels\Keeper\Resources\Activities;
+
+use App\Filament\Panels\Keeper\Resources\Activities\Pages\ListActivities;
+use App\Filament\Panels\Keeper\Resources\Activities\Pages\ViewAttendance;
+use App\Filament\Panels\Keeper\Resources\Activities\Schemas\ActivityForm;
+use App\Filament\Panels\Keeper\Resources\Activities\Tables\ActivitiesTable;
+use App\Models\Activity;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class ActivityResource extends Resource
+{
+    protected static ?string $model = Activity::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Play;
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function form(Schema $schema): Schema
+    {
+        return ActivityForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return ActivitiesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListActivities::route('/'),
+            'attendance' => ViewAttendance::route('/{record}/attendance'),
+        ];
+    }
+}

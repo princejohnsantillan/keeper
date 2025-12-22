@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
             $table->string('relationship')->index();
+            $table->boolean('is_primary')->default(false)->index();
             $table->timestamps();
 
             $table->unique(['guardian_id', 'child_id']);

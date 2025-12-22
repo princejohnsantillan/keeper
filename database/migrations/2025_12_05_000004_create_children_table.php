@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('children', function (Blueprint $table) {
             $table->id();
             $table->string('first_name', 80)->index();
-            $table->string('middle_name', 80)->nullable();
+            $table->string('middle_name', 80)->nullable()->index();
             $table->string('last_name', 80)->index();
             $table->string('nickname', 40)->nullable()->index();
             $table->date('birth_date')->index();
