@@ -24,7 +24,8 @@ final class ChildForm
                 AppDatePicker::birthDate(),
                 AppToggleButtons::gender(),
                 AppSelect::relationship(),
-                AppTextarea::notes()->columnSpanFull(),
+                AppTextarea::notes()
+                    ->columnSpanFull(),
             ]);
     }
 }

@@ -29,6 +29,10 @@ final class GuardianPanelProvider extends PanelProvider
             ->path('dashboard')
             ->registration(Register::class)
             ->login()
+            ->passwordReset()
+            ->emailVerification()
+            ->emailChangeVerification()
+            ->profile()
             ->revealablePasswords(false)
             ->viteTheme('resources/css/filament/guardian/theme.css')
             ->colors([
