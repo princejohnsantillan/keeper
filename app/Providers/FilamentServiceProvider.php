@@ -33,9 +33,5 @@ class FilamentServiceProvider extends ServiceProvider
         DeleteAction::configureUsing(function (DeleteAction $action) {
             $action->slideOver(false);
         });
-
-        DatePicker::configureUsing(function (DatePicker $datePicker) {
-            $datePicker->native(false);
-        });
     }
 }

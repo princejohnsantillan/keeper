@@ -23,11 +23,9 @@ final class ActivityForm
                     ->required()->columnSpanFull(),
                 DateTimePicker::make('starts_at')
                     ->displayFormat('d M Y (h:i A)')
-                    ->native(false)
                     ->required(),
                 DateTimePicker::make('ends_at')
                     ->displayFormat('d M Y (h:i A)')
-                    ->native(false)
                     ->required(),
                 Textarea::make('notes')
                     ->columnSpanFull(),

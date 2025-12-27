@@ -28,7 +28,6 @@ final class AttendActivityAction
                 Repeater::make('children')
                     ->hiddenLabel()
                     ->addable(false)
-                    ->deletable(false)
                     ->reorderable(false)
                     ->schema([
                         Hidden::make('child_id'),
@@ -52,8 +51,7 @@ final class AttendActivityAction
                                 }
 
                                 return $child->guardians->pluck('full_name', 'id')->toArray();
-                            })
-                            ->required(),
+                            })->required(),
                     ])
                     ->columns(2),
             ])

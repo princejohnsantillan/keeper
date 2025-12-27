@@ -44,7 +44,7 @@ return new class extends Migration
         ]);
 
         $user2 = User::create([
-            'name' => 'Pearl',
+            'name' => 'Pearl  Anne',
             'email' => 'pearlannelao@gmail.com',
             'email_verified_at' => now(),
             'password' => bcrypt('secret'),
@@ -57,7 +57,7 @@ return new class extends Migration
             'email' => $user2->email,
             'gender' => Gender::Female,
             'birth_date' => '2025-01-01',
-            'phone' => '+639',
+            'phone' => '+639177123519',
             'user_id' => $user2->id,
         ]);
 

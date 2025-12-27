@@ -6,6 +6,9 @@ namespace App\Filament\Panels\Guardian\Resources\Guardians\Schemas;
 
 use App\Enums\Gender;
 use App\Enums\Relationship;
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppTextInput;
+use App\Filament\Components\Forms\AppToggleButtons;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
@@ -23,29 +26,13 @@ final class GuardianForm
             ->components([
                 Fieldset::make('Guardian Details')
                     ->schema([
-                        TextInput::make('first_name')
-                            ->required()
-                            ->columnSpan(2),
-                        TextInput::make('middle_name')
-                            ->columnSpan(2),
-                        TextInput::make('last_name')
-                            ->required()
-                            ->columnSpan(2),
-                        DatePicker::make('birth_date')
-                            ->displayFormat('d M Y')
-                            ->native(false)
-                            ->columnSpan(3),
-                        ToggleButtons::make('gender')
-                            ->required()
-                            ->options(Gender::class)
-                            ->inline()
-                            ->columnSpan(3),
-
-                        TextInput::make('email')
-                            ->email()
-                            ->required()->columnSpan(3),
-                        TextInput::make('phone')
-                            ->tel()->columnSpan(3),
+                        AppTextInput::firstName()->columnSpan(2),
+                        AppTextInput::middleName()->columnSpan(2),
+                        AppTextInput::lastName()->columnSpan(2),
+                        AppDatePicker::birthDate()->columnSpan(3),
+                        AppToggleButtons::gender()->columnSpan(3),
+                        AppTextInput::email()->columnSpan(3),
+                        AppTextInput::phone()->columnSpan(3),
                     ])
                     ->columns(6)->columnSpanFull(),
                 Fieldset::make('Relationships with Children')
