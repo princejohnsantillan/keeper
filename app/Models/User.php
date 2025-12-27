@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Subdomain;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -17,10 +17,11 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @mixin IdeHelperUser
  */
-final class User extends Authenticatable implements FilamentUser
+final class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -66,7 +67,7 @@ final class User extends Authenticatable implements FilamentUser
     /**
      * @return HasOne<Keeper, $this>
      */
-    public function keeper(): HasMany
+    public function keeper(): HasOne
     {
         return $this->hasOne(Keeper::class);
     }

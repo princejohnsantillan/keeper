@@ -29,6 +29,12 @@ final class KeeperPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName(Subdomain::organization()?->name ?: 'Keeper')
             ->login()
+            ->passwordReset()
+            ->emailVerification()
+            ->emailChangeVerification()
+            ->profile()
+            ->revealablePasswords(false)
+            ->viteTheme('resources/css/filament/keeper/theme.css')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Neutral,
@@ -38,10 +44,10 @@ final class KeeperPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->breadcrumbs(false)
-            ->discoverResources(in: app_path('Filament/Keeper/Resources'), for: 'App\Filament\Keeper\Resources')
-            ->discoverPages(in: app_path('Filament/Keeper/Pages'), for: 'App\Filament\Keeper\Pages')
+            ->discoverResources(in: app_path('Filament/Panels/Keeper/Resources'), for: 'App\Filament\Panels\Keeper\Resources')
+            ->discoverPages(in: app_path('Filament/Panels/Keeper/Pages'), for: 'App\Filament\Panels\Keeper\Pages')
             ->pages([])
-            ->discoverWidgets(in: app_path('Filament/Keeper/Widgets'), for: 'App\Filament\Keeper\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Panels/Keeper/Widgets'), for: 'App\Filament\Panels\Keeper\Widgets')
             ->middleware([
                 RequireOrganizationSubdomain::class,
                 EncryptCookies::class,

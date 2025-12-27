@@ -19,6 +19,7 @@
 - Add team management section for organization admins
 - Add decent homepage with links to login/register
 - figure out how to manage age group/classification
+- Add functionality to set another primary guardian, an invite must be sent and accepted to make it official
 
 ```php
 enum AgeGroup

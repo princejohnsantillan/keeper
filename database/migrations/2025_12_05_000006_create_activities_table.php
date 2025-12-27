@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title')->index();
             $table->string('description')->nullable();
             $table->string('location')->index();
+            $table->string('location_map_link')->nullable();
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->index();
             $table->text('notes')->nullable(); // Internal notes

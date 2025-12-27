@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
-use App\Filament\Guardian\Pages\Register;
+use App\Filament\Panels\Guardian\Pages\Register;
 use App\Http\Middleware\RedirectGuardianDashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -29,6 +29,12 @@ final class GuardianPanelProvider extends PanelProvider
             ->path('dashboard')
             ->registration(Register::class)
             ->login()
+            ->passwordReset()
+            ->emailVerification()
+            ->emailChangeVerification()
+            ->profile()
+            ->revealablePasswords(false)
+            ->viteTheme('resources/css/filament/guardian/theme.css')
             ->colors([
                 'danger' => Color::Red,
                 'gray' => Color::Stone,
@@ -38,10 +44,10 @@ final class GuardianPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->breadcrumbs(false)
-            ->discoverResources(in: app_path('Filament/Guardian/Resources'), for: 'App\Filament\Guardian\Resources')
-            ->discoverPages(in: app_path('Filament/Guardian/Pages'), for: 'App\Filament\Guardian\Pages')
+            ->discoverResources(in: app_path('Filament/Panels/Guardian/Resources'), for: 'App\Filament\Panels\Guardian\Resources')
+            ->discoverPages(in: app_path('Filament/Panels/Guardian/Pages'), for: 'App\Filament\Panels\Guardian\Pages')
             ->pages([])
-            ->discoverWidgets(in: app_path('Filament/Guardian/Widgets'), for: 'App\Filament\Guardian\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Panels/Guardian/Widgets'), for: 'App\Filament\Panels\Guardian\Widgets')
             ->middleware([
                 RedirectGuardianDashboard::class,
                 EncryptCookies::class,
