@@ -50,7 +50,7 @@ final class ChildrenTable
                             ->where('guardian_id', AuthUser::guardianId())
                             ->first();
 
-                        return $record->nickname ?? Str::before($record->first_name, ' ');
+                        return $record->getNickname();
                     })
                     ->size(TextSize::Large)
                     ->description(function (Child $record): string {
@@ -178,7 +178,7 @@ final class ChildrenTable
             ->slideOver()
             ->label('Guardians')
             ->icon('entypo-shield')
-            ->modalHeading(fn (Child $record): string => "Guardians of {$record->full_name}")
+            ->modalHeading(fn (Child $record): string => "Guardians of {$record->getNickname()}")
             ->modalSubmitActionLabel('Save changes')
             ->fillForm(function (Child $record): array {
                 $guardians = Guardian::query()

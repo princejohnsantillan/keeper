@@ -12,6 +12,9 @@
 - Keeper: An authorized staff member or volunteer of an organization responsible for verifying gatepasses and ensuring the safe check-in and check-out of children.
 
 
+# Notes
+- Label names: by default the `nickname` is used but if none is provided then the first word of the `first name` will be used.
+
 ## Todos
 - Add avatar for guardians and children
 - Add QR scanning for check in/out

@@ -29,6 +29,11 @@ final class Child extends Model
         ];
     }
 
+    public function getNickname(): string
+    {
+        return $this->nickname ?? Str::before($this->first_name, ' ');
+    }
+
     /** @return Attribute<string,never> */
     public function fullName(): Attribute
     {

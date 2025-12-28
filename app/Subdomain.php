@@ -21,6 +21,11 @@ final class Subdomain
 
     public static function defined(): bool
     {
-        return request()->host() !== Config::string('app.domain');
+        $domains = [
+            'www.'.Config::string('app.domain'),
+            Config::string('app.domain'),
+        ];
+
+        return !in_array(request()->host(), $domains);
     }
 }
