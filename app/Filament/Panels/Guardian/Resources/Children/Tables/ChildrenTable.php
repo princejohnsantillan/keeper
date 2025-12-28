@@ -213,6 +213,7 @@ final class ChildrenTable
                         Hidden::make('guardian_id')
                             ->required(),
                         TextInput::make('guardian_name')
+                            ->label('Guardian')
                             ->disabled(),
                         Select::make('relationship')
                             ->options(RelationshipEnum::class)
