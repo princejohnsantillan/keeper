@@ -64,11 +64,13 @@ final class ListGuardians extends ListRecords
                         ];
                     }
 
-                    Notification::make()->danger()
-                        ->title("At least one child relationship is required.")->send();
+                    if (empty($syncData)) {
+                        Notification::make()->danger()
+                            ->title("At least one child relationship is required.")->send();
 
-                    $action->halt(true);
+                        $action->halt(true);
 
+                    }
 
                     $guardian->children()->sync($syncData);
 
