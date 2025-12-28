@@ -58,7 +58,7 @@ final class AttendActivityAction
                             ->options(function (callable $get): array {
                                 $childId = $get('child_id');
 
-                                if (blank($childId)) {
+                                if (! is_int($childId)) {
                                     return [];
                                 }
 

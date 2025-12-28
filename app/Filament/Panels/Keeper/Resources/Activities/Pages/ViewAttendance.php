@@ -38,7 +38,7 @@ final class ViewAttendance extends ManageRelatedRecords
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('child.fullName')
+                TextColumn::make('child.full_name')
                     ->label('Child')
                     ->searchable(['first_name', 'last_name'])
                     ->sortable(),
@@ -96,7 +96,7 @@ final class ViewAttendance extends ManageRelatedRecords
                             return;
                         }
 
-                        $childName = $gatepass->child->fullName;
+                        $childName = $gatepass->child->full_name;
 
                         $existingAttendance = Attendance::query()
                             ->where('activity_id', $activity->id)
@@ -161,7 +161,7 @@ final class ViewAttendance extends ManageRelatedRecords
                             return;
                         }
 
-                        $childName = $gatepass->child->fullName;
+                        $childName = $gatepass->child->full_name;
 
                         $alreadyCheckedOut = Attendance::query()
                             ->where('activity_id', $activity->id)

@@ -54,15 +54,12 @@ final class GuardianResource extends Resource
 
         $details = [
             'Gender' => $record->gender->getLabel(),
+            'Birth date' => $birtDate->format('d M Y').' ('.$birtDate->age.' yrs)',
             'Email' => $record->email,
         ];
 
         if ($phone !== null) {
             $details['Phone'] = $phone;
-        }
-
-        if ($birtDate !== null) {
-            $details['Birth date'] = $birtDate->format('d M Y').' ('.$birtDate->age.' yrs)';
         }
 
         return $details;

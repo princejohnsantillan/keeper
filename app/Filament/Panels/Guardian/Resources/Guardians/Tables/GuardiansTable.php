@@ -31,10 +31,10 @@ final class GuardiansTable
                     ->sortable(),
                 TextColumn::make('birth_date')
                     ->date('d M Y')
-                    ->description(function (Guardian $record): ?string {
-                        $age = $record->birth_date?->age;
+                    ->description(function (Guardian $record): string {
+                        $age = $record->birth_date->age;
 
-                        return $age === null ? null : "{$age} yrs";
+                        return "{$age} yrs";
                     })
                     ->sortable(),
                 IconColumn::make('gender')->sortable()->alignCenter(),

@@ -69,10 +69,10 @@ final class GatepassesTable
                     ->color('success')
                     ->requiresConfirmation()
                     ->modalHeading('Check In Child')
-                    ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check in {$record->child->fullName} for {$record->activity->title}?")
+                    ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check in {$record->child->full_name} for {$record->activity->title}?")
                     ->hidden(fn (Gatepass $record): bool => self::isCheckedIn($record))
                     ->action(function (Gatepass $record): void {
-                        $childName = $record->child->fullName;
+                        $childName = $record->child->full_name;
 
                         $existingAttendance = Attendance::query()
                             ->where('activity_id', $record->activity_id)
@@ -113,10 +113,10 @@ final class GatepassesTable
                     ->color('warning')
                     ->requiresConfirmation()
                     ->modalHeading('Check Out Child')
-                    ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check out {$record->child->fullName} from {$record->activity->title}?")
+                    ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check out {$record->child->full_name} from {$record->activity->title}?")
                     ->visible(fn (Gatepass $record): bool => self::isCheckedIn($record))
                     ->action(function (Gatepass $record): void {
-                        $childName = $record->child->fullName;
+                        $childName = $record->child->full_name;
 
                         $attendance = Attendance::query()
                             ->where('activity_id', $record->activity_id)
