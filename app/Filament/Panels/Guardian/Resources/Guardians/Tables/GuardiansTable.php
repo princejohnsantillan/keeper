@@ -113,7 +113,7 @@ final class GuardiansTable
                             ->title('Deleted')
                             ->danger()
                             ->send();
-                    })->visible(fn(Guardian $record) => AuthUser::guardianId() !== $record->id),
+                    })->visible(fn (Guardian $record) => AuthUser::guardianId() !== $record->id),
             ]);
     }
 }

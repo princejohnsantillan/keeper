@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
- use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Subdomain;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -21,7 +21,6 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
 
     /**
      * The attributes that should be hidden for serialization.

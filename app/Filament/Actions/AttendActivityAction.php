@@ -13,6 +13,7 @@ use App\ReadableCode;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
@@ -24,11 +25,28 @@ final class AttendActivityAction
             ->slideOver()
             ->button()
             ->modalSubmitActionLabel('Attend')
+            ->fillForm(function (): array {
+                $guardian = AuthUser::guardian();
+                $children = $guardian->children()->with('guardians')->get();
+
+                return [
+                    'children' => $children->map(fn ($child) => [
+                        'child_id' => $child->id,
+                        'child_name' => $child->full_name,
+                        'guardian_id' => $guardian->id,
+                    ])->toArray(),
+                ];
+            })
             ->schema([
                 Repeater::make('children')
                     ->hiddenLabel()
                     ->addable(false)
+
                     ->reorderable(false)
+                    ->table([
+                        TableColumn::make('Child'),
+                        TableColumn::make('Guardian for Check-in/out'),
+                    ])
                     ->schema([
                         Hidden::make('child_id'),
                         TextInput::make('child_name')
@@ -52,21 +70,8 @@ final class AttendActivityAction
 
                                 return $child->guardians->pluck('full_name', 'id')->toArray();
                             })->required(),
-                    ])
-                    ->columns(2),
+                    ]),
             ])
-            ->fillForm(function (): array {
-                $guardian = AuthUser::guardian();
-                $children = $guardian->children()->with('guardians')->get();
-
-                return [
-                    'children' => $children->map(fn ($child) => [
-                        'child_id' => $child->id,
-                        'child_name' => $child->full_name,
-                        'guardian_id' => $guardian->id,
-                    ])->toArray(),
-                ];
-            })
             ->action(function (array $data, Activity $record): void {
                 foreach ($data['children'] as $childData) {
                     $childId = $childData['child_id'];

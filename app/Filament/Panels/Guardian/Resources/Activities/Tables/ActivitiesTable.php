@@ -24,12 +24,12 @@ final class ActivitiesTable
                 TextColumn::make('location')
                     ->sortable(),
                 TextColumn::make('starts_at')
-                    ->dateTime('D - h:i A')
-                    ->description(fn (Activity $record) => $record->starts_at->format('F d'))
+                    ->dateTime('M d - D')
+                    ->description(fn (Activity $record) => $record->starts_at->format('h:i A'))
                     ->sortable(),
                 TextColumn::make('ends_at')
-                    ->dateTime('D - h:i A')
-                    ->description(fn (Activity $record) => $record->ends_at->format('F d'))
+                    ->dateTime('M d - D')
+                    ->description(fn (Activity $record) => $record->ends_at->format('h:i A'))
                     ->sortable(),
                 TextColumn::make('organization.name')
                     ->label('Organized by'),

@@ -12,7 +12,6 @@ use App\Models\Relationship;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
@@ -20,13 +19,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
-use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 final class ChildrenTable
@@ -39,49 +36,45 @@ final class ChildrenTable
             ->persistSortInSession()
             ->columns([
 
-//                ChildrenTable::getGenderColumn(),
+                //                ChildrenTable::getGenderColumn(),
                 TextColumn::make('name')
-                    ->icon(function(Child $child) {
+                    ->icon(function (Child $child) {
                         return $child->gender->getIcon();
                     })
-                    ->iconColor(function(Child $child) {
+                    ->iconColor(function (Child $child) {
                         return $child->gender->getColor();
                     })
-                ->getStateUsing(function(Child $record): string {
-                    $relationship = Relationship::where('child_id', $record->id)
-                        ->whereNotNull('guardian_id')
-                        ->where('guardian_id', AuthUser::guardianId())
-                        ->first();
+                    ->getStateUsing(function (Child $record): string {
+                        $relationship = Relationship::where('child_id', $record->id)
+                            ->whereNotNull('guardian_id')
+                            ->where('guardian_id', AuthUser::guardianId())
+                            ->first();
 
-                    return $record->nickname ?? Str::before($record->first_name, ' ');
-                })
+                        return $record->nickname ?? Str::before($record->first_name, ' ');
+                    })
                     ->size(TextSize::Large)
-                ->description(function(Child $record): string {
-                    return $record->full_name;
-                }),
+                    ->description(function (Child $record): string {
+                        return $record->full_name;
+                    }),
 
-
-
-
-//                ChildrenTable::getFirstNameColumn(),
-//                ChildrenTable::getMiddleNameColumn(),
-//                ChildrenTable::getLastNameColumn(),
-//                ChildrenTable::getNicknameColumn(),
+                //                ChildrenTable::getFirstNameColumn(),
+                //                ChildrenTable::getMiddleNameColumn(),
+                //                ChildrenTable::getLastNameColumn(),
+                //                ChildrenTable::getNicknameColumn(),
                 ChildrenTable::getBirthDateColumn(),
                 TextColumn::make('guardians.full_name')
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList()
-                ->action(ChildrenTable::getUpdateGuardiansAction())
-                ,
+                    ->action(ChildrenTable::getUpdateGuardiansAction()),
 
-//                ChildrenTable::getRelationshipColumn()->alignCenter(),
+                //                ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
             ->recordAction('edit')
             ->recordActions([
-//                ChildrenTable::getUpdateGuardiansAction(),
-//                ChildrenTable::getEditAction(),
-//                ChildrenTable::getDeleteAction(),
+                //                ChildrenTable::getUpdateGuardiansAction(),
+                //                ChildrenTable::getEditAction(),
+                //                ChildrenTable::getDeleteAction(),
             ]);
     }
 

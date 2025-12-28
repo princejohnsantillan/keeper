@@ -5,8 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
 
-    if(Subdomain::defined())
-    {
+    if (Subdomain::defined()) {
         return redirect('/admin');
     }
 
