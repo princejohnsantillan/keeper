@@ -5,4 +5,5 @@ return [
     App\Providers\FilamentServiceProvider::class,
     App\Providers\Filament\GuardianPanelProvider::class,
     App\Providers\Filament\KeeperPanelProvider::class,
+    App\Providers\HorizonServiceProvider::class,
 ];
