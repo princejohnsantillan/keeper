@@ -66,7 +66,10 @@ final class ChildrenTable
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList()
-                    ->action(ChildrenTable::getUpdateGuardiansAction()),
+                    ->action(ChildrenTable::getUpdateGuardiansAction())
+                    ->extraCellAttributes([
+                        'class' => '[&:hover_*]:text-primary-600 [&:hover_*]:transition-colors dark:[&:hover_*]:text-primary-400',
+                    ]),
 
                 //                ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
