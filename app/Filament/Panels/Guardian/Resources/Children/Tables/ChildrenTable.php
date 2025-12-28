@@ -50,7 +50,7 @@ final class ChildrenTable
                             ->where('guardian_id', AuthUser::guardianId())
                             ->first();
 
-                        return $record->nickname ?? Str::before($record->first_name, ' ');
+                        return $record->getNickname();
                     })
                     ->size(TextSize::Large)
                     ->description(function (Child $record): string {
@@ -66,7 +66,10 @@ final class ChildrenTable
                     ->listWithLineBreaks()
                     ->limitList(3)
                     ->expandableLimitedList()
-                    ->action(ChildrenTable::getUpdateGuardiansAction()),
+                    ->action(ChildrenTable::getUpdateGuardiansAction())
+                    ->extraCellAttributes([
+                        'class' => '[&:hover_*]:text-primary-600 [&:hover_*]:transition-colors dark:[&:hover_*]:text-primary-400',
+                    ]),
 
                 //                ChildrenTable::getRelationshipColumn()->alignCenter(),
             ])
@@ -175,7 +178,7 @@ final class ChildrenTable
             ->slideOver()
             ->label('Guardians')
             ->icon('entypo-shield')
-            ->modalHeading(fn (Child $record): string => "Guardians of {$record->full_name}")
+            ->modalHeading(fn (Child $record): string => "Guardians of {$record->getNickname()}")
             ->modalSubmitActionLabel('Save changes')
             ->fillForm(function (Child $record): array {
                 $guardians = Guardian::query()
@@ -213,6 +216,7 @@ final class ChildrenTable
                         Hidden::make('guardian_id')
                             ->required(),
                         TextInput::make('guardian_name')
+                            ->label('Guardian')
                             ->disabled(),
                         Select::make('relationship')
                             ->options(RelationshipEnum::class)

@@ -39,6 +39,7 @@ final class GuardianForm
                             ->addable(false)
                             ->deletable(false)
                             ->reorderable(false)
+                            ->minItems(1)
                             ->schema([
                                 Hidden::make('child_id')
                                     ->required(),

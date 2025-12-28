@@ -106,7 +106,7 @@ namespace App\Models{
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
- * @property string|null $nickname
+ * @property string $nickname
  * @property \Carbon\CarbonImmutable $birth_date
  * @property \App\Enums\Gender $gender
  * @property string|null $notes

@@ -54,7 +54,7 @@ final class ChildResource extends Resource
     {
         return [
             'Gender' => $record->gender->getLabel(),
-            'Nickname' => $record->nickname ?? Str::before($record->first_name, ' '),
+            'Nickname' => $record->getNickname(),
             'Birth date' => $record->birth_date->format('d M Y').' ('.$record->birth_date->age.' yrs)',
         ];
     }
