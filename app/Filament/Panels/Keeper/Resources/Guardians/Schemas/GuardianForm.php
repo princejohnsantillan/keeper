@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
 
 use App\Enums\Gender;
@@ -8,7 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class GuardianForm
+final class GuardianForm
 {
     public static function configure(Schema $schema): Schema
     {

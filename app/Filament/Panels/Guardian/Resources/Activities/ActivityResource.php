@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Activities;
 
 use App\Filament\Panels\Guardian\Resources\Activities\Pages\ListActivities;
+use App\Filament\Panels\Guardian\Resources\Activities\Schemas\ActivityForm;
 use App\Filament\Panels\Guardian\Resources\Activities\Tables\ActivitiesTable;
 use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
@@ -20,9 +22,21 @@ final class ActivityResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function form(Schema $schema): Schema
+    {
+        return ActivityForm::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return ActivitiesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
     }
 
     public static function getPages(): array

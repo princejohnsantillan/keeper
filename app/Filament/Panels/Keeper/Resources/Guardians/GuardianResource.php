@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Panels\Keeper\Resources\Guardians;
 
 use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
@@ -11,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-class GuardianResource extends Resource
+final class GuardianResource extends Resource
 {
     protected static ?string $model = Guardian::class;
 

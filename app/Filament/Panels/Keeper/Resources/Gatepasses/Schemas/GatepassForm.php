@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Panels\Keeper\Resources\Gatepasses\Schemas;
 
 use App\AuthUser;
@@ -9,7 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
-class GatepassForm
+final class GatepassForm
 {
     public static function configure(Schema $schema): Schema
     {

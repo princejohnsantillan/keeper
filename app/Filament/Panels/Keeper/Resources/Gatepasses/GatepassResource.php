@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Panels\Keeper\Resources\Gatepasses;
 
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Pages\ListGatepasses;
@@ -11,7 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
-class GatepassResource extends Resource
+final class GatepassResource extends Resource
 {
     protected static ?string $model = Gatepass::class;
 
