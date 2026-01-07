@@ -11,6 +11,7 @@ use App\Filament\Components\Forms\AppToggleButtons;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Schema;
@@ -21,6 +22,14 @@ final class GuardianForm
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->collection('avatar')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->required()
+                    ->columnSpanFull(),
                 Fieldset::make('Guardian Details')
                     ->schema([
                         AppTextInput::firstName()->columnSpan(2),

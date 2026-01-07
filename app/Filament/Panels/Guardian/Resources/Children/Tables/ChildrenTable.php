@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Children\Tables;
 
 use App\AuthUser;
+use App\Avatar;
 use App\Enums\Relationship as RelationshipEnum;
 use App\Models\Child;
 use App\Models\Guardian;
@@ -21,10 +22,10 @@ use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 final class ChildrenTable
 {
@@ -35,6 +36,10 @@ final class ChildrenTable
             ->paginated(false)
             ->persistSortInSession()
             ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->collection('avatar')
+                    ->circular()
+                    ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name)),
 
                 //                ChildrenTable::getGenderColumn(),
                 TextColumn::make('name')

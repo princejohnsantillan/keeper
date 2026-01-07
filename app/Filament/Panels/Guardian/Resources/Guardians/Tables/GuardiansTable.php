@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Guardians\Tables;
 
 use App\AuthUser;
+use App\Avatar;
 use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Relationship;
@@ -12,6 +13,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -23,6 +25,10 @@ final class GuardiansTable
             ->searchable(false)
             ->paginated(false)
             ->columns([
+                SpatieMediaLibraryImageColumn::make('avatar')
+                    ->collection('avatar')
+                    ->circular()
+                    ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name)),
                 TextColumn::make('first_name')
                     ->sortable(),
                 TextColumn::make('middle_name')

@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Models\Guardian;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Guardian>
  */
-class GuardianFactory extends Factory
+final class GuardianFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -27,5 +30,13 @@ class GuardianFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'user_id' => User::factory(),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Guardian $guardian): void {
+            $guardian->addMediaFromUrl('https://i.pravatar.cc/300?u=guardian-'.$guardian->id)
+                ->toMediaCollection('avatar');
+        });
     }
 }

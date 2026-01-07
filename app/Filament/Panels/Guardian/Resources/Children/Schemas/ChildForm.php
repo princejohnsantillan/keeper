@@ -9,6 +9,7 @@ use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
 use App\Filament\Components\Forms\AppToggleButtons;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Schema;
 
 final class ChildForm
@@ -17,6 +18,14 @@ final class ChildForm
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->collection('avatar')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->required()
+                    ->columnSpanFull(),
                 AppTextInput::firstName(),
                 AppTextInput::middleName(),
                 AppTextInput::lastName(),
