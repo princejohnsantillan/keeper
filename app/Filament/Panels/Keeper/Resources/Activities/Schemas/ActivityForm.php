@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Resources\Activities\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -15,6 +16,15 @@ final class ActivityForm
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('thumbnail')
+                    ->collection('thumbnail')
+                    ->image()
+                    ->imageEditor()
+                    ->imageEditorAspectRatios([
+                        '16:9',
+                    ])
+                    ->required()
+                    ->columnSpanFull(),
                 TextInput::make('title')
                     ->required()->columnSpanFull(),
                 Textarea::make('description')

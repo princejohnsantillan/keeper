@@ -23,6 +23,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,9 @@ final class ActivitiesTable
     {
         return $table
             ->columns([
+                SpatieMediaLibraryImageColumn::make('thumbnail')
+                    ->collection('thumbnail')
+                    ->conversion('thumbnail'),
                 TextColumn::make('title')
                     ->description(fn (Activity $activity): ?string => $activity->description)
                     ->sortable(),

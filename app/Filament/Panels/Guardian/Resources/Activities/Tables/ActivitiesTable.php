@@ -6,6 +6,7 @@ namespace App\Filament\Panels\Guardian\Resources\Activities\Tables;
 
 use App\Filament\Actions\AttendActivityAction;
 use App\Models\Activity;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -18,6 +19,9 @@ final class ActivitiesTable
             ->paginated(false)
             ->defaultSort('starts_at', 'asc')
             ->columns([
+                SpatieMediaLibraryImageColumn::make('thumbnail')
+                    ->collection('thumbnail')
+                    ->conversion('thumbnail'),
                 TextColumn::make('title')
                     ->description(fn (Activity $activity): ?string => $activity->description)
                     ->sortable(),
