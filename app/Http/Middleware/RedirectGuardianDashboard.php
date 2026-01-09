@@ -26,7 +26,7 @@ final class RedirectGuardianDashboard
         }
 
         if ($organization !== null) {
-            return redirect(Config::string('app.url').'/dashboard');
+            return redirect(Config::string('app.url').'/'.$request->path());
         }
 
         return $next($request);
