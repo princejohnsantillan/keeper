@@ -51,6 +51,14 @@ final class Activity extends Model implements HasMedia
     }
 
     /**
+     * @return BelongsTo<Term, $this>
+     */
+    public function term(): BelongsTo
+    {
+        return $this->belongsTo(Term::class);
+    }
+
+    /**
      * @return BelongsToMany<Child, $this, Attendance>
      */
     public function children(): BelongsToMany

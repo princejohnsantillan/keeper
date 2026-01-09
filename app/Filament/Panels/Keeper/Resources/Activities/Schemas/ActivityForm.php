@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Resources\Activities\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -37,6 +38,11 @@ final class ActivityForm
                 DateTimePicker::make('ends_at')
                     ->displayFormat('d M Y (h:i A)')
                     ->required(),
+                Select::make('term_id')
+                    ->label('Terms & Conditions')
+                    ->relationship('term', 'name')
+                    ->native(false)
+                    ->columnSpanFull(),
                 Textarea::make('notes')
                     ->columnSpanFull(),
             ])->columns(2);
