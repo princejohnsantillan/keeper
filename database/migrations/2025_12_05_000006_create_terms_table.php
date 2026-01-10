@@ -16,6 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('name')->index();
             $table->text('content');
+            $table->unsignedInteger('version')->default(1);
+            $table->timestamp('published_at')->nullable();
             $table->foreignIdFor(Organization::class)->constrained();
             $table->timestamps();
         });
