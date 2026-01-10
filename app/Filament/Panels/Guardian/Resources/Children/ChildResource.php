@@ -17,7 +17,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 final class ChildResource extends Resource
 {
@@ -39,7 +38,8 @@ final class ChildResource extends Resource
         return parent::getEloquentQuery()
             ->whereHas('relationships', function (Builder $query): void {
                 $query->where('guardian_id', AuthUser::guardianId());
-            });
+            })
+            ->with('guardians');
     }
 
     public static function getGloballySearchableAttributes(): array

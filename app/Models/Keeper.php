@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @mixin IdeHelperKeeper
@@ -17,6 +18,8 @@ final class Keeper extends Model
 {
     /** @use HasFactory<KeeperFactory> */
     use HasFactory;
+
+    use SoftDeletes;
 
     /**
      * @return BelongsTo<User, $this>

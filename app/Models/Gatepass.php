@@ -39,4 +39,12 @@ final class Gatepass extends Model
     {
         return $this->belongsTo(Activity::class);
     }
+
+    /**
+     * @return BelongsTo<TermAcceptance, $this>
+     */
+    public function termAcceptance(): BelongsTo
+    {
+        return $this->belongsTo(TermAcceptance::class);
+    }
 }

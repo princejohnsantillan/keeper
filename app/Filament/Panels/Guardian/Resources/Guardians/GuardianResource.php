@@ -33,10 +33,15 @@ final class GuardianResource extends Resource
      */
     public static function getEloquentQuery(): Builder
     {
+        $childIds = AuthUser::guardian()->children()->pluck('children.id');
+
         return parent::getEloquentQuery()
-            ->whereHas('relationships', function (Builder $query): void {
-                $query->whereIn('child_id', AuthUser::guardian()->children()->pluck('children.id'));
-            });
+            ->whereHas('relationships', function (Builder $query) use ($childIds): void {
+                $query->whereIn('child_id', $childIds);
+            })
+            ->with(['children' => function ($query) use ($childIds): void {
+                $query->whereIn('children.id', $childIds);
+            }]);
     }
 
     public static function getGloballySearchableAttributes(): array

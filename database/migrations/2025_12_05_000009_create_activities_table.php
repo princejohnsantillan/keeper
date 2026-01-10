@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Organization;
+use App\Models\Term;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,8 +22,10 @@ return new class extends Migration
             $table->string('location_map_link')->nullable();
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->index();
-            $table->text('notes')->nullable(); // Internal notes
+            $table->timestamp('published_at')->nullable();
+            $table->text('notes')->nullable();
             $table->foreignIdFor(Organization::class)->constrained();
+            $table->foreignIdFor(Term::class)->nullable()->constrained();
             $table->foreignIdFor(User::class, 'created_by')->constrained();
             $table->timestamps();
         });

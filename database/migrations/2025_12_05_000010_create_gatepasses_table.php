@@ -3,6 +3,7 @@
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Guardian;
+use App\Models\TermAcceptance;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->foreignIdFor(Guardian::class)->constrained();
             $table->foreignIdFor(Child::class)->constrained();
             $table->foreignIdFor(Activity::class)->constrained();
+            $table->foreignIdFor(TermAcceptance::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('code');
             $table->timestamps();
 

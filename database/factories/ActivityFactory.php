@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Organization;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Activity>
  */
-class ActivityFactory extends Factory
+final class ActivityFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -26,9 +28,20 @@ class ActivityFactory extends Factory
             'location' => $this->faker->optional()->address(),
             'starts_at' => $startsAt,
             'ends_at' => (clone $startsAt)->modify('+2 hours'),
+            'published_at' => now(),
             'notes' => $this->faker->optional()->sentence(),
             'organization_id' => Organization::factory(),
             'created_by' => User::factory(),
         ];
+    }
+
+    /**
+     * Indicate that the activity is a draft (not published).
+     */
+    public function draft(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'published_at' => null,
+        ]);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Activity;
 use App\Models\Attendance;
 use App\Models\Gatepass;
 use App\Models\Keeper;
+use App\ReadableCode;
 use App\Subdomain;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
@@ -117,7 +118,12 @@ final class ViewAttendance extends ManageRelatedRecords
 
                         $keeper = $this->getCurrentKeeper();
 
+                        do {
+                            $attendeeCode = ReadableCode::generate();
+                        } while (Attendance::query()->where('attendee_code', $attendeeCode)->exists());
+
                         Attendance::create([
+                            'attendee_code' => $attendeeCode,
                             'activity_id' => $activity->id,
                             'child_id' => $gatepass->child_id,
                             'checkin_keeper_id' => $keeper->id,

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->foreignIdFor(User::class)->nullable()->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

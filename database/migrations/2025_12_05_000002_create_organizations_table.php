@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->foreignIdFor(User::class, 'owner_id')->constrained();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -1,25 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
 
 use App\Enums\Gender;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class GuardianForm
+final class GuardianForm
 {
     public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->collection('avatar')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->required()
+                    ->columnSpanFull(),
                 TextInput::make('first_name')
                     ->required(),
                 TextInput::make('middle_name'),
                 TextInput::make('last_name')
                     ->required(),
-                DatePicker::make('birth_date'),
+                DatePicker::make('birth_date')
+                    ->maxDate(now()->subYears(18)),
                 Select::make('gender')
                     ->options(Gender::class)
                     ->required(),

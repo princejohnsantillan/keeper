@@ -7,6 +7,7 @@ namespace App\Filament\Panels\Keeper\Resources\Children\Schemas;
 use App\Enums\Gender;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -17,6 +18,14 @@ final class ChildForm
     {
         return $schema
             ->components([
+                SpatieMediaLibraryFileUpload::make('avatar')
+                    ->collection('avatar')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->required()
+                    ->columnSpanFull(),
                 TextInput::make('first_name')
                     ->required(),
                 TextInput::make('middle_name'),

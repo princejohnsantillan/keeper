@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Children\Tables;
 
 use App\AuthUser;
+use App\Avatar;
 use App\Enums\Relationship as RelationshipEnum;
 use App\Models\Child;
 use App\Models\Guardian;
@@ -19,12 +20,16 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 final class ChildrenTable
 {
@@ -34,51 +39,66 @@ final class ChildrenTable
             ->searchable(false)
             ->paginated(false)
             ->persistSortInSession()
+            ->defaultSort('first_name', 'asc')
             ->columns([
+                Split::make([
+                    SpatieMediaLibraryImageColumn::make('avatar')
+                        ->collection('avatar')
+                        ->circular()
+                        ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
+                        ->grow(false),
 
-                //                ChildrenTable::getGenderColumn(),
-                TextColumn::make('name')
-                    ->icon(function (Child $child) {
-                        return $child->gender->getIcon();
-                    })
-                    ->iconColor(function (Child $child) {
-                        return $child->gender->getColor();
-                    })
-                    ->getStateUsing(function (Child $record): string {
-                        $relationship = Relationship::where('child_id', $record->id)
-                            ->whereNotNull('guardian_id')
-                            ->where('guardian_id', AuthUser::guardianId())
-                            ->first();
+                    Stack::make([
+                        TextColumn::make('nickname')
+                            ->label('Name')
+                            ->weight(FontWeight::Bold)
+                            ->icon(fn (Child $record) => $record->gender->getIcon())
+                            ->iconColor(fn (Child $record) => $record->gender->getColor())
+                            ->getStateUsing(fn (Child $record): string => $record->getNickname())
+                            ->description(fn (Child $record): string => $record->full_name)
+                            ->sortable(['first_name', 'last_name']),
 
-                        return $record->getNickname();
-                    })
-                    ->size(TextSize::Large)
-                    ->description(function (Child $record): string {
-                        return $record->full_name;
-                    }),
-
-                //                ChildrenTable::getFirstNameColumn(),
-                //                ChildrenTable::getMiddleNameColumn(),
-                //                ChildrenTable::getLastNameColumn(),
-                //                ChildrenTable::getNicknameColumn(),
-                ChildrenTable::getBirthDateColumn(),
-                TextColumn::make('guardians.full_name')
-                    ->listWithLineBreaks()
-                    ->limitList(3)
-                    ->expandableLimitedList()
-                    ->action(ChildrenTable::getUpdateGuardiansAction())
-                    ->extraCellAttributes([
-                        'class' => '[&:hover_*]:text-primary-600 [&:hover_*]:transition-colors dark:[&:hover_*]:text-primary-400',
+                        TextColumn::make('birth_date')
+                            ->date('d M Y')
+                            ->suffix(fn (Child $record): string => ' · '.$record->birth_date->age.' yrs')
+                            ->sortable()
+                            ->color('gray'),
                     ]),
+                ]),
 
-                //                ChildrenTable::getRelationshipColumn()->alignCenter(),
+                Panel::make([
+                    TextColumn::make('guardians.id')
+                        ->label('Guardians')
+                        ->icon(function (string $state, Child $record): ?string {
+                            $guardian = $record->guardians->firstWhere('id', $state);
+
+                            return $guardian?->gender->getIcon();
+                        })
+                        ->iconColor(function (string $state, Child $record): ?array {
+                            $guardian = $record->guardians->firstWhere('id', $state);
+
+                            return $guardian?->gender->getColor();
+                        })
+                        ->formatStateUsing(function (string $state, Child $record): string {
+                            $guardian = $record->guardians->firstWhere('id', $state);
+
+                            if (! $guardian) {
+                                return '';
+                            }
+
+                            /** @var RelationshipEnum|null $relationship */
+                            $relationship = $guardian->pivot->relationship;
+
+                            $relationshipLabel = $relationship?->getLabel() ?? '';
+
+                            return $guardian->full_name.($relationshipLabel ? " ({$relationshipLabel})" : '');
+                        })
+                        ->listWithLineBreaks()
+                        ->action(ChildrenTable::getUpdateGuardiansAction()),
+                ])->collapsible(),
             ])
             ->recordAction('edit')
-            ->recordActions([
-                //                ChildrenTable::getUpdateGuardiansAction(),
-                //                ChildrenTable::getEditAction(),
-                //                ChildrenTable::getDeleteAction(),
-            ]);
+            ->recordActions([]);
     }
 
     public static function getFirstNameColumn(): TextColumn

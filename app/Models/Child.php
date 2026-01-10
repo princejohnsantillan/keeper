@@ -11,15 +11,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @mixin IdeHelperChild
  */
-final class Child extends Model
+final class Child extends Model implements HasMedia
 {
     /** @use HasFactory<ChildFactory> */
     use HasFactory;
+
+    use InteractsWithMedia;
+    use SoftDeletes;
 
     protected function casts(): array
     {
@@ -32,6 +38,16 @@ final class Child extends Model
     public function getNickname(): string
     {
         return $this->nickname ?? Str::before($this->first_name, ' ');
+    }
+
+    /**
+     * @return Attribute<string,never>
+     */
+    public function knownAs(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->nickname ?? Str::before($this->first_name, ' '),
+        );
     }
 
     /** @return Attribute<string,never> */
@@ -55,7 +71,7 @@ final class Child extends Model
      */
     public function activities(): BelongsToMany
     {
-        return $this->belongsToMany(Activity::class, 'attendance')
+        return $this->belongsToMany(Activity::class, 'attendances')
             ->using(Attendance::class)
             ->withTimestamps();
     }
@@ -82,5 +98,11 @@ final class Child extends Model
     public function attendance(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->singleFile();
     }
 }

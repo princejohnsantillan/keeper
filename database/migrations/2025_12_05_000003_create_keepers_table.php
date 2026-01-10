@@ -19,6 +19,9 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->json('permissions')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->unique(['organization_id', 'user_id']);
         });
     }
 

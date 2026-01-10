@@ -3,3 +3,11 @@
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
 
+/* Remove table container styling for activities resource */
+.fi-resource-activities .fi-ta-ctn {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+    --tw-ring-shadow: none;
+}
+

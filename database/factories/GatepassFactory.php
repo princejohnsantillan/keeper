@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Activity;
@@ -11,7 +13,7 @@ use Illuminate\Support\Str;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Gatepass>
  */
-class GatepassFactory extends Factory
+final class GatepassFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -25,6 +27,7 @@ class GatepassFactory extends Factory
             'child_id' => Child::factory(),
             'activity_id' => Activity::factory(),
             'code' => Str::upper(Str::random(6)),
+            'term_acceptance_id' => null,
         ];
     }
 }

@@ -5,8 +5,10 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+.mcp.json
 /.claude
 /.cursor
+/.gemini
 /.fleet
 /.idea
 /.nova
@@ -21,6 +23,10 @@
 /storage/*.key
 /storage/pail
 /vendor
+boost.json
+opencode.json
+AGENTS.md
+GEMINI.md
 Homestead.json
 Homestead.yaml
 Thumbs.db

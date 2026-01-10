@@ -11,21 +11,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
  * @mixin IdeHelperActivity
  */
 #[ScopedBy(OrganizationScope::class)]
-final class Activity extends Model
+final class Activity extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\ActivityFactory> */
     use HasFactory;
+
+    use InteractsWithMedia;
 
     protected function casts(): array
     {
         return [
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
+            'published_at' => 'immutable_datetime',
         ];
     }
 
@@ -46,11 +52,19 @@ final class Activity extends Model
     }
 
     /**
+     * @return BelongsTo<Term, $this>
+     */
+    public function term(): BelongsTo
+    {
+        return $this->belongsTo(Term::class);
+    }
+
+    /**
      * @return BelongsToMany<Child, $this, Attendance>
      */
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(Child::class, 'attendance')
+        return $this->belongsToMany(Child::class, 'attendances')
             ->using(Attendance::class)
             ->withTimestamps();
     }
@@ -69,5 +83,20 @@ final class Activity extends Model
     public function attendance(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('thumbnail')
+            ->width(800)
+            ->height(600)
+            ->sharpen(10)
+            ->nonQueued();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('thumbnail')
+            ->singleFile();
     }
 }
