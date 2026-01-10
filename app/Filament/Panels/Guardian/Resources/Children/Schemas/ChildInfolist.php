@@ -11,7 +11,6 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
@@ -22,54 +21,44 @@ final class ChildInfolist
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Section::make()
                     ->schema([
-                        Grid::make(['default' => 1, 'md' => 4])
-                            ->schema([
-                                SpatieMediaLibraryImageEntry::make('avatar')
-                                    ->hiddenLabel()
-                                    ->collection('avatar')
-                                    ->circular()
-                                    ->size(120)
-                                    ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
-                                    ->columnSpan(['default' => 1, 'md' => 1]),
+                        SpatieMediaLibraryImageEntry::make('avatar')
+                            ->hiddenLabel()
+                            ->collection('avatar')
+                            ->circular()
+                            ->size(120)
+                            ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name)),
 
-                                Grid::make(1)
-                                    ->schema([
-                                        TextEntry::make('full_name')
-                                            ->hiddenLabel()
-                                            ->size(TextSize::Large)
-                                            ->weight(FontWeight::Bold),
+                        TextEntry::make('full_name')
+                            ->hiddenLabel()
+                            ->size(TextSize::Large)
+                            ->weight(FontWeight::Bold),
 
-                                        TextEntry::make('nickname')
-                                            ->label('Known as')
-                                            ->placeholder('—')
-                                            ->icon('heroicon-o-chat-bubble-bottom-center-text'),
+                        TextEntry::make('nickname')
+                            ->label('Known as')
+                            ->placeholder('—')
+                            ->icon('heroicon-o-chat-bubble-bottom-center-text'),
 
-                                        Grid::make(['default' => 1, 'sm' => 3])
-                                            ->schema([
-                                                TextEntry::make('birth_date')
-                                                    ->label('Age')
-                                                    ->icon('heroicon-o-cake')
-                                                    ->formatStateUsing(function (CarbonImmutable $state): string {
-                                                        $age = $state->age;
-                                                        $years = $age === 1 ? 'year' : 'years';
+                        TextEntry::make('birth_date')
+                            ->label('Age')
+                            ->icon('heroicon-o-cake')
+                            ->formatStateUsing(function (CarbonImmutable $state): string {
+                                $age = $state->age;
+                                $years = $age === 1 ? 'year' : 'years';
 
-                                                        return "{$age} {$years} old";
-                                                    }),
+                                return "{$age} {$years} old";
+                            }),
 
-                                                TextEntry::make('birth_date')
-                                                    ->label('Birthday')
-                                                    ->icon('heroicon-o-calendar')
-                                                    ->date('F j, Y'),
+                        TextEntry::make('birth_date')
+                            ->label('Birthday')
+                            ->icon('heroicon-o-calendar')
+                            ->date('F j, Y'),
 
-                                                IconEntry::make('gender')
-                                                    ->label('Gender'),
-                                            ]),
-                                    ])
-                                    ->columnSpan(['default' => 1, 'md' => 3]),
-                            ]),
+                        IconEntry::make('gender')
+                            ->label('Gender'),
                     ]),
 
                 Section::make('Guardians')
@@ -97,7 +86,7 @@ final class ChildInfolist
                                     ->icon('heroicon-o-envelope')
                                     ->placeholder('—'),
                             ])
-                            ->columns(['default' => 1, 'sm' => 2, 'lg' => 4]),
+                            ->columns(1),
                     ]),
 
                 Section::make('Notes')
