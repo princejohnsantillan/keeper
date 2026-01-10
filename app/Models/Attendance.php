@@ -17,6 +17,8 @@ final class Attendance extends Pivot
     /** @use HasFactory<AttendanceFactory> */
     use HasFactory;
 
+    protected $table = 'attendances';
+
     public $incrementing = true;
 
     /**

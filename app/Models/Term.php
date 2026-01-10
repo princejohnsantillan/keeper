@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -19,6 +20,14 @@ final class Term extends Model
 {
     /** @use HasFactory<\Database\Factories\TermFactory> */
     use HasFactory;
+
+    protected function casts(): array
+    {
+        return [
+            'version' => 'integer',
+            'published_at' => 'immutable_datetime',
+        ];
+    }
 
     /**
      * @return BelongsTo<Organization, $this>
@@ -34,5 +43,23 @@ final class Term extends Model
     public function activities(): HasMany
     {
         return $this->hasMany(Activity::class);
+    }
+
+    /**
+     * @return HasMany<TermAcceptance, $this>
+     */
+    public function acceptances(): HasMany
+    {
+        return $this->hasMany(TermAcceptance::class);
+    }
+
+    /**
+     * @return BelongsToMany<Guardian, $this>
+     */
+    public function acceptedByGuardians(): BelongsToMany
+    {
+        return $this->belongsToMany(Guardian::class, 'term_acceptances')
+            ->withPivot(['ip_address', 'user_agent', 'accepted_at'])
+            ->withTimestamps();
     }
 }

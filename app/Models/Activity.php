@@ -64,7 +64,7 @@ final class Activity extends Model implements HasMedia
      */
     public function children(): BelongsToMany
     {
-        return $this->belongsToMany(Child::class, 'attendance')
+        return $this->belongsToMany(Child::class, 'attendances')
             ->using(Attendance::class)
             ->withTimestamps();
     }

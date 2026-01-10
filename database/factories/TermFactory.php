@@ -22,7 +22,23 @@ final class TermFactory extends Factory
         return [
             'name' => fake()->words(3, true),
             'content' => fake()->paragraphs(5, true),
+            'version' => 1,
+            'published_at' => null,
             'organization_id' => Organization::factory(),
         ];
+    }
+
+    public function published(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'published_at' => now(),
+        ]);
+    }
+
+    public function version(int $version): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'version' => $version,
+        ]);
     }
 }
