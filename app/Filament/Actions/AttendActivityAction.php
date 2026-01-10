@@ -72,6 +72,7 @@ final class AttendActivityAction
             ->schema(fn (Activity $record): array => array_filter([
                 $record->term !== null ? Fieldset::make('Terms and Conditions')
                     ->columnSpanFull()
+                    ->columns(1)
                     ->schema([
                         Placeholder::make('terms_content')
                             ->hiddenLabel()
