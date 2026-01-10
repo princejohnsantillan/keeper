@@ -6,13 +6,18 @@ namespace App\Filament\Panels\Guardian\Resources\Guardians\Tables;
 
 use App\AuthUser;
 use App\Avatar;
+use App\Enums\Relationship as RelationshipEnum;
 use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Relationship;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
-use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -24,32 +29,74 @@ final class GuardiansTable
         return $table
             ->searchable(false)
             ->paginated(false)
+            ->defaultSort('first_name', 'asc')
             ->columns([
-                SpatieMediaLibraryImageColumn::make('avatar')
-                    ->collection('avatar')
-                    ->circular()
-                    ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name)),
-                TextColumn::make('first_name')
-                    ->sortable(),
-                TextColumn::make('middle_name')
-                    ->sortable(),
-                TextColumn::make('last_name')
-                    ->sortable(),
-                TextColumn::make('birth_date')
-                    ->date('d M Y')
-                    ->description(function (Guardian $record): string {
-                        $age = $record->birth_date->age;
+                Split::make([
+                    SpatieMediaLibraryImageColumn::make('avatar')
+                        ->collection('avatar')
+                        ->circular()
+                        ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name))
+                        ->grow(false),
 
-                        return "{$age} yrs";
-                    })
-                    ->sortable(),
-                IconColumn::make('gender')->sortable()->alignCenter(),
-                TextColumn::make('email')
-                    ->copyable()
-                    ->sortable(),
-                TextColumn::make('phone')
-                    ->copyable()
-                    ->sortable(),
+                    Stack::make([
+                        TextColumn::make('full_name')
+                            ->label('Name')
+                            ->weight(FontWeight::Bold)
+                            ->icon(fn (Guardian $record) => $record->gender->getIcon())
+                            ->iconColor(fn (Guardian $record) => $record->gender->getColor())
+                            ->sortable(['first_name', 'last_name']),
+
+                        TextColumn::make('birth_date')
+                            ->date('d M Y')
+                            ->suffix(fn (Guardian $record): string => ' · '.$record->birth_date->age.' yrs')
+                            ->sortable()
+                            ->color('gray'),
+                    ]),
+
+                    Stack::make([
+                        TextColumn::make('email')
+                            ->icon(Heroicon::Envelope)
+                            ->sortable()
+                            ->copyable()
+                            ->grow(false),
+
+                        TextColumn::make('phone')
+                            ->icon(Heroicon::Phone)
+                            ->copyable()
+                            ->grow(false),
+                    ])->visibleFrom('md'),
+                ]),
+
+                Panel::make([
+                    TextColumn::make('children.id')
+                        ->label('Children')
+                        ->icon(function (string $state, Guardian $record): ?string {
+                            $child = $record->children->firstWhere('id', $state);
+
+                            return $child?->gender->getIcon();
+                        })
+                        ->iconColor(function (string $state, Guardian $record): ?array {
+                            $child = $record->children->firstWhere('id', $state);
+
+                            return $child?->gender->getColor();
+                        })
+                        ->formatStateUsing(function (string $state, Guardian $record): string {
+                            $child = $record->children->firstWhere('id', $state);
+
+                            if (! $child) {
+                                return '';
+                            }
+
+                            /** @var RelationshipEnum|null $relationship */
+                            $relationship = $child->pivot->relationship;
+
+                            $inverseLabel = $relationship?->inverse($child->gender)->getLabel() ?? '';
+                            $age = $child->birth_date->age;
+
+                            return $child->getNickname().", {$age} yrs".($inverseLabel ? " ({$inverseLabel})" : '');
+                        })
+                        ->listWithLineBreaks(),
+                ])->collapsible(),
             ])
             ->recordActions([
                 EditAction::make()
