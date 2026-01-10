@@ -42,7 +42,8 @@ final class ActivityResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScope(OrganizationScope::class);
+            ->withoutGlobalScope(OrganizationScope::class)
+            ->where('ends_at', '>=', now());
     }
 
     public static function getRelations(): array
