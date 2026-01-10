@@ -35,7 +35,9 @@ final class GuardianForm
                         AppTextInput::firstName()->columnSpan(2),
                         AppTextInput::middleName()->columnSpan(2),
                         AppTextInput::lastName()->columnSpan(2),
-                        AppDatePicker::birthDate()->columnSpan(3),
+                        AppDatePicker::birthDate()
+                            ->maxDate(now()->subYears(18))
+                            ->columnSpan(3),
                         AppToggleButtons::gender()->columnSpan(3),
                         AppTextInput::email()->columnSpan(3),
                         AppTextInput::phone()->columnSpan(3),

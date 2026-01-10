@@ -30,7 +30,8 @@ final class GuardianForm
                 TextInput::make('middle_name'),
                 TextInput::make('last_name')
                     ->required(),
-                DatePicker::make('birth_date'),
+                DatePicker::make('birth_date')
+                    ->maxDate(now()->subYears(18)),
                 Select::make('gender')
                     ->options(Gender::class)
                     ->required(),
