@@ -44,6 +44,7 @@ final class GuardianPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->breadcrumbs(false)
+            ->sidebarWidth('14rem')
             ->discoverResources(in: app_path('Filament/Panels/Guardian/Resources'), for: 'App\Filament\Panels\Guardian\Resources')
             ->discoverPages(in: app_path('Filament/Panels/Guardian/Pages'), for: 'App\Filament\Panels\Guardian\Pages')
             ->pages([])

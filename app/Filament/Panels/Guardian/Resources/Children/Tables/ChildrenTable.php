@@ -49,6 +49,7 @@ final class ChildrenTable
                         SpatieMediaLibraryImageColumn::make('avatar')
                             ->collection('avatar')
                             ->circular()
+                            ->imageSize(80)
                             ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
                             ->grow(false),
 
@@ -69,35 +70,6 @@ final class ChildrenTable
                                 ->color('gray'),
                         ]),
                     ]),
-
-                    TextColumn::make('guardians.id')
-                        ->label('Guardians')
-                        ->icon(function (string $state, Child $record): ?string {
-                            $guardian = $record->guardians->firstWhere('id', $state);
-
-                            return $guardian?->gender->getIcon();
-                        })
-                        ->iconColor(function (string $state, Child $record): ?array {
-                            $guardian = $record->guardians->firstWhere('id', $state);
-
-                            return $guardian?->gender->getColor();
-                        })
-                        ->formatStateUsing(function (string $state, Child $record): string {
-                            $guardian = $record->guardians->firstWhere('id', $state);
-
-                            if (! $guardian) {
-                                return '';
-                            }
-
-                            /** @var RelationshipEnum|null $relationship */
-                            $relationship = $guardian->pivot->relationship;
-
-                            $relationshipLabel = $relationship?->getLabel() ?? '';
-
-                            return $guardian->full_name.($relationshipLabel ? " ({$relationshipLabel})" : '');
-                        })
-                        ->listWithLineBreaks()
-                        ->action(ChildrenTable::getUpdateGuardiansAction()),
                 ])->space(3),
             ])
             ->recordAction('edit')

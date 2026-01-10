@@ -44,6 +44,7 @@ final class KeeperPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->breadcrumbs(false)
+            ->sidebarWidth('14rem')
             ->discoverResources(in: app_path('Filament/Panels/Keeper/Resources'), for: 'App\Filament\Panels\Keeper\Resources')
             ->discoverPages(in: app_path('Filament/Panels/Keeper/Pages'), for: 'App\Filament\Panels\Keeper\Pages')
             ->pages([])
