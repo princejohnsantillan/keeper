@@ -115,7 +115,8 @@ final class ActivitiesTable
                             ->icon(Heroicon::BuildingOffice),
                     ]),
 
-                AttendActivityAction::make('attend_from_view', 'Attend Activity'),
+                AttendActivityAction::make('attend_from_view', 'Attend Activity')
+                    ->extraAttributes(['class' => 'w-full justify-center']),
             ]);
     }
 }
