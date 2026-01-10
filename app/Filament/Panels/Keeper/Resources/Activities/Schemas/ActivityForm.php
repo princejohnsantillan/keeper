@@ -38,6 +38,9 @@ final class ActivityForm
                 DateTimePicker::make('ends_at')
                     ->displayFormat('d M Y (h:i A)')
                     ->required(),
+                DateTimePicker::make('published_at')
+                    ->displayFormat('d M Y (h:i A)')
+                    ->helperText('Leave empty to keep as draft. Set a date to publish the activity to guardians.'),
                 Select::make('term_id')
                     ->label('Terms & Conditions')
                     ->relationship('term', 'name')

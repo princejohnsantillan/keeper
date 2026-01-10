@@ -31,6 +31,7 @@ final class Activity extends Model implements HasMedia
         return [
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
+            'published_at' => 'immutable_datetime',
         ];
     }
 

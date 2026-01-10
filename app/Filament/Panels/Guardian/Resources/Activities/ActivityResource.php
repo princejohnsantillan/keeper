@@ -43,7 +43,8 @@ final class ActivityResource extends Resource
     {
         return parent::getEloquentQuery()
             ->withoutGlobalScope(OrganizationScope::class)
-            ->where('ends_at', '>=', now());
+            ->where('ends_at', '>=', now())
+            ->where('published_at', '<=', now());
     }
 
     public static function getRelations(): array
