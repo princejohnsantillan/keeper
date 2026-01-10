@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App;
 
 use App\Models\Organization;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -15,13 +14,9 @@ final class Subdomain
     public static function organization(): ?Organization
     {
         return once(function (): ?Organization {
-            if (App::runningUnitTests() && ! Schema::hasTable('organizations')) {
-                return null;
-            }
-
             $slug = Str::beforeLast(request()->host(), '.'.Config::string('app.domain'));
 
-            return Organization::query()->where('slug', $slug)->first();
+            return rescue(fn(): ?Organization => Organization::query()->where('slug', $slug)->first());
         });
     }
 
