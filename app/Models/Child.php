@@ -40,6 +40,16 @@ final class Child extends Model implements HasMedia
         return $this->nickname ?? Str::before($this->first_name, ' ');
     }
 
+    /**
+     * @return Attribute<string,never>
+     */
+    public function knownAs(): Attribute
+    {
+        return Attribute::make(
+            get: fn (): string => $this->nickname ?? Str::before($this->first_name, ' '),
+        );
+    }
+
     /** @return Attribute<string,never> */
     public function fullName(): Attribute
     {
