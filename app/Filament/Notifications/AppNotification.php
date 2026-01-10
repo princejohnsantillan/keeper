@@ -14,4 +14,12 @@ final class AppNotification
             ->success()
             ->title('Successfully registered');
     }
+
+    public static function termsNotAgreed(): Notification
+    {
+        return Notification::make()
+            ->warning()
+            ->title('Agreement Required')
+            ->body('You must agree to the terms and conditions before requesting a gate pass.');
+    }
 }

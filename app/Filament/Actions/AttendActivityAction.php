@@ -11,14 +11,18 @@ use App\Models\Child;
 use App\Models\Gatepass;
 use App\ReadableCode;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 final class AttendActivityAction
 {
@@ -38,6 +42,7 @@ final class AttendActivityAction
                     ->keyBy('child_id');
 
                 return [
+                    'agree_to_terms' => false,
                     'children' => $children->map(fn ($child) => [
                         'child_id' => $child->id,
                         'child_name' => $child->full_name,
@@ -46,7 +51,22 @@ final class AttendActivityAction
                     ])->toArray(),
                 ];
             })
-            ->schema([
+            ->schema(fn (Activity $record): array => array_filter([
+                $record->term !== null ? Fieldset::make('Terms and Conditions')
+                    ->columnSpanFull()
+                    ->schema([
+                        Placeholder::make('terms_content')
+                            ->hiddenLabel()
+                            ->state(new HtmlString(
+                                '<div class="fi-prose prose dark:prose-invert max-w-none max-h-64 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">'.
+                                Str::markdown($record->term->content).
+                                '</div>'
+                            ))
+                            ->html(),
+                        Checkbox::make('agree_to_terms')
+                            ->label('I have read and agree to the terms and conditions')
+                            ->live(),
+                    ]) : null,
                 Repeater::make('children')
                     ->hiddenLabel()
                     ->addable(false)
@@ -91,6 +111,12 @@ final class AttendActivityAction
                                 ->icon(Heroicon::Ticket)
                                 ->hidden(fn (callable $get): bool => ! empty($get('gatepass_code')))
                                 ->action(function (callable $get, callable $set, Activity $record): void {
+                                    if ($record->term !== null && ! $get('../../agree_to_terms')) {
+                                        AppNotification::termsNotAgreed()->send();
+
+                                        return;
+                                    }
+
                                     $childId = $get('child_id');
                                     $guardianId = $get('guardian_id');
 
@@ -123,7 +149,7 @@ final class AttendActivityAction
                                 ->hidden(fn (callable $get): bool => empty($get('gatepass_code'))),
                         ]),
                     ]),
-            ])
+            ]))
             ->modalSubmitAction(false)
             ->modalCancelActionLabel('Close');
     }
