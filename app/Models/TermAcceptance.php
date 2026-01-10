@@ -8,6 +8,7 @@ use Database\Factories\TermAcceptanceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperTermAcceptance
@@ -16,13 +17,6 @@ final class TermAcceptance extends Model
 {
     /** @use HasFactory<TermAcceptanceFactory> */
     use HasFactory;
-
-    protected function casts(): array
-    {
-        return [
-            'accepted_at' => 'datetime',
-        ];
-    }
 
     /**
      * @return BelongsTo<Term, $this>
@@ -38,5 +32,13 @@ final class TermAcceptance extends Model
     public function guardian(): BelongsTo
     {
         return $this->belongsTo(Guardian::class);
+    }
+
+    /**
+     * @return HasMany<Gatepass, $this>
+     */
+    public function gatepasses(): HasMany
+    {
+        return $this->hasMany(Gatepass::class);
     }
 }

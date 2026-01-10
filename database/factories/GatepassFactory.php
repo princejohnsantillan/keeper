@@ -27,6 +27,7 @@ final class GatepassFactory extends Factory
             'child_id' => Child::factory(),
             'activity_id' => Activity::factory(),
             'code' => Str::upper(Str::random(6)),
+            'term_acceptance_id' => null,
         ];
     }
 }

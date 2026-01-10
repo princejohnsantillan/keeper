@@ -26,7 +26,6 @@ final class TermAcceptanceFactory extends Factory
             'guardian_id' => Guardian::factory(),
             'ip_address' => fake()->ipv4(),
             'user_agent' => fake()->userAgent(),
-            'accepted_at' => fake()->dateTimeBetween('-1 year', 'now'),
         ];
     }
 }

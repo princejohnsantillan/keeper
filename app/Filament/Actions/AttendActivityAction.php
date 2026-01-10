@@ -9,6 +9,7 @@ use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
+use App\Models\TermAcceptance;
 use App\ReadableCode;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -41,8 +42,25 @@ final class AttendActivityAction
                     ->get()
                     ->keyBy('child_id');
 
+                $termAcceptance = null;
+                $hasGatepassWithAcceptance = false;
+
+                if ($record->term !== null) {
+                    $termAcceptance = TermAcceptance::query()
+                        ->where('term_id', $record->term->id)
+                        ->where('guardian_id', $guardian->id)
+                        ->first();
+
+                    if ($termAcceptance !== null) {
+                        $hasGatepassWithAcceptance = Gatepass::query()
+                            ->where('term_acceptance_id', $termAcceptance->id)
+                            ->exists();
+                    }
+                }
+
                 return [
-                    'agree_to_terms' => false,
+                    'agree_to_terms' => $termAcceptance !== null,
+                    'terms_locked' => $hasGatepassWithAcceptance,
                     'children' => $children->map(fn ($child) => [
                         'child_id' => $child->id,
                         'child_name' => $child->full_name,
@@ -63,9 +81,47 @@ final class AttendActivityAction
                                 '</div>'
                             ))
                             ->html(),
+                        Hidden::make('terms_locked'),
                         Checkbox::make('agree_to_terms')
                             ->label('I have read and agree to the terms and conditions')
-                            ->live(),
+                            ->disabled(fn (callable $get): bool => (bool) $get('terms_locked'))
+                            ->live()
+                            ->afterStateUpdated(function (bool $state, Activity $record): void {
+                                $guardian = AuthUser::guardian();
+                                $term = $record->term;
+
+                                if ($term === null) {
+                                    return;
+                                }
+
+                                if ($state) {
+                                    TermAcceptance::query()->firstOrCreate(
+                                        [
+                                            'term_id' => $term->id,
+                                            'guardian_id' => $guardian->id,
+                                        ],
+                                        [
+                                            'ip_address' => request()->ip(),
+                                            'user_agent' => request()->userAgent(),
+                                        ]
+                                    );
+                                } else {
+                                    $termAcceptance = TermAcceptance::query()
+                                        ->where('term_id', $term->id)
+                                        ->where('guardian_id', $guardian->id)
+                                        ->first();
+
+                                    if ($termAcceptance !== null) {
+                                        $hasGatepassUsing = Gatepass::query()
+                                            ->where('term_acceptance_id', $termAcceptance->id)
+                                            ->exists();
+
+                                        if (! $hasGatepassUsing) {
+                                            $termAcceptance->delete();
+                                        }
+                                    }
+                                }
+                            }),
                     ]) : null,
                 Repeater::make('children')
                     ->hiddenLabel()
@@ -124,6 +180,18 @@ final class AttendActivityAction
                                         return;
                                     }
 
+                                    $guardian = AuthUser::guardian();
+                                    $termAcceptanceId = null;
+
+                                    if ($record->term !== null) {
+                                        $termAcceptance = TermAcceptance::query()
+                                            ->where('term_id', $record->term->id)
+                                            ->where('guardian_id', $guardian->id)
+                                            ->first();
+
+                                        $termAcceptanceId = $termAcceptance?->id;
+                                    }
+
                                     do {
                                         $code = ReadableCode::generate();
                                     } while (Gatepass::query()
@@ -136,9 +204,11 @@ final class AttendActivityAction
                                         'guardian_id' => $guardianId,
                                         'activity_id' => $record->id,
                                         'code' => $code,
+                                        'term_acceptance_id' => $termAcceptanceId,
                                     ]);
 
                                     $set('gatepass_code', $code);
+                                    $set('../../terms_locked', true);
 
                                     AppNotification::registeredToActivity()->send();
                                 }),

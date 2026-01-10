@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignIdFor(Guardian::class)->constrained()->cascadeOnDelete();
             $table->ipAddress('ip_address')->nullable();
             $table->string('user_agent')->nullable();
-            $table->timestamp('accepted_at');
             $table->timestamps();
 
             $table->unique(['term_id', 'guardian_id']);
