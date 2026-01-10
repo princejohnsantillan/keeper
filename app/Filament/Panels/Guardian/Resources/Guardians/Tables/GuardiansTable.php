@@ -15,7 +15,6 @@ use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
@@ -29,45 +28,48 @@ final class GuardiansTable
         return $table
             ->searchable(false)
             ->paginated(false)
+            ->persistSortInSession()
             ->defaultSort('first_name', 'asc')
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
             ->columns([
-                Split::make([
-                    SpatieMediaLibraryImageColumn::make('avatar')
-                        ->collection('avatar')
-                        ->circular()
-                        ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name))
-                        ->grow(false),
+                Stack::make([
+                    Split::make([
+                        SpatieMediaLibraryImageColumn::make('avatar')
+                            ->collection('avatar')
+                            ->circular()
+                            ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name))
+                            ->grow(false),
 
-                    Stack::make([
-                        TextColumn::make('full_name')
-                            ->label('Name')
-                            ->weight(FontWeight::Bold)
-                            ->icon(fn (Guardian $record) => $record->gender->getIcon())
-                            ->iconColor(fn (Guardian $record) => $record->gender->getColor())
-                            ->sortable(['first_name', 'last_name']),
+                        Stack::make([
+                            TextColumn::make('full_name')
+                                ->label('Name')
+                                ->weight(FontWeight::Bold)
+                                ->icon(fn (Guardian $record) => $record->gender->getIcon())
+                                ->iconColor(fn (Guardian $record) => $record->gender->getColor())
+                                ->sortable(['first_name', 'last_name']),
 
-                        TextColumn::make('birth_date')
-                            ->date('d M Y')
-                            ->suffix(fn (Guardian $record): string => ' · '.$record->birth_date->age.' yrs')
-                            ->sortable()
-                            ->color('gray'),
+                            TextColumn::make('birth_date')
+                                ->date('d M Y')
+                                ->suffix(fn (Guardian $record): string => ' · '.$record->birth_date->age.' yrs')
+                                ->sortable()
+                                ->color('gray'),
+                        ]),
                     ]),
 
                     Stack::make([
                         TextColumn::make('email')
                             ->icon(Heroicon::Envelope)
                             ->sortable()
-                            ->copyable()
-                            ->grow(false),
+                            ->copyable(),
 
                         TextColumn::make('phone')
                             ->icon(Heroicon::Phone)
-                            ->copyable()
-                            ->grow(false),
-                    ])->visibleFrom('md'),
-                ]),
+                            ->copyable(),
+                    ]),
 
-                Panel::make([
                     TextColumn::make('children.id')
                         ->label('Children')
                         ->icon(function (string $state, Guardian $record): ?string {
@@ -96,7 +98,7 @@ final class GuardiansTable
                             return $child->getNickname().", {$age} yrs".($inverseLabel ? " ({$inverseLabel})" : '');
                         })
                         ->listWithLineBreaks(),
-                ])->collapsible(),
+                ])->space(3),
             ])
             ->recordActions([
                 EditAction::make()

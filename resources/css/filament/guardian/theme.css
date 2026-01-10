@@ -3,42 +3,49 @@
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
 
-/* Remove table container styling for activities and children resources */
+/* Remove table container styling for activities, children, and guardians resources */
 .fi-resource-activities .fi-ta-ctn,
-.fi-resource-children .fi-ta-ctn {
+.fi-resource-children .fi-ta-ctn,
+.fi-resource-guardians .fi-ta-ctn {
     background-color: transparent;
     box-shadow: none;
     border: none;
     --tw-ring-shadow: none;
 }
 
-/* Remove header container styling for children resource */
-.fi-resource-children .fi-ta-header-ctn {
+/* Remove header container styling for children and guardians resources */
+.fi-resource-children .fi-ta-header-ctn,
+.fi-resource-guardians .fi-ta-header-ctn {
     background-color: transparent;
     box-shadow: none;
     border: none;
 }
 
-.fi-resource-children .fi-ta-header-toolbar {
+.fi-resource-children .fi-ta-header-toolbar,
+.fi-resource-guardians .fi-ta-header-toolbar {
     background-color: transparent;
     border: none;
 }
 
-/* Hide the dividing line between header and content for children resource */
-.fi-resource-children .fi-ta-ctn > .fi-ta-main {
+/* Hide the dividing line between header and content for children and guardians resources */
+.fi-resource-children .fi-ta-ctn > .fi-ta-main,
+.fi-resource-guardians .fi-ta-ctn > .fi-ta-main {
     border-top: none !important;
 }
 
-.fi-resource-children .fi-ta-header-ctn + * {
+.fi-resource-children .fi-ta-header-ctn + *,
+.fi-resource-guardians .fi-ta-header-ctn + * {
     border-top: none !important;
 }
 
-.fi-resource-children .fi-ta-ctn [class*="border-t"] {
+.fi-resource-children .fi-ta-ctn [class*="border-t"],
+.fi-resource-guardians .fi-ta-ctn [class*="border-t"] {
     border-top-color: transparent !important;
 }
 
-/* Remove border-bottom from table content header for children resource */
-.fi-resource-children .fi-ta-content-header {
+/* Remove border-bottom from table content header for children and guardians resources */
+.fi-resource-children .fi-ta-content-header,
+.fi-resource-guardians .fi-ta-content-header {
     border-bottom-width: 0;
 }
 
