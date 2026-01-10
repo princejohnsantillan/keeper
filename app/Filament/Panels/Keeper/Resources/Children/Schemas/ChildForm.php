@@ -8,6 +8,7 @@ use App\Enums\Gender;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -37,6 +38,8 @@ final class ChildForm
                 Select::make('gender')
                     ->options(Gender::class)
                     ->required(),
+                SpatieTagsInput::make('tags')
+                    ->columnSpanFull(),
                 Textarea::make('notes')
                     ->columnSpanFull(),
             ]);

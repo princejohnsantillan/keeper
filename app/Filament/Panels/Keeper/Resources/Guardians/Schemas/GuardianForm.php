@@ -8,6 +8,7 @@ use App\Enums\Gender;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -43,6 +44,8 @@ final class GuardianForm
                     ->tel(),
                 Select::make('user_id')
                     ->relationship('user', 'name'),
+                SpatieTagsInput::make('tags')
+                    ->columnSpanFull(),
             ]);
     }
 }

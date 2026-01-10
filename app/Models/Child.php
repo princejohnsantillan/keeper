@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Tags\HasTags;
 
 /**
  * @mixin IdeHelperChild
@@ -24,6 +25,7 @@ final class Child extends Model implements HasMedia
     /** @use HasFactory<ChildFactory> */
     use HasFactory;
 
+    use HasTags;
     use InteractsWithMedia;
     use SoftDeletes;
 

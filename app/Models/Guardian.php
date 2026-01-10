@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Tags\HasTags;
 
 /**
  * @mixin IdeHelperGuardian
@@ -23,6 +24,7 @@ final class Guardian extends Model implements HasMedia
     /** @use HasFactory<\Database\Factories\GuardianFactory> */
     use HasFactory;
 
+    use HasTags;
     use InteractsWithMedia;
     use SoftDeletes;
 

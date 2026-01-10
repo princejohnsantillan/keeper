@@ -9,6 +9,7 @@
         "php": "^8.2",
         "filament/filament": "^4.0",
         "filament/spatie-laravel-media-library-plugin": "^4.0",
+        "filament/spatie-laravel-tags-plugin": "^4.5",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.41",
         "laravel/tinker": "^2.10.1",
