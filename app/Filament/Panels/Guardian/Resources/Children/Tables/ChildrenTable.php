@@ -23,7 +23,6 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
@@ -40,33 +39,37 @@ final class ChildrenTable
             ->paginated(false)
             ->persistSortInSession()
             ->defaultSort('first_name', 'asc')
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
             ->columns([
-                Split::make([
-                    SpatieMediaLibraryImageColumn::make('avatar')
-                        ->collection('avatar')
-                        ->circular()
-                        ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
-                        ->grow(false),
+                Stack::make([
+                    Split::make([
+                        SpatieMediaLibraryImageColumn::make('avatar')
+                            ->collection('avatar')
+                            ->circular()
+                            ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
+                            ->grow(false),
 
-                    Stack::make([
-                        TextColumn::make('nickname')
-                            ->label('Name')
-                            ->weight(FontWeight::Bold)
-                            ->icon(fn (Child $record) => $record->gender->getIcon())
-                            ->iconColor(fn (Child $record) => $record->gender->getColor())
-                            ->getStateUsing(fn (Child $record): string => $record->getNickname())
-                            ->description(fn (Child $record): string => $record->full_name)
-                            ->sortable(['first_name', 'last_name']),
+                        Stack::make([
+                            TextColumn::make('nickname')
+                                ->label('Name')
+                                ->weight(FontWeight::Bold)
+                                ->icon(fn (Child $record) => $record->gender->getIcon())
+                                ->iconColor(fn (Child $record) => $record->gender->getColor())
+                                ->getStateUsing(fn (Child $record): string => $record->getNickname())
+                                ->description(fn (Child $record): string => $record->full_name)
+                                ->sortable(['first_name', 'last_name']),
 
-                        TextColumn::make('birth_date')
-                            ->date('d M Y')
-                            ->suffix(fn (Child $record): string => ' · '.$record->birth_date->age.' yrs')
-                            ->sortable()
-                            ->color('gray'),
+                            TextColumn::make('birth_date')
+                                ->date('d M Y')
+                                ->suffix(fn (Child $record): string => ' · '.$record->birth_date->age.' yrs')
+                                ->sortable()
+                                ->color('gray'),
+                        ]),
                     ]),
-                ]),
 
-                Panel::make([
                     TextColumn::make('guardians.id')
                         ->label('Guardians')
                         ->icon(function (string $state, Child $record): ?string {
@@ -95,7 +98,7 @@ final class ChildrenTable
                         })
                         ->listWithLineBreaks()
                         ->action(ChildrenTable::getUpdateGuardiansAction()),
-                ])->collapsible(),
+                ])->space(3),
             ])
             ->recordAction('edit')
             ->recordActions([]);

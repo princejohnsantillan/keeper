@@ -3,11 +3,42 @@
 @source '../../../../app/Filament';
 @source '../../../../resources/views/filament';
 
-/* Remove table container styling for activities resource */
-.fi-resource-activities .fi-ta-ctn {
+/* Remove table container styling for activities and children resources */
+.fi-resource-activities .fi-ta-ctn,
+.fi-resource-children .fi-ta-ctn {
     background-color: transparent;
     box-shadow: none;
     border: none;
     --tw-ring-shadow: none;
+}
+
+/* Remove header container styling for children resource */
+.fi-resource-children .fi-ta-header-ctn {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.fi-resource-children .fi-ta-header-toolbar {
+    background-color: transparent;
+    border: none;
+}
+
+/* Hide the dividing line between header and content for children resource */
+.fi-resource-children .fi-ta-ctn > .fi-ta-main {
+    border-top: none !important;
+}
+
+.fi-resource-children .fi-ta-header-ctn + * {
+    border-top: none !important;
+}
+
+.fi-resource-children .fi-ta-ctn [class*="border-t"] {
+    border-top-color: transparent !important;
+}
+
+/* Remove border-bottom from table content header for children resource */
+.fi-resource-children .fi-ta-content-header {
+    border-bottom-width: 0;
 }
 
