@@ -100,75 +100,82 @@ final class GuardiansTable
                         ->listWithLineBreaks(),
                 ])->space(3),
             ])
-            ->recordActions([
-                EditAction::make()
-                    ->slideOver()
-                    ->hiddenLabel()
-                    ->mutateRecordDataUsing(function (array $data, Guardian $record): array {
-                        $children = AuthUser::guardian()->children;
+            ->recordAction('view')
+            ->recordActions([]);
+    }
 
-                        $relationshipsByChildId = Relationship::query()
-                            ->where('guardian_id', $record->id)
-                            ->whereIn('child_id', $children->pluck('id'))
-                            ->get()
-                            ->keyBy('child_id');
+    public static function getEditAction(): EditAction
+    {
+        return EditAction::make()
+            ->slideOver()
+            ->mutateRecordDataUsing(function (array $data, Guardian $record): array {
+                $children = AuthUser::guardian()->children;
 
-                        $data['children'] = $children
-                            ->map(fn (Child $child): array => [
-                                'child_id' => $child->id,
-                                'child_name' => $child->full_name,
-                                'relationship' => $relationshipsByChildId->get($child->id)?->relationship?->value,
-                            ])
-                            ->all();
+                $relationshipsByChildId = Relationship::query()
+                    ->where('guardian_id', $record->id)
+                    ->whereIn('child_id', $children->pluck('id'))
+                    ->get()
+                    ->keyBy('child_id');
 
-                        return $data;
-                    })
-                    ->using(function (Guardian $record, array $data): Guardian {
-                        /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
-                        $rows = $data['children'] ?? [];
+                $data['children'] = $children
+                    ->map(fn (Child $child): array => [
+                        'child_id' => $child->id,
+                        'child_name' => $child->full_name,
+                        'relationship' => $relationshipsByChildId->get($child->id)?->relationship?->value,
+                    ])
+                    ->all();
 
-                        unset($data['children']);
+                return $data;
+            })
+            ->using(function (Guardian $record, array $data): Guardian {
+                /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
+                $rows = $data['children'] ?? [];
 
-                        $record->update($data);
+                unset($data['children']);
 
-                        $syncData = [];
+                $record->update($data);
 
-                        foreach ($rows as $row) {
-                            $childId = (int) ($row['child_id'] ?? 0);
-                            $relationship = $row['relationship'] ?? null;
+                $syncData = [];
 
-                            if ($childId <= 0) {
-                                continue;
-                            }
+                foreach ($rows as $row) {
+                    $childId = (int) ($row['child_id'] ?? 0);
+                    $relationship = $row['relationship'] ?? null;
 
-                            if ($relationship === null || $relationship === '') {
-                                continue;
-                            }
+                    if ($childId <= 0) {
+                        continue;
+                    }
 
-                            $syncData[$childId] = [
-                                'relationship' => $relationship,
-                            ];
-                        }
+                    if ($relationship === null || $relationship === '') {
+                        continue;
+                    }
 
-                        $record->children()->sync($syncData);
+                    $syncData[$childId] = [
+                        'relationship' => $relationship,
+                    ];
+                }
 
-                        return $record;
-                    }),
-                DeleteAction::make()
-                    ->hiddenLabel()
-                    ->using(function (Guardian $record): void {
-                        $childIds = AuthUser::guardian()->children()->pluck('children.id');
+                $record->children()->sync($syncData);
 
-                        Relationship::query()
-                            ->where('guardian_id', $record->id)
-                            ->whereIn('child_id', $childIds)
-                            ->delete();
+                return $record;
+            });
+    }
 
-                        Notification::make()
-                            ->title('Deleted')
-                            ->danger()
-                            ->send();
-                    })->visible(fn (Guardian $record) => AuthUser::guardianId() !== $record->id),
-            ]);
+    public static function getDeleteAction(): DeleteAction
+    {
+        return DeleteAction::make()
+            ->using(function (Guardian $record): void {
+                $childIds = AuthUser::guardian()->children()->pluck('children.id');
+
+                Relationship::query()
+                    ->where('guardian_id', $record->id)
+                    ->whereIn('child_id', $childIds)
+                    ->delete();
+
+                Notification::make()
+                    ->title('Deleted')
+                    ->danger()
+                    ->send();
+            })
+            ->visible(fn (Guardian $record) => AuthUser::guardianId() !== $record->id);
     }
 }

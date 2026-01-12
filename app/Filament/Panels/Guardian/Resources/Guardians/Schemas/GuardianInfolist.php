@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Panels\Guardian\Resources\Children\Schemas;
+namespace App\Filament\Panels\Guardian\Resources\Guardians\Schemas;
 
 use App\Avatar;
-use App\Models\Child;
+use App\Enums\Relationship as RelationshipEnum;
+use App\Models\Guardian;
 use Carbon\CarbonImmutable;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -17,7 +18,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 
-final class ChildInfolist
+final class GuardianInfolist
 {
     public static function configure(Schema $schema): Schema
     {
@@ -35,18 +36,13 @@ final class ChildInfolist
                             ->collection('avatar')
                             ->circular()
                             ->size(120)
-                            ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name)),
+                            ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name)),
 
                         Group::make([
                             TextEntry::make('full_name')
                                 ->hiddenLabel()
                                 ->size(TextSize::Large)
                                 ->weight(FontWeight::Bold),
-
-                            TextEntry::make('nickname')
-                                ->label('Known as')
-                                ->placeholder('—')
-                                ->icon('heroicon-o-chat-bubble-bottom-center-text'),
 
                             TextEntry::make('birth_date')
                                 ->label('Age')
@@ -65,14 +61,26 @@ final class ChildInfolist
 
                             IconEntry::make('gender')
                                 ->label('Gender'),
+
+                            TextEntry::make('email')
+                                ->label('Email')
+                                ->icon('heroicon-o-envelope')
+                                ->copyable()
+                                ->placeholder('—'),
+
+                            TextEntry::make('phone')
+                                ->label('Phone')
+                                ->icon('heroicon-o-phone')
+                                ->copyable()
+                                ->placeholder('—'),
                         ]),
                     ]),
 
-                Section::make('Guardians')
-                    ->icon('heroicon-o-users')
+                Section::make('Children')
+                    ->icon('fas-children')
                     ->collapsible()
                     ->schema([
-                        RepeatableEntry::make('guardians')
+                        RepeatableEntry::make('children')
                             ->hiddenLabel()
                             ->columns([
                                 'default' => 1,
@@ -82,37 +90,32 @@ final class ChildInfolist
                                 Group::make([
                                     TextEntry::make('full_name')
                                         ->label('Name')
-                                        ->icon('heroicon-o-user'),
+                                        ->icon(fn ($record) => $record->gender->getIcon())
+                                        ->iconColor(fn ($record) => $record->gender->getColor()),
 
                                     TextEntry::make('pivot.relationship')
                                         ->label('Relationship')
+                                        ->formatStateUsing(fn (RelationshipEnum $state, $record): string => $state->inverse($record->gender)->getLabel())
                                         ->badge(),
                                 ]),
 
                                 Group::make([
-                                    TextEntry::make('phone')
-                                        ->label('Phone')
-                                        ->icon('heroicon-o-phone')
-                                        ->placeholder('—'),
+                                    TextEntry::make('birth_date')
+                                        ->label('Age')
+                                        ->icon('heroicon-o-cake')
+                                        ->formatStateUsing(function (CarbonImmutable $state): string {
+                                            $age = $state->age;
+                                            $years = $age === 1 ? 'year' : 'years';
 
-                                    TextEntry::make('email')
-                                        ->label('Email')
-                                        ->icon('heroicon-o-envelope')
+                                            return "{$age} {$years} old";
+                                        }),
+
+                                    TextEntry::make('nickname')
+                                        ->label('Known as')
+                                        ->icon('heroicon-o-chat-bubble-bottom-center-text')
                                         ->placeholder('—'),
                                 ]),
                             ]),
-                    ]),
-
-                Section::make('Notes')
-                    ->icon('heroicon-o-document-text')
-                    ->collapsible()
-                    ->collapsed(fn (Child $record): bool => empty($record->notes))
-                    ->schema([
-                        TextEntry::make('notes')
-                            ->hiddenLabel()
-                            ->placeholder('No notes recorded.')
-                            ->prose()
-                            ->markdown(),
                     ]),
             ]);
     }
