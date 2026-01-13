@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Guardians\Tables;
 
-use App\AuthUser;
 use App\Enums\Relationship as RelationshipEnum;
+use App\Filament\Actions\DeleteGuardianAction;
+use App\Filament\Actions\EditGuardianAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
-use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Relationship;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Notifications\Notification;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\Layout\Split;
@@ -127,76 +126,11 @@ final class GuardiansTable
 
     public static function getEditAction(): EditAction
     {
-        return EditAction::make()
-            ->slideOver()
-            ->mutateRecordDataUsing(function (array $data, Guardian $record): array {
-                $children = AuthUser::guardian()->children;
-
-                $relationshipsByChildId = Relationship::query()
-                    ->where('guardian_id', $record->id)
-                    ->whereIn('child_id', $children->pluck('id'))
-                    ->get()
-                    ->keyBy('child_id');
-
-                $data['children'] = $children
-                    ->map(fn (Child $child): array => [
-                        'child_id' => $child->id,
-                        'child_name' => $child->full_name,
-                        'relationship' => $relationshipsByChildId->get($child->id)?->relationship?->value,
-                    ])
-                    ->all();
-
-                return $data;
-            })
-            ->using(function (Guardian $record, array $data): Guardian {
-                /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
-                $rows = $data['children'] ?? [];
-
-                unset($data['children']);
-
-                $record->update($data);
-
-                $syncData = [];
-
-                foreach ($rows as $row) {
-                    $childId = (int) ($row['child_id'] ?? 0);
-                    $relationship = $row['relationship'] ?? null;
-
-                    if ($childId <= 0) {
-                        continue;
-                    }
-
-                    if ($relationship === null || $relationship === '') {
-                        continue;
-                    }
-
-                    $syncData[$childId] = [
-                        'relationship' => $relationship,
-                    ];
-                }
-
-                $record->children()->sync($syncData);
-
-                return $record;
-            });
+        return EditGuardianAction::make();
     }
 
     public static function getDeleteAction(): DeleteAction
     {
-        return DeleteAction::make()
-            ->using(function (Guardian $record): void {
-                $childIds = AuthUser::guardian()->children()->pluck('children.id');
-
-                Relationship::query()
-                    ->where('guardian_id', $record->id)
-                    ->whereIn('child_id', $childIds)
-                    ->delete();
-
-                Notification::make()
-                    ->title('Deleted')
-                    ->danger()
-                    ->send();
-            })
-            ->visible(fn (Guardian $record) => AuthUser::guardianId() !== $record->id);
+        return DeleteGuardianAction::make();
     }
 }

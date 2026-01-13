@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Activities\Pages;
 
 use App\AuthUser;
-use App\Filament\Notifications\AppNotification;
+use App\Filament\Actions\BackToActivitiesAction;
+use App\Filament\Actions\RequestGatePassAction;
 use App\Filament\Panels\Guardian\Resources\Activities\ActivityResource;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
-use App\Models\Guardian;
-use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -27,7 +26,6 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -71,11 +69,7 @@ final class AttendActivity extends Page
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('back_to_activities')
-                ->label('Back to Activities')
-                ->icon(Heroicon::ArrowLeft)
-                ->color('gray')
-                ->url(ActivityResource::getUrl('index')),
+            BackToActivitiesAction::make(),
         ];
     }
 
@@ -131,7 +125,7 @@ final class AttendActivity extends Page
             ->components([
                 Form::make(array_filter([
                     $activity->term !== null ? self::termsFieldset($activity) : null,
-                    self::childrenRepeater(),
+                    self::childrenRepeater($activity),
                 ])),
             ])
             ->statePath('data');
@@ -190,7 +184,7 @@ final class AttendActivity extends Page
             });
     }
 
-    private static function childrenRepeater(): Repeater
+    private static function childrenRepeater(Activity $activity): Repeater
     {
         return Repeater::make('children')
             ->hiddenLabel()
@@ -206,7 +200,7 @@ final class AttendActivity extends Page
                 self::childIdHidden(),
                 self::childNameInput(),
                 self::guardianSelect(),
-                self::gatepassFlex(),
+                self::gatepassFlex($activity),
             ]);
     }
 
@@ -246,11 +240,11 @@ final class AttendActivity extends Page
             ->required();
     }
 
-    private static function gatepassFlex(): Flex
+    private static function gatepassFlex(Activity $activity): Flex
     {
         return Flex::make([
             self::gatepassCodeHidden(),
-            self::requestGatePassAction(),
+            RequestGatePassAction::make($activity),
             self::gatepassDisplayPlaceholder(),
         ]);
     }
@@ -260,68 +254,6 @@ final class AttendActivity extends Page
         return Hidden::make('gatepass_code');
     }
 
-    private static function requestGatePassAction(): Action
-    {
-        return Action::make('requestGatePass')
-            ->label('Request')
-            ->button()
-            ->color('primary')
-            ->icon(Heroicon::Ticket)
-            ->hidden(fn (callable $get): bool => ! empty($get('gatepass_code')))
-            ->action(function (
-                callable $get,
-                callable $set,
-                TermAcceptanceServiceInterface $termAcceptanceService,
-                GatepassServiceInterface $gatepassService,
-            ): void {
-                /** @var Activity $activity */
-                $activity = self::getActivityFromContext();
-
-                if ($activity->term !== null && ! $get('../../agree_to_terms')) {
-                    AppNotification::termsNotAgreed()->send();
-
-                    return;
-                }
-
-                $childId = $get('child_id');
-                $guardianId = $get('guardian_id');
-
-                if (empty($guardianId)) {
-                    return;
-                }
-
-                $requestingGuardian = AuthUser::guardian();
-                /** @var Child|null $child */
-                $child = Child::query()->find($childId);
-                /** @var Guardian|null $checkinGuardian */
-                $checkinGuardian = Guardian::query()->find($guardianId);
-
-                if ($child === null || $checkinGuardian === null) {
-                    return;
-                }
-
-                $termAcceptance = null;
-                if ($activity->term !== null) {
-                    $termAcceptance = $termAcceptanceService->getAcceptance(
-                        $activity->term,
-                        $requestingGuardian
-                    );
-                }
-
-                $gatepass = $gatepassService->create(
-                    $activity,
-                    $child,
-                    $checkinGuardian,
-                    $termAcceptance
-                );
-
-                $set('gatepass_code', $gatepass->code);
-                $set('../../terms_locked', true);
-
-                AppNotification::registeredToActivity()->send();
-            });
-    }
-
     private static function gatepassDisplayPlaceholder(): Placeholder
     {
         return Placeholder::make('gatepass_display')
@@ -329,12 +261,5 @@ final class AttendActivity extends Page
             ->hiddenLabel()
             ->content(fn (callable $get): ?string => $get('gatepass_code'))
             ->hidden(fn (callable $get): bool => empty($get('gatepass_code')));
-    }
-
-    private static function getActivityFromContext(): Activity
-    {
-        // This method is called from within an action context where we need the activity
-        // The activity is retrieved from the Livewire component's record
-        return app('livewire')->current()->getRecord();
     }
 }

@@ -40,3 +40,11 @@
 | Qualified relationship | Qualifier + noun | `checkinAttendance()`, `ownedOrganizations()` |
 | Complex column (private) | `{field}Column()` | `self::childrenColumn()` |
 | Complex entry (private) | `{field}Entry()` | `self::descriptionEntry()` |
+
+## Variable Naming
+
+| Type | Convention | Example |
+|------|------------|---------|
+| Filament action variable | Full class name in camelCase | `$createChildAction = CreateChildAction::make()` |
+
+**Note:** Never use `$action` as a variable name for Filament actions. It is a reserved parameter name in Filament callbacks. See [Filament Actions guidelines](./filament-actions.md) for details.
