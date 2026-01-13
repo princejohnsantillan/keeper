@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Terms\Schemas;
 
-use Filament\Infolists\Components\TextEntry;
+use App\Filament\Components\Infolists\AppTextEntry;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
 
 final class TermInfolist
 {
@@ -15,14 +13,9 @@ final class TermInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('name')
-                    ->hiddenLabel()
-                    ->size(TextSize::Large)
-                    ->weight(FontWeight::Bold)
+                AppTextEntry::title('name')
                     ->columnSpanFull(),
-                TextEntry::make('content')
-                    ->hiddenLabel()
-                    ->markdown()
+                AppTextEntry::content()
                     ->columnSpanFull(),
             ]);
     }

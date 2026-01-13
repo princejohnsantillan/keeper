@@ -23,7 +23,9 @@
 | Form | `{Model}Form` | `ChildForm` | `Resources/{Model}/Schemas/` |
 | Infolist | `{Model}Infolist` | `ChildInfolist` | `Resources/{Model}/Schemas/` |
 | Table | `{PluralModel}Table` | `ChildrenTable` | `Resources/{Model}/Tables/` |
-| Component | `App{Type}` | `AppTextInput`, `AppSelect` | `app/Filament/Components/` |
+| Form Component | `App{Type}` | `AppTextInput`, `AppSelect` | `app/Filament/Components/Forms/` |
+| Infolist Component | `App{Type}` | `AppTextEntry`, `AppIconEntry` | `app/Filament/Components/Infolists/` |
+| Table Component | `App{Type}` | `AppTextColumn`, `AppIconColumn` | `app/Filament/Components/Tables/` |
 | Notification | `AppNotification` | - | `app/Filament/Notifications/` |
 
 ## Method Patterns
@@ -31,6 +33,10 @@
 | Type | Convention | Example |
 |------|------------|---------|
 | Static factory | `make()` | `AttendActivityAction::make()` |
-| Field builder | Noun | `AppTextInput::firstName()` |
+| Form field builder | Noun | `AppTextInput::firstName()` |
+| Infolist entry builder | Noun | `AppTextEntry::fullName()` |
+| Table column builder | Noun | `AppTextColumn::birthDate()` |
 | Notification factory | Past participle | `AppNotification::registeredToActivity()` |
 | Qualified relationship | Qualifier + noun | `checkinAttendance()`, `ownedOrganizations()` |
+| Complex column (private) | `{field}Column()` | `self::childrenColumn()` |
+| Complex entry (private) | `{field}Entry()` | `self::descriptionEntry()` |

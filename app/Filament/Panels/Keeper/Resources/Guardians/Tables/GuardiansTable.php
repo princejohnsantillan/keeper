@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Guardians\Tables;
 
-use App\Avatar;
-use App\Models\Guardian;
+use App\Filament\Components\Tables\AppIconColumn;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppSpatieTagsColumn;
+use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Tables\Columns\SpatieTagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -21,27 +20,15 @@ final class GuardiansTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('avatar')
-                    ->collection('avatar')
-                    ->circular()
-                    ->defaultImageUrl(fn (Guardian $record): string => Avatar::generateUrl($record->full_name)),
-                TextColumn::make('first_name')
-                    ->searchable(),
-                TextColumn::make('middle_name')
-                    ->searchable(),
-                TextColumn::make('last_name')
-                    ->searchable(),
-                TextColumn::make('birth_date')
-                    ->date()
-                    ->sortable(),
-                IconColumn::make('gender')
-                    ->boolean(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('phone')
-                    ->searchable(),
-                SpatieTagsColumn::make('tags'),
+                AppSpatieMediaLibraryImageColumn::avatar(),
+                AppTextColumn::firstName(),
+                AppTextColumn::middleName(),
+                AppTextColumn::lastName(),
+                self::birthDateColumn(),
+                AppIconColumn::gender(),
+                AppTextColumn::email('email', 'Email address'),
+                AppTextColumn::phone(),
+                AppSpatieTagsColumn::tags(),
             ])
             ->filters([
                 //
@@ -55,5 +42,12 @@ final class GuardiansTable
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private static function birthDateColumn(): TextColumn
+    {
+        return TextColumn::make('birth_date')
+            ->date()
+            ->sortable();
     }
 }

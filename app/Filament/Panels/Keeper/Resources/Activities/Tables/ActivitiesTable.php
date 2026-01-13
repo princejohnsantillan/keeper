@@ -9,6 +9,8 @@ use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
 use App\Filament\Components\Forms\AppToggleButtons;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppTextColumn;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
 use App\Models\Activity;
 use App\Models\Child;
@@ -21,7 +23,6 @@ use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
@@ -32,25 +33,12 @@ final class ActivitiesTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('thumbnail')
-                    ->collection('thumbnail')
-                    ->conversion('thumbnail'),
-                TextColumn::make('title')
-                    ->description(fn (Activity $activity): ?string => $activity->description)
-                    ->sortable(),
-                TextColumn::make('location')
-                    ->searchable(),
-                TextColumn::make('starts_at')
-                    ->dateTime('D - h:i A')
-                    ->description(fn (Activity $record) => $record->starts_at->format('F d'))
-                    ->sortable(),
-                TextColumn::make('ends_at')
-                    ->dateTime('D - h:i A')
-                    ->description(fn (Activity $record) => $record->ends_at->format('F d'))
-                    ->sortable(),
-                TextColumn::make('creator.name')
-                    ->numeric()
-                    ->sortable(),
+                AppSpatieMediaLibraryImageColumn::thumbnail(),
+                self::titleColumn(),
+                AppTextColumn::location(),
+                self::startsAtColumn(),
+                self::endsAtColumn(),
+                self::creatorColumn(),
             ])
             ->filters([
                 //
@@ -66,6 +54,36 @@ final class ActivitiesTable
                     ->hiddenLabel(),
                 DeleteAction::make()->hiddenLabel(),
             ]);
+    }
+
+    private static function titleColumn(): TextColumn
+    {
+        return TextColumn::make('title')
+            ->description(fn (Activity $activity): ?string => $activity->description)
+            ->sortable();
+    }
+
+    private static function startsAtColumn(): TextColumn
+    {
+        return TextColumn::make('starts_at')
+            ->dateTime('D - h:i A')
+            ->description(fn (Activity $record) => $record->starts_at->format('F d'))
+            ->sortable();
+    }
+
+    private static function endsAtColumn(): TextColumn
+    {
+        return TextColumn::make('ends_at')
+            ->dateTime('D - h:i A')
+            ->description(fn (Activity $record) => $record->ends_at->format('F d'))
+            ->sortable();
+    }
+
+    private static function creatorColumn(): TextColumn
+    {
+        return TextColumn::make('creator.name')
+            ->numeric()
+            ->sortable();
     }
 
     private static function walkInAction(): Action

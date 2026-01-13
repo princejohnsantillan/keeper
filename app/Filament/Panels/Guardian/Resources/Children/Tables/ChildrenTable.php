@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Children\Tables;
 
 use App\AuthUser;
-use App\Avatar;
 use App\Enums\Relationship as RelationshipEnum;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
 use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Relationship;
@@ -19,13 +19,9 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -46,28 +42,13 @@ final class ChildrenTable
             ->columns([
                 Stack::make([
                     Split::make([
-                        SpatieMediaLibraryImageColumn::make('avatar')
-                            ->collection('avatar')
-                            ->circular()
+                        AppSpatieMediaLibraryImageColumn::avatar()
                             ->imageSize(80)
-                            ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
                             ->grow(false),
 
                         Stack::make([
-                            TextColumn::make('nickname')
-                                ->label('Name')
-                                ->weight(FontWeight::Bold)
-                                ->icon(fn (Child $record) => $record->gender->getIcon())
-                                ->iconColor(fn (Child $record) => $record->gender->getColor())
-                                ->getStateUsing(fn (Child $record): string => $record->getNickname())
-                                ->description(fn (Child $record): string => $record->full_name)
-                                ->sortable(['first_name', 'last_name']),
-
-                            TextColumn::make('birth_date')
-                                ->date('d M Y')
-                                ->suffix(fn (Child $record): string => ' · '.$record->birth_date->age.' yrs')
-                                ->sortable()
-                                ->color('gray'),
+                            self::nicknameColumn(),
+                            self::birthDateColumn(),
                         ]),
                     ]),
                 ])->space(3),
@@ -76,64 +57,25 @@ final class ChildrenTable
             ->recordActions([]);
     }
 
-    public static function getFirstNameColumn(): TextColumn
-    {
-        return TextColumn::make('first_name')
-            ->searchable()
-            ->sortable();
-    }
-
-    public static function getMiddleNameColumn(): TextColumn
-    {
-        return TextColumn::make('middle_name')
-            ->searchable()
-            ->sortable();
-    }
-
-    public static function getLastNameColumn(): TextColumn
-    {
-        return TextColumn::make('last_name')
-            ->searchable()
-            ->sortable();
-    }
-
-    public static function getNicknameColumn(): TextColumn
+    private static function nicknameColumn(): TextColumn
     {
         return TextColumn::make('nickname')
-            ->searchable()
-            ->sortable();
+            ->label('Name')
+            ->weight(FontWeight::Bold)
+            ->icon(fn (Child $record) => $record->gender->getIcon())
+            ->iconColor(fn (Child $record) => $record->gender->getColor())
+            ->getStateUsing(fn (Child $record): string => $record->getNickname())
+            ->description(fn (Child $record): string => $record->full_name)
+            ->sortable(['first_name', 'last_name']);
     }
 
-    public static function getBirthDateColumn(): TextColumn
+    private static function birthDateColumn(): TextColumn
     {
         return TextColumn::make('birth_date')
             ->date('d M Y')
-            ->description(function (Child $record): string {
-                $age = $record->birth_date->age;
-
-                return "{$age} yrs";
-            });
-    }
-
-    public static function getGenderColumn(): IconColumn
-    {
-        return IconColumn::make('gender')->label('');
-    }
-
-    public static function getRelationshipColumn(): TextColumn
-    {
-        return TextColumn::make('relationship')
-            ->getStateUsing(function (Child $record): ?string {
-                $relationship = Relationship::where('child_id', $record->id)
-                    ->whereNotNull('guardian_id')
-                    ->where('guardian_id', AuthUser::guardianId())
-                    ->first();
-
-                return $relationship?->relationship->inverse($record->gender)->getLabel();
-            })
-            ->badge()
-            ->size(TextSize::Large)
-            ->color(Color::Stone);
+            ->suffix(fn (Child $record): string => ' · '.$record->birth_date->age.' yrs')
+            ->sortable()
+            ->color('gray');
     }
 
     public static function getEditAction(): EditAction

@@ -155,7 +155,7 @@ final class AttendActivity extends Page
             ->hiddenLabel()
             ->state(new HtmlString(
                 '<div class="fi-prose prose dark:prose-invert max-w-none max-h-64 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">'.
-                Str::markdown($activity->term->content).
+                Str::markdown($activity->term?->content ?: '').
                 '</div>'
             ))
             ->html();

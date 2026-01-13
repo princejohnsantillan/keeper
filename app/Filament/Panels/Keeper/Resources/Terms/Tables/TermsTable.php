@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Terms\Tables;
 
+use App\Filament\Components\Tables\AppTextColumn;
 use App\Filament\Panels\Keeper\Resources\Terms\Schemas\TermInfolist;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -17,12 +18,8 @@ final class TermsTable
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->label('Created')
-                    ->dateTime('M d, Y')
-                    ->sortable(),
+                AppTextColumn::name(),
+                self::createdAtColumn(),
             ])
             ->defaultSort('created_at', 'desc')
             ->paginated(false)
@@ -43,5 +40,13 @@ final class TermsTable
                             ->cancelParentActions(),
                     ]),
             ]);
+    }
+
+    private static function createdAtColumn(): TextColumn
+    {
+        return TextColumn::make('created_at')
+            ->label('Created')
+            ->dateTime('M d, Y')
+            ->sortable();
     }
 }

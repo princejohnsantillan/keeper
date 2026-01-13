@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Children\Tables;
 
-use App\Avatar;
-use App\Models\Child;
+use App\Filament\Components\Tables\AppIconColumn;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppSpatieTagsColumn;
+use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Tables\Columns\SpatieTagsColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 final class ChildrenTable
@@ -20,29 +18,14 @@ final class ChildrenTable
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('avatar')
-                    ->collection('avatar')
-                    ->circular()
-                    ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name)),
-                TextColumn::make('first_name')
-                    ->searchable(),
-                TextColumn::make('middle_name')
-                    ->searchable(),
-                TextColumn::make('last_name')
-                    ->searchable(),
-                TextColumn::make('nickname')
-                    ->searchable(),
-                TextColumn::make('birth_date')
-                    ->date('d M Y')
-                    ->description(function (Child $record): string {
-                        $age = $record->birth_date->age;
-
-                        return "{$age} yrs";
-                    })
-                    ->sortable(),
-                IconColumn::make('gender')
-                    ->boolean(),
-                SpatieTagsColumn::make('tags'),
+                AppSpatieMediaLibraryImageColumn::avatar(),
+                AppTextColumn::firstName(),
+                AppTextColumn::middleName(),
+                AppTextColumn::lastName(),
+                AppTextColumn::nickname(),
+                AppTextColumn::birthDate(),
+                AppIconColumn::gender(),
+                AppSpatieTagsColumn::tags(),
             ])
             ->filters([
                 //

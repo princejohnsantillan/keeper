@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Children\Schemas;
 
-use App\Avatar;
+use App\Filament\Components\Infolists\AppIconEntry;
+use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
+use App\Filament\Components\Infolists\AppTextEntry;
 use App\Models\Child;
-use Carbon\CarbonImmutable;
-use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
 
 final class ChildInfolist
 {
@@ -30,90 +27,63 @@ final class ChildInfolist
                         'sm' => 2,
                     ])
                     ->schema([
-                        SpatieMediaLibraryImageEntry::make('avatar')
-                            ->hiddenLabel()
-                            ->collection('avatar')
-                            ->circular()
-                            ->size(120)
-                            ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name)),
-
+                        AppSpatieMediaLibraryImageEntry::avatar(),
                         Group::make([
-                            TextEntry::make('full_name')
-                                ->hiddenLabel()
-                                ->size(TextSize::Large)
-                                ->weight(FontWeight::Bold),
-
-                            TextEntry::make('nickname')
-                                ->label('Known as')
-                                ->placeholder('—')
-                                ->icon('heroicon-o-chat-bubble-bottom-center-text'),
-
-                            TextEntry::make('birth_date')
-                                ->label('Age')
-                                ->icon('heroicon-o-cake')
-                                ->formatStateUsing(function (CarbonImmutable $state): string {
-                                    $age = $state->age;
-                                    $years = $age === 1 ? 'year' : 'years';
-
-                                    return "{$age} {$years} old";
-                                }),
-
-                            TextEntry::make('birth_date')
-                                ->label('Birthday')
-                                ->icon('heroicon-o-calendar')
-                                ->date('F j, Y'),
-
-                            IconEntry::make('gender')
-                                ->label('Gender'),
+                            AppTextEntry::fullName(),
+                            AppTextEntry::nickname(),
+                            AppTextEntry::age(),
+                            AppTextEntry::birthday(),
+                            AppIconEntry::gender(),
                         ]),
                     ]),
-
                 Section::make('Guardians')
                     ->icon('heroicon-o-users')
                     ->collapsible()
                     ->schema([
-                        RepeatableEntry::make('guardians')
-                            ->hiddenLabel()
-                            ->columns([
-                                'default' => 1,
-                                'sm' => 2,
-                            ])
-                            ->schema([
-                                Group::make([
-                                    TextEntry::make('full_name')
-                                        ->label('Name')
-                                        ->icon('heroicon-o-user'),
-
-                                    TextEntry::make('pivot.relationship')
-                                        ->label('Relationship')
-                                        ->badge(),
-                                ]),
-
-                                Group::make([
-                                    TextEntry::make('phone')
-                                        ->label('Phone')
-                                        ->icon('heroicon-o-phone')
-                                        ->placeholder('—'),
-
-                                    TextEntry::make('email')
-                                        ->label('Email')
-                                        ->icon('heroicon-o-envelope')
-                                        ->placeholder('—'),
-                                ]),
-                            ]),
+                        self::guardiansRepeatable(),
                     ]),
-
                 Section::make('Notes')
                     ->icon('heroicon-o-document-text')
                     ->collapsible()
                     ->collapsed(fn (Child $record): bool => empty($record->notes))
                     ->schema([
-                        TextEntry::make('notes')
-                            ->hiddenLabel()
-                            ->placeholder('No notes recorded.')
-                            ->prose()
-                            ->markdown(),
+                        AppTextEntry::notes()
+                            ->hiddenLabel(),
                     ]),
             ]);
+    }
+
+    private static function guardiansRepeatable(): RepeatableEntry
+    {
+        return RepeatableEntry::make('guardians')
+            ->hiddenLabel()
+            ->columns([
+                'default' => 1,
+                'sm' => 2,
+            ])
+            ->schema([
+                Group::make([
+                    self::guardianNameEntry(),
+                    self::relationshipEntry(),
+                ]),
+                Group::make([
+                    AppTextEntry::phone(),
+                    AppTextEntry::email(),
+                ]),
+            ]);
+    }
+
+    private static function guardianNameEntry(): TextEntry
+    {
+        return TextEntry::make('full_name')
+            ->label('Name')
+            ->icon('heroicon-o-user');
+    }
+
+    private static function relationshipEntry(): TextEntry
+    {
+        return TextEntry::make('pivot.relationship')
+            ->label('Relationship')
+            ->badge();
     }
 }
