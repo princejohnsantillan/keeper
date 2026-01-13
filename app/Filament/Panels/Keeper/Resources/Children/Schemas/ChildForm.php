@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Children\Schemas;
 
-use App\Enums\Gender;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\SpatieTagsInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSelect;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppSpatieTagsInput;
+use App\Filament\Components\Forms\AppTextarea;
+use App\Filament\Components\Forms\AppTextInput;
 use Filament\Schemas\Schema;
 
 final class ChildForm
@@ -19,28 +18,17 @@ final class ChildForm
     {
         return $schema
             ->components([
-                SpatieMediaLibraryFileUpload::make('avatar')
-                    ->collection('avatar')
-                    ->image()
-                    ->avatar()
-                    ->imageEditor()
-                    ->circleCropper()
-                    ->required()
+                AppSpatieMediaLibraryFileUpload::avatar()
                     ->columnSpanFull(),
-                TextInput::make('first_name')
-                    ->required(),
-                TextInput::make('middle_name'),
-                TextInput::make('last_name')
-                    ->required(),
-                TextInput::make('nickname'),
-                DatePicker::make('birth_date')
-                    ->required(),
-                Select::make('gender')
-                    ->options(Gender::class)
-                    ->required(),
-                SpatieTagsInput::make('tags')
+                AppTextInput::firstName(),
+                AppTextInput::middleName(),
+                AppTextInput::lastName(),
+                AppTextInput::nickname(),
+                AppDatePicker::birthDate(),
+                AppSelect::gender(),
+                AppSpatieTagsInput::tags()
                     ->columnSpanFull(),
-                Textarea::make('notes')
+                AppTextarea::notes()
                     ->columnSpanFull(),
             ]);
     }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Activities\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Components\Forms\AppDateTimePicker;
+use App\Filament\Components\Forms\AppSelect;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppTextarea;
+use App\Filament\Components\Forms\AppTextInput;
 use Filament\Schemas\Schema;
 
 final class ActivityForm
@@ -17,36 +17,20 @@ final class ActivityForm
     {
         return $schema
             ->components([
-                SpatieMediaLibraryFileUpload::make('thumbnail')
-                    ->collection('thumbnail')
-                    ->image()
-                    ->imageEditor()
-                    ->imageEditorAspectRatios([
-                        '16:9',
-                    ])
-                    ->required()
+                AppSpatieMediaLibraryFileUpload::thumbnail()
                     ->columnSpanFull(),
-                TextInput::make('title')
-                    ->required()->columnSpanFull(),
-                Textarea::make('description')
+                AppTextInput::title()
                     ->columnSpanFull(),
-                TextInput::make('location')
-                    ->required()->columnSpanFull(),
-                DateTimePicker::make('starts_at')
-                    ->displayFormat('d M Y (h:i A)')
-                    ->required(),
-                DateTimePicker::make('ends_at')
-                    ->displayFormat('d M Y (h:i A)')
-                    ->required(),
-                DateTimePicker::make('published_at')
-                    ->displayFormat('d M Y (h:i A)')
-                    ->helperText('Leave empty to keep as draft. Set a date to publish the activity to guardians.'),
-                Select::make('term_id')
-                    ->label('Terms & Conditions')
-                    ->relationship('term', 'name')
-                    ->native(false)
+                AppTextarea::description()
                     ->columnSpanFull(),
-                Textarea::make('notes')
+                AppTextInput::location()
+                    ->columnSpanFull(),
+                AppDateTimePicker::startsAt(),
+                AppDateTimePicker::endsAt(),
+                AppDateTimePicker::publishedAt(),
+                AppSelect::term()
+                    ->columnSpanFull(),
+                AppTextarea::notes()
                     ->columnSpanFull(),
             ])->columns(2);
     }

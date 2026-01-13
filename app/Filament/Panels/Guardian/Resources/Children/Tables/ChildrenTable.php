@@ -198,26 +198,7 @@ final class ChildrenTable
                 ];
             })
             ->schema([
-                Repeater::make('guardians')
-                    ->hiddenLabel()
-                    ->addable(false)
-                    ->deletable(false)
-                    ->reorderable(false)
-                    ->table([
-                        TableColumn::make('Guardian'),
-                        TableColumn::make('Relationship'),
-                    ])
-                    ->schema([
-                        Hidden::make('guardian_id')
-                            ->required(),
-                        TextInput::make('guardian_name')
-                            ->label('Guardian')
-                            ->disabled(),
-                        Select::make('relationship')
-                            ->options(RelationshipEnum::class)
-                            ->placeholder('Select a relationship')
-                            ->native(false),
-                    ])
+                self::guardiansRepeater()
                     ->columnSpanFull(),
             ])
             ->action(function (Child $record, array $data): void {
@@ -266,5 +247,44 @@ final class ChildrenTable
                     ->danger()
                     ->send();
             });
+    }
+
+    private static function guardiansRepeater(): Repeater
+    {
+        return Repeater::make('guardians')
+            ->hiddenLabel()
+            ->addable(false)
+            ->deletable(false)
+            ->reorderable(false)
+            ->table([
+                TableColumn::make('Guardian'),
+                TableColumn::make('Relationship'),
+            ])
+            ->schema([
+                self::guardianIdHidden(),
+                self::guardianNameInput(),
+                self::relationshipSelect(),
+            ]);
+    }
+
+    private static function guardianIdHidden(): Hidden
+    {
+        return Hidden::make('guardian_id')
+            ->required();
+    }
+
+    private static function guardianNameInput(): TextInput
+    {
+        return TextInput::make('guardian_name')
+            ->label('Guardian')
+            ->disabled();
+    }
+
+    private static function relationshipSelect(): Select
+    {
+        return Select::make('relationship')
+            ->options(RelationshipEnum::class)
+            ->placeholder('Select a relationship')
+            ->native(false);
     }
 }

@@ -17,37 +17,53 @@ final class GatepassForm
     {
         return $schema
             ->components([
-                TextInput::make('code')
-                    ->default(ReadableCode::generate())
-                    ->disabled()
-                    ->dehydrated()
-                    ->copyable()
-                    ->required(),
-
-                Select::make('activity_id')
-                    ->relationship('activity', 'title')
-                    ->required(),
-
-                Select::make('guardian_id')
-                    ->relationship(
-                        name: 'guardian',
-                        titleAttribute: 'full_name',
-
-                    )
-                    ->getOptionLabelFromRecordUsing(fn ($record): string => $record->full_name)
-                    ->required(),
-
-                Select::make('child_id')
-                    ->relationship(
-                        name: 'child',
-                        titleAttribute: 'first_name',
-                        modifyQueryUsing: fn (Builder $query): Builder => $query
-                            ->whereHas('relationships', fn (Builder $q) => $q
-                                ->where('guardian_id', AuthUser::guardianId())
-                            ),
-                    )
-                    ->getOptionLabelFromRecordUsing(fn ($record): string => $record->full_name)
-                    ->required(),
+                self::code(),
+                self::activitySelect(),
+                self::guardianSelect(),
+                self::childSelect(),
             ])->columns(2);
+    }
+
+    private static function code(): TextInput
+    {
+        return TextInput::make('code')
+            ->default(ReadableCode::generate())
+            ->disabled()
+            ->dehydrated()
+            ->copyable()
+            ->required();
+    }
+
+    private static function activitySelect(): Select
+    {
+        return Select::make('activity_id')
+            ->relationship('activity', 'title')
+            ->required();
+    }
+
+    private static function guardianSelect(): Select
+    {
+        return Select::make('guardian_id')
+            ->relationship(
+                name: 'guardian',
+                titleAttribute: 'full_name',
+            )
+            ->getOptionLabelFromRecordUsing(fn ($record): string => $record->full_name)
+            ->required();
+    }
+
+    private static function childSelect(): Select
+    {
+        return Select::make('child_id')
+            ->relationship(
+                name: 'child',
+                titleAttribute: 'first_name',
+                modifyQueryUsing: fn (Builder $query): Builder => $query
+                    ->whereHas('relationships', fn (Builder $q) => $q
+                        ->where('guardian_id', AuthUser::guardianId())
+                    ),
+            )
+            ->getOptionLabelFromRecordUsing(fn ($record): string => $record->full_name)
+            ->required();
     }
 }

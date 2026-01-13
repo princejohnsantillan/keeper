@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Terms\Schemas;
 
-use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Components\Forms\AppMarkdownEditor;
+use App\Filament\Components\Forms\AppTextInput;
 use Filament\Schemas\Schema;
 
 final class TermForm
@@ -14,12 +14,9 @@ final class TermForm
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255)
+                AppTextInput::name()
                     ->columnSpanFull(),
-                MarkdownEditor::make('content')
-                    ->required()
+                AppMarkdownEditor::content()
                     ->columnSpanFull(),
             ]);
     }

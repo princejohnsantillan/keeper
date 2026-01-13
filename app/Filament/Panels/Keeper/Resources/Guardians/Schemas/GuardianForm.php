@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
 
-use App\Enums\Gender;
-use Filament\Forms\Components\DatePicker;
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSelect;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppSpatieTagsInput;
+use App\Filament\Components\Forms\AppTextInput;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\SpatieTagsInput;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 final class GuardianForm
@@ -18,34 +18,25 @@ final class GuardianForm
     {
         return $schema
             ->components([
-                SpatieMediaLibraryFileUpload::make('avatar')
-                    ->collection('avatar')
-                    ->image()
-                    ->avatar()
-                    ->imageEditor()
-                    ->circleCropper()
-                    ->required()
+                AppSpatieMediaLibraryFileUpload::avatar()
                     ->columnSpanFull(),
-                TextInput::make('first_name')
-                    ->required(),
-                TextInput::make('middle_name'),
-                TextInput::make('last_name')
-                    ->required(),
-                DatePicker::make('birth_date')
+                AppTextInput::firstName(),
+                AppTextInput::middleName(),
+                AppTextInput::lastName(),
+                AppDatePicker::birthDate()
                     ->maxDate(now()->subYears(18)),
-                Select::make('gender')
-                    ->options(Gender::class)
-                    ->required(),
-                TextInput::make('email')
-                    ->label('Email address')
-                    ->email()
-                    ->required(),
-                TextInput::make('phone')
-                    ->tel(),
-                Select::make('user_id')
-                    ->relationship('user', 'name'),
-                SpatieTagsInput::make('tags')
+                AppSelect::gender(),
+                AppTextInput::email(),
+                AppTextInput::phone(),
+                self::userSelect(),
+                AppSpatieTagsInput::tags()
                     ->columnSpanFull(),
             ]);
+    }
+
+    private static function userSelect(): Select
+    {
+        return Select::make('user_id')
+            ->relationship('user', 'name');
     }
 }

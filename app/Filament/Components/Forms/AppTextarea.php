@@ -12,4 +12,9 @@ final class AppTextarea
     {
         return Textarea::make($field)->label($label);
     }
+
+    public static function description(string $field = 'description', string $label = 'Description'): Textarea
+    {
+        return Textarea::make($field)->label($label);
+    }
 }

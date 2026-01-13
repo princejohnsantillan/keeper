@@ -1,0 +1,31 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Components\Forms;
+
+use Filament\Forms\Components\DateTimePicker;
+
+final class AppDateTimePicker
+{
+    public static function startsAt(string $field = 'starts_at', string $label = 'Starts at'): DateTimePicker
+    {
+        return DateTimePicker::make($field)->label($label)
+            ->displayFormat('d M Y (h:i A)')
+            ->required();
+    }
+
+    public static function endsAt(string $field = 'ends_at', string $label = 'Ends at'): DateTimePicker
+    {
+        return DateTimePicker::make($field)->label($label)
+            ->displayFormat('d M Y (h:i A)')
+            ->required();
+    }
+
+    public static function publishedAt(string $field = 'published_at', string $label = 'Published at'): DateTimePicker
+    {
+        return DateTimePicker::make($field)->label($label)
+            ->displayFormat('d M Y (h:i A)')
+            ->helperText('Leave empty to keep as draft. Set a date to publish the activity to guardians.');
+    }
+}

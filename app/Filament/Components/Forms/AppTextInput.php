@@ -47,4 +47,30 @@ final class AppTextInput
             ->tel()
             ->rules(['max:16']);
     }
+
+    public static function title(string $field = 'title', string $label = 'Title'): TextInput
+    {
+        return TextInput::make($field)->label($label)
+            ->required();
+    }
+
+    public static function name(string $field = 'name', string $label = 'Name'): TextInput
+    {
+        return TextInput::make($field)->label($label)
+            ->required()
+            ->maxLength(255);
+    }
+
+    public static function location(string $field = 'location', string $label = 'Location'): TextInput
+    {
+        return TextInput::make($field)->label($label)
+            ->required();
+    }
+
+    public static function type(string $field = 'type', string $label = 'Type'): TextInput
+    {
+        return TextInput::make($field)->label($label)
+            ->maxLength(255)
+            ->helperText('Optional. Use to categorize tags (e.g., "child", "guardian").');
+    }
 }

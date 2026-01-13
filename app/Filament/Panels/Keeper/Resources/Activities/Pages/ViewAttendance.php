@@ -67,158 +67,171 @@ final class ViewAttendance extends ManageRelatedRecords
             ])
             ->filters([])
             ->headerActions([
-                Action::make('check_in')
-                    ->label('Check In')
-                    ->icon(Heroicon::ArrowRightEndOnRectangle)
-                    ->color('success')
-                    ->schema([
-                        TextInput::make('code')
-                            ->label('Gatepass Code')
-                            ->required()
-                            ->autofocus(),
-                    ])
-                    ->action(function (array $data): void {
-                        /** @var Activity $activity */
-                        $activity = $this->getOwnerRecord();
-
-                        $gatepass = Gatepass::query()
-                            ->with('child')
-                            ->where('code', $data['code'])
-                            ->where('activity_id', $activity->id)
-                            ->first();
-
-                        if ($gatepass === null) {
-                            Notification::make()
-                                ->title('Invalid code')
-                                ->body('The gatepass code does not match this activity.')
-                                ->danger()
-                                ->send();
-
-                            return;
-                        }
-
-                        $childName = $gatepass->child->full_name;
-
-                        $existingAttendance = Attendance::query()
-                            ->where('activity_id', $activity->id)
-                            ->where('child_id', $gatepass->child_id)
-                            ->whereNotNull('checked_in_at')
-                            ->whereNull('checked_out_at')
-                            ->exists();
-
-                        if ($existingAttendance) {
-                            Notification::make()
-                                ->title('Already checked in')
-                                ->body("{$childName} is already checked in to this activity.")
-                                ->warning()
-                                ->send();
-
-                            return;
-                        }
-
-                        $keeper = $this->getCurrentKeeper();
-
-                        do {
-                            $attendeeCode = ReadableCode::generate();
-                        } while (Attendance::query()->where('attendee_code', $attendeeCode)->exists());
-
-                        Attendance::create([
-                            'attendee_code' => $attendeeCode,
-                            'activity_id' => $activity->id,
-                            'child_id' => $gatepass->child_id,
-                            'checkin_keeper_id' => $keeper->id,
-                            'checkin_gatepass_id' => $gatepass->id,
-                            'checked_in_at' => now(),
-                        ]);
-
-                        Notification::make()
-                            ->title('Checked in')
-                            ->body("{$childName} has been checked in successfully.")
-                            ->success()
-                            ->send();
-                    }),
-                Action::make('check_out')
-                    ->label('Check Out')
-                    ->icon(Heroicon::ArrowRightStartOnRectangle)
-                    ->color('warning')
-                    ->schema([
-                        TextInput::make('code')
-                            ->label('Gatepass Code')
-                            ->required()
-                            ->autofocus(),
-                    ])
-                    ->action(function (array $data): void {
-                        /** @var Activity $activity */
-                        $activity = $this->getOwnerRecord();
-
-                        $gatepass = Gatepass::query()
-                            ->with('child')
-                            ->where('code', $data['code'])
-                            ->where('activity_id', $activity->id)
-                            ->first();
-
-                        if ($gatepass === null) {
-                            Notification::make()
-                                ->title('Invalid code')
-                                ->body('The gatepass code does not match this activity.')
-                                ->danger()
-                                ->send();
-
-                            return;
-                        }
-
-                        $childName = $gatepass->child->full_name;
-
-                        $alreadyCheckedOut = Attendance::query()
-                            ->where('activity_id', $activity->id)
-                            ->where('child_id', $gatepass->child_id)
-                            ->whereNotNull('checked_out_at')
-                            ->exists();
-
-                        if ($alreadyCheckedOut) {
-                            Notification::make()
-                                ->title('Already checked out')
-                                ->body("{$childName} has already been checked out of this activity.")
-                                ->warning()
-                                ->send();
-
-                            return;
-                        }
-
-                        $attendance = Attendance::query()
-                            ->where('activity_id', $activity->id)
-                            ->where('child_id', $gatepass->child_id)
-                            ->whereNotNull('checked_in_at')
-                            ->whereNull('checked_out_at')
-                            ->first();
-
-                        if ($attendance === null) {
-                            Notification::make()
-                                ->title('No check-in found')
-                                ->body("{$childName} has not been checked in to this activity.")
-                                ->danger()
-                                ->send();
-
-                            return;
-                        }
-
-                        $keeper = $this->getCurrentKeeper();
-
-                        $attendance->update([
-                            'checkout_keeper_id' => $keeper->id,
-                            'checkout_gatepass_id' => $gatepass->id,
-                            'checked_out_at' => now(),
-                        ]);
-
-                        Notification::make()
-                            ->title('Checked out')
-                            ->body("{$childName} has been checked out successfully.")
-                            ->success()
-                            ->send();
-                    }),
+                self::checkInAction(),
+                self::checkOutAction(),
             ])
             ->recordActions([])
             ->toolbarActions([]);
+    }
+
+    private function checkInAction(): Action
+    {
+        return Action::make('check_in')
+            ->label('Check In')
+            ->icon(Heroicon::ArrowRightEndOnRectangle)
+            ->color('success')
+            ->schema([
+                self::gatepassCodeInput()
+                    ->autofocus(),
+            ])
+            ->action(function (array $data): void {
+                /** @var Activity $activity */
+                $activity = $this->getOwnerRecord();
+
+                $gatepass = Gatepass::query()
+                    ->with('child')
+                    ->where('code', $data['code'])
+                    ->where('activity_id', $activity->id)
+                    ->first();
+
+                if ($gatepass === null) {
+                    Notification::make()
+                        ->title('Invalid code')
+                        ->body('The gatepass code does not match this activity.')
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
+                $childName = $gatepass->child->full_name;
+
+                $existingAttendance = Attendance::query()
+                    ->where('activity_id', $activity->id)
+                    ->where('child_id', $gatepass->child_id)
+                    ->whereNotNull('checked_in_at')
+                    ->whereNull('checked_out_at')
+                    ->exists();
+
+                if ($existingAttendance) {
+                    Notification::make()
+                        ->title('Already checked in')
+                        ->body("{$childName} is already checked in to this activity.")
+                        ->warning()
+                        ->send();
+
+                    return;
+                }
+
+                $keeper = $this->getCurrentKeeper();
+
+                do {
+                    $attendeeCode = ReadableCode::generate();
+                } while (Attendance::query()->where('attendee_code', $attendeeCode)->exists());
+
+                Attendance::create([
+                    'attendee_code' => $attendeeCode,
+                    'activity_id' => $activity->id,
+                    'child_id' => $gatepass->child_id,
+                    'checkin_keeper_id' => $keeper->id,
+                    'checkin_gatepass_id' => $gatepass->id,
+                    'checked_in_at' => now(),
+                ]);
+
+                Notification::make()
+                    ->title('Checked in')
+                    ->body("{$childName} has been checked in successfully.")
+                    ->success()
+                    ->send();
+            });
+    }
+
+    private function checkOutAction(): Action
+    {
+        return Action::make('check_out')
+            ->label('Check Out')
+            ->icon(Heroicon::ArrowRightStartOnRectangle)
+            ->color('warning')
+            ->schema([
+                self::gatepassCodeInput()
+                    ->autofocus(),
+            ])
+            ->action(function (array $data): void {
+                /** @var Activity $activity */
+                $activity = $this->getOwnerRecord();
+
+                $gatepass = Gatepass::query()
+                    ->with('child')
+                    ->where('code', $data['code'])
+                    ->where('activity_id', $activity->id)
+                    ->first();
+
+                if ($gatepass === null) {
+                    Notification::make()
+                        ->title('Invalid code')
+                        ->body('The gatepass code does not match this activity.')
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
+                $childName = $gatepass->child->full_name;
+
+                $alreadyCheckedOut = Attendance::query()
+                    ->where('activity_id', $activity->id)
+                    ->where('child_id', $gatepass->child_id)
+                    ->whereNotNull('checked_out_at')
+                    ->exists();
+
+                if ($alreadyCheckedOut) {
+                    Notification::make()
+                        ->title('Already checked out')
+                        ->body("{$childName} has already been checked out of this activity.")
+                        ->warning()
+                        ->send();
+
+                    return;
+                }
+
+                $attendance = Attendance::query()
+                    ->where('activity_id', $activity->id)
+                    ->where('child_id', $gatepass->child_id)
+                    ->whereNotNull('checked_in_at')
+                    ->whereNull('checked_out_at')
+                    ->first();
+
+                if ($attendance === null) {
+                    Notification::make()
+                        ->title('No check-in found')
+                        ->body("{$childName} has not been checked in to this activity.")
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
+
+                $keeper = $this->getCurrentKeeper();
+
+                $attendance->update([
+                    'checkout_keeper_id' => $keeper->id,
+                    'checkout_gatepass_id' => $gatepass->id,
+                    'checked_out_at' => now(),
+                ]);
+
+                Notification::make()
+                    ->title('Checked out')
+                    ->body("{$childName} has been checked out successfully.")
+                    ->success()
+                    ->send();
+            });
+    }
+
+    private static function gatepassCodeInput(): TextInput
+    {
+        return TextInput::make('code')
+            ->label('Gatepass Code')
+            ->required();
     }
 
     private function getCurrentKeeper(): Keeper

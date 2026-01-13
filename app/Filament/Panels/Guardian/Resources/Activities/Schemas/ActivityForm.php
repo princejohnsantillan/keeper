@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Activities\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Components\Forms\AppDateTimePicker;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppTextarea;
+use App\Filament\Components\Forms\AppTextInput;
 use Filament\Schemas\Schema;
 
 final class ActivityForm
@@ -16,30 +16,17 @@ final class ActivityForm
     {
         return $schema
             ->components([
-                SpatieMediaLibraryFileUpload::make('thumbnail')
-                    ->collection('thumbnail')
-                    ->image()
-                    ->imageEditor()
-                    ->imageEditorAspectRatios([
-                        '16:9',
-                    ])
-                    ->required()
+                AppSpatieMediaLibraryFileUpload::thumbnail()
                     ->columnSpanFull(),
-                TextInput::make('title')
-                    ->required()
+                AppTextInput::title()
                     ->columnSpanFull(),
-                Textarea::make('description')
+                AppTextarea::description()
                     ->columnSpanFull(),
-                TextInput::make('location')
-                    ->required()
+                AppTextInput::location()
                     ->columnSpanFull(),
-                DateTimePicker::make('starts_at')
-                    ->displayFormat('d M Y (h:i A)')
-                    ->required(),
-                DateTimePicker::make('ends_at')
-                    ->displayFormat('d M Y (h:i A)')
-                    ->required(),
-                Textarea::make('notes')
+                AppDateTimePicker::startsAt(),
+                AppDateTimePicker::endsAt(),
+                AppTextarea::notes()
                     ->columnSpanFull(),
             ])->columns(2);
     }
