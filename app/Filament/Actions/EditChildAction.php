@@ -6,7 +6,6 @@ namespace App\Filament\Actions;
 
 use App\Actions\UpdateChildAction;
 use App\AuthUser;
-use App\Enums\Relationship as RelationshipEnum;
 use App\Models\Child;
 use App\Models\Relationship;
 use Filament\Actions\EditAction;
@@ -24,20 +23,18 @@ final class EditChildAction
                     ->where('guardian_id', AuthUser::guardianId())
                     ->first();
 
-                $data['relationship'] = $relationship?->relationship?->value;
+                $data['relationship'] = $relationship?->relationship;
 
                 return $data;
             })
             ->using(function (Child $record, array $data, UpdateChildAction $updateChild): Child {
                 $relationshipValue = $data['relationship'] ?? null;
+
                 unset($data['relationship']);
 
                 $guardian = AuthUser::guardian();
-                $relationship = $relationshipValue !== null
-                    ? RelationshipEnum::from($relationshipValue)
-                    : null;
 
-                return $updateChild($record, $data, $guardian, $relationship);
+                return $updateChild($record, $data, $guardian, $relationshipValue);
             });
     }
 }
