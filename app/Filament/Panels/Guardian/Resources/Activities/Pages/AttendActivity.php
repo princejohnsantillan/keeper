@@ -53,16 +53,6 @@ final class AttendActivity extends Page
         return $activity->title;
     }
 
-    public function getSubheading(): string
-    {
-        /** @var Activity $activity */
-        $activity = $this->getRecord();
-
-        $schedule = $activity->starts_at->format('F j, Y \a\t g:i A').' - '.$activity->ends_at->format('F j, Y \a\t g:i A');
-
-        return $activity->location.' · '.$schedule;
-    }
-
     /**
      * @return array<Action>
      */

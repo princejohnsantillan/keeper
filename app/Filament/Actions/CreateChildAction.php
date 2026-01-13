@@ -19,12 +19,12 @@ final class CreateChildAction
             ->modalSubmitActionLabel('Add')
             ->createAnother(false)
             ->using(function (array $data, CreateChildBusinessAction $createChildAction): Child {
-                /** @var string $relationshipValue */
-                $relationshipValue = $data['relationship'];
+                /** @var Relationship $relationship */
+                $relationship = $data['relationship'];
+
                 unset($data['relationship']);
 
                 $guardian = AuthUser::guardian();
-                $relationship = Relationship::from($relationshipValue);
 
                 return $createChildAction($data, $guardian, $relationship);
             });

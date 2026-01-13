@@ -25,6 +25,11 @@ final class ChildResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['first_name', 'middle_name', 'last_name', 'nickname'];
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ChildForm::configure($schema);
