@@ -14,7 +14,10 @@
 | Enum | Singular noun | `Gender`, `Relationship` | `app/Enums/` |
 | Enum Case | TitleCase | `Male`, `FamilyFriend` | - |
 | Enum Backing | snake_case or int | `'family_friend'`, `1` | - |
-| Action | `{Verb}{Noun}Action` | `CreateChildAction` | `app/Filament/Actions/` |
+| Action (Business Logic) | `{Verb}{Noun}Action` | `CreateChildAction` | `app/Actions/` |
+| Action (Filament UI) | `{Verb}{Noun}Action` | `CreateChildAction` | `app/Filament/Actions/` |
+| Service | `{Domain}Service` | `ChildService` | `app/Services/` |
+| Service Interface | `{Domain}ServiceInterface` | `ChildServiceInterface` | `app/Services/Contracts/` |
 | Middleware | VerbFirst | `RequireOrganizationSubdomain` | `app/Http/Middleware/` |
 | Service Provider | `{Context}ServiceProvider` | `AppServiceProvider` | `app/Providers/` |
 | Panel Provider | `{Panel}PanelProvider` | `KeeperPanelProvider` | `app/Providers/` |
