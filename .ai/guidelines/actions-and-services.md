@@ -1,37 +1,31 @@
 # Actions and Services
 
 ## Purpose
+Framework-agnostic business logic layer that:
+- Centralizes testable logic outside controllers, Livewire, and Filament
+- Enables UI swapping (Filament → Inertia, Livewire → API) without rewriting logic
+- Maintains single source of truth for domain operations
 
-Actions and services provide a framework-agnostic business logic layer that:
-
-- Centralizes testable business logic outside of controllers, Livewire components, and Filament actions
-- Enables swapping UI implementations (e.g., Filament → Inertia, Livewire → API) without rewriting business logic
-- Maintains a single source of truth for how domain operations are performed
+---
 
 ## Actions
 
-### Definition
-
-An action is a single-responsibility, invokable class that performs one specific operation.
+**Definition:** Single-responsibility invokable class performing one specific operation.
 
 ### Rules
+- Must have single public `__invoke()` method
+- Must NOT contain UI logic (no Filament/Livewire/HTTP code)
+- Each action requires a corresponding feature test
 
-- Must be an invokable class with a single public `__invoke()` method
-- Must not contain UI logic (no Filament, Livewire, or HTTP-specific code)
-- Each action must have a corresponding feature test
+### Location
 
-### Location & Naming
+| Type | Pattern | Location |
+|------|---------|----------|
+| Action | `{Verb}{Noun}Action` | `app/Actions/` |
+| Test | `{Verb}{Noun}ActionTest` | `tests/Feature/Actions/` |
 
-| Type | Pattern | Example | Location |
-|------|---------|---------|----------|
-| Action | `{Verb}{Noun}Action` | `CreateChildAction` | `app/Actions/` |
-| Action Test | `{Verb}{Noun}ActionTest` | `CreateChildActionTest` | `tests/Feature/Actions/` |
-
-### Structure
-
+### Basic Structure
 ```php
-<?php
-
 declare(strict_types=1);
 
 namespace App\Actions;
@@ -47,13 +41,8 @@ final class CreateChildAction
 }
 ```
 
-### Actions with Dependencies
-
-Actions can have constructor dependencies injected by Laravel's container:
-
+### With Dependencies
 ```php
-<?php
-
 declare(strict_types=1);
 
 namespace App\Actions;
@@ -70,42 +59,34 @@ final class CreateChildAction
     public function __invoke(array $data): Child
     {
         $child = Child::query()->create($data);
-
         $this->notificationService->notifyGuardian($child);
-
         return $child;
     }
 }
 ```
 
+---
+
 ## Services
 
-### Definition
-
-A service is a library of related, co-located methods that operate on a specific domain. Services group multiple related operations that don't warrant individual action classes.
+**Definition:** Library of related methods operating on a specific domain, grouping operations that don't warrant individual action classes.
 
 ### Rules
+- Must have interface in `app/Services/Contracts/`
+- Interface bound to implementation in `ServiceServiceProvider`
+- Each public method requires a feature test
+- Must NOT contain UI logic
 
-- Must have a corresponding interface in `app/Services/Contracts/`
-- Interface must be bound to implementation in `ServiceServiceProvider`
-- Each public method must have a corresponding feature test
-- Must not contain UI logic
+### Location
 
-### Location & Naming
+| Type | Pattern | Location |
+|------|---------|----------|
+| Service | `{Domain}Service` | `app/Services/` |
+| Interface | `{Domain}ServiceInterface` | `app/Services/Contracts/` |
+| Test | `{Domain}ServiceTest` | `tests/Feature/Services/` |
 
-| Type | Pattern | Example | Location |
-|------|---------|---------|----------|
-| Service | `{Domain}Service` | `ChildService` | `app/Services/` |
-| Interface | `{Domain}ServiceInterface` | `ChildServiceInterface` | `app/Services/Contracts/` |
-| Service Test | `{Domain}ServiceTest` | `ChildServiceTest` | `tests/Feature/Services/` |
-
-### Structure
-
-**Interface:**
-
+### Interface
 ```php
-<?php
-
 declare(strict_types=1);
 
 namespace App\Services\Contracts;
@@ -116,18 +97,13 @@ use App\Models\Guardian;
 interface ChildServiceInterface
 {
     public function create(array $data): Child;
-
     public function attachGuardian(Child $child, Guardian $guardian, string $relationship): void;
-
     public function detachGuardian(Child $child, Guardian $guardian): void;
 }
 ```
 
-**Implementation:**
-
+### Implementation
 ```php
-<?php
-
 declare(strict_types=1);
 
 namespace App\Services;
@@ -163,13 +139,8 @@ final class ChildService implements ChildServiceInterface
 }
 ```
 
-### Binding Services
-
-Register interface-to-implementation bindings in `app/Providers/ServiceServiceProvider.php`:
-
+### Binding in ServiceServiceProvider
 ```php
-<?php
-
 declare(strict_types=1);
 
 namespace App\Providers;
@@ -186,20 +157,12 @@ final class ServiceServiceProvider extends ServiceProvider
 }
 ```
 
-## Testing Requirements
+---
 
-| Type | Requirement | Location |
-|------|-------------|----------|
-| Action | Each action must have a test | `tests/Feature/Actions/` |
-| Service | Each public method must have a test | `tests/Feature/Services/` |
+## Testing
 
-### Testing Actions
-
+### Action Test
 ```php
-<?php
-
-declare(strict_types=1);
-
 use App\Actions\CreateChildAction;
 use App\Models\Child;
 
@@ -223,13 +186,8 @@ it('creates a child', function () {
 });
 ```
 
-### Testing Services
-
+### Service Test
 ```php
-<?php
-
-declare(strict_types=1);
-
 use App\Models\Child;
 use App\Models\Guardian;
 use App\Services\Contracts\ChildServiceInterface;
@@ -250,121 +208,68 @@ it('attaches a guardian to a child', function () {
 ```
 
 ### Mocking Services
-
-Because services have interfaces, they can be easily mocked in tests:
-
 ```php
-<?php
-
-declare(strict_types=1);
-
 use App\Services\Contracts\NotificationServiceInterface;
 
 it('sends notification when child is created', function () {
     $mock = $this->mock(NotificationServiceInterface::class);
     $mock->shouldReceive('notifyGuardian')->once();
-
     // Test code that triggers notification...
 });
 ```
 
+---
+
 ## Filament Integration
 
-Filament UI actions in `app/Filament/Actions/` must delegate business logic to action classes or services. No direct model manipulation should occur in Filament actions.
+Filament UI actions (`app/Filament/Actions/`) must delegate to business logic actions/services. No direct model manipulation in Filament actions.
 
-### Why?
-
+**Why:**
 - Filament actions are UI components, not business logic
-- Business logic in Filament actions cannot be reused in APIs or other UI frameworks
-- Testing Filament actions requires browser/Livewire testing; action classes can be unit tested
+- Logic in Filament actions cannot be reused in APIs/other frameworks
+- Action classes enable unit testing; Filament requires browser/Livewire testing
 
 ### Dependency Injection in Closures
-
-Laravel's container automatically resolves action classes passed as closure parameters:
-
+Laravel auto-resolves actions in closure parameters:
 ```php
 ->using(fn (array $data, CreateChildAction $action): Child => $action($data))
 ```
 
-### Before (avoid)
-
+### Avoid (business logic in Filament)
 ```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Filament\Actions;
-
-use App\AuthUser;
-use App\Models\Child;
-use App\Models\Relationship;
-use Filament\Actions\CreateAction;
-
-final class CreateChildAction
-{
-    public static function make(?string $name = null, string $label = 'Add child'): CreateAction
-    {
-        return CreateAction::make($name)
-            ->label($label)
-            ->using(function (array $data): Child {
-                // ❌ Business logic directly in Filament action
-                $relationship = $data['relationship'];
-                unset($data['relationship']);
-
-                $guardian = AuthUser::guardian();
-                $child = Child::query()->create($data);
-
-                Relationship::create([
-                    'guardian_id' => $guardian->id,
-                    'child_id' => $child->id,
-                    'relationship' => $relationship,
-                    'is_primary' => true,
-                ]);
-
-                return $child;
-            });
-    }
-}
+// app/Filament/Actions/CreateChildAction.php
+->using(function (array $data): Child {
+    $relationship = $data['relationship'];
+    unset($data['relationship']);
+    $guardian = AuthUser::guardian();
+    $child = Child::query()->create($data);
+    Relationship::create([...]);
+    return $child;
+});
 ```
 
-### After (preferred)
-
+### Preferred (delegate to action)
 ```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Filament\Actions;
-
-use App\Actions\CreateChildAction as CreateChildBusinessAction;
-use App\Models\Child;
-use Filament\Actions\CreateAction;
-
-final class CreateChildAction
-{
-    public static function make(?string $name = null, string $label = 'Add child'): CreateAction
-    {
-        return CreateAction::make($name)
-            ->label($label)
-            // ✅ Delegate to business logic action
-            ->using(fn (array $data, CreateChildBusinessAction $action): Child => $action($data));
-    }
-}
+// app/Filament/Actions/CreateChildAction.php
+->using(fn (array $data, CreateChildBusinessAction $action): Child => $action($data));
 ```
 
-## When to Use Actions vs Services
+---
 
-| Use Case | Recommendation |
-|----------|----------------|
-| Single, focused operation | Action |
-| Multiple related operations on a domain | Service |
-| Operation used in one place | Action |
-| Operations shared across many features | Service |
-| Simple CRUD with no side effects | Either (prefer Action for single ops) |
-| Complex orchestration of multiple steps | Action (can inject services) |
+## Action vs Service Decision
+
+| Scenario | Use |
+|----------|-----|
+| Single focused operation | Action |
+| Multiple related domain operations | Service |
+| Used in one place | Action |
+| Shared across many features | Service |
+| Simple CRUD, no side effects | Action |
+| Complex multi-step orchestration | Action (inject services) |
+
+---
 
 ## Migration Strategy
-
-- **New features:** Use actions/services from the start
+- **New features:** Use actions/services from start
 - **Existing code:** Refactor incrementally when touching related code
-- **Priority:** Focus on code with business logic in Filament actions, controllers, or Livewire components
+- **Priority:** Extract logic from Filament actions, controllers, Livewire components
