@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Actions;
 
 use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Guardian;
 use App\Models\Relationship;
 use Filament\Actions\DeleteAction;
-use Filament\Notifications\Notification;
 
 final class DeleteGuardianAction
 {
@@ -23,10 +23,7 @@ final class DeleteGuardianAction
                     ->whereIn('child_id', $childIds)
                     ->delete();
 
-                Notification::make()
-                    ->title('Deleted')
-                    ->danger()
-                    ->send();
+                AppNotification::deleted()->send();
             })
             ->visible(fn (Guardian $record) => AuthUser::guardianId() !== $record->id);
     }

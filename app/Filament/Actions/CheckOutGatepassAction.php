@@ -6,10 +6,10 @@ namespace App\Filament\Actions;
 
 use App\Actions\GetCurrentKeeperAction;
 use App\Actions\IsCheckedInAction;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Attendance;
 use App\Models\Gatepass;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 
 final class CheckOutGatepassAction
@@ -34,11 +34,7 @@ final class CheckOutGatepassAction
                     ->first();
 
                 if ($attendance === null) {
-                    Notification::make()
-                        ->title('No check-in found')
-                        ->body("{$childName} has not been checked in to this activity.")
-                        ->danger()
-                        ->send();
+                    AppNotification::noCheckInFound($childName)->send();
 
                     return;
                 }
@@ -51,11 +47,7 @@ final class CheckOutGatepassAction
                     'checked_out_at' => now(),
                 ]);
 
-                Notification::make()
-                    ->title('Checked out')
-                    ->body("{$childName} has been checked out successfully.")
-                    ->success()
-                    ->send();
+                AppNotification::checkedOut($childName)->send();
             });
     }
 }

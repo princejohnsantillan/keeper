@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Filament\Actions;
 
 use App\Actions\GetCurrentKeeperAction;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
 use App\Models\Attendance;
 use App\Models\Gatepass;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 
 final class CheckOutAttendanceAction
@@ -32,11 +32,7 @@ final class CheckOutAttendanceAction
                     ->first();
 
                 if ($gatepass === null) {
-                    Notification::make()
-                        ->title('Invalid code')
-                        ->body('The gatepass code does not match this activity.')
-                        ->danger()
-                        ->send();
+                    AppNotification::invalidGatepassCode()->send();
 
                     return;
                 }
@@ -50,11 +46,7 @@ final class CheckOutAttendanceAction
                     ->exists();
 
                 if ($alreadyCheckedOut) {
-                    Notification::make()
-                        ->title('Already checked out')
-                        ->body("{$childName} has already been checked out of this activity.")
-                        ->warning()
-                        ->send();
+                    AppNotification::alreadyCheckedOut($childName)->send();
 
                     return;
                 }
@@ -67,11 +59,7 @@ final class CheckOutAttendanceAction
                     ->first();
 
                 if ($attendance === null) {
-                    Notification::make()
-                        ->title('No check-in found')
-                        ->body("{$childName} has not been checked in to this activity.")
-                        ->danger()
-                        ->send();
+                    AppNotification::noCheckInFound($childName)->send();
 
                     return;
                 }
@@ -84,11 +72,7 @@ final class CheckOutAttendanceAction
                     'checked_out_at' => now(),
                 ]);
 
-                Notification::make()
-                    ->title('Checked out')
-                    ->body("{$childName} has been checked out successfully.")
-                    ->success()
-                    ->send();
+                AppNotification::checkedOut($childName)->send();
             });
     }
 

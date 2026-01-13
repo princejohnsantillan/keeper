@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\Guardians\Pages;
 
 use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
 use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
 use App\Models\Child;
 use App\Models\Guardian;
 use Filament\Actions\CreateAction;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 final class ListGuardians extends ListRecords
@@ -65,11 +65,9 @@ final class ListGuardians extends ListRecords
                     }
 
                     if (empty($syncData)) {
-                        Notification::make()->danger()
-                            ->title('At least one child relationship is required.')->send();
+                        AppNotification::childRelationshipRequired()->send();
 
                         $action->halt(true);
-
                     }
 
                     $guardian->children()->sync($syncData);

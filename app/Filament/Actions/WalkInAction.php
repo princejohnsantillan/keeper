@@ -9,13 +9,13 @@ use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
 use App\Filament\Components\Forms\AppToggleButtons;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\ReadableCode;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Fieldset;
 use Illuminate\Support\Facades\DB;
 
@@ -68,10 +68,7 @@ final class WalkInAction
                     ]);
                 });
 
-                Notification::make()
-                    ->title('Walk-in registered successfully')
-                    ->success()
-                    ->send();
+                AppNotification::walkInRegistered()->send();
             });
     }
 

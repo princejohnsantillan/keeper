@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Filament\Actions;
 
 use App\Actions\GetCurrentKeeperAction;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
 use App\Models\Attendance;
 use App\Models\Gatepass;
 use App\ReadableCode;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 
 final class CheckInAttendanceAction
@@ -33,11 +33,7 @@ final class CheckInAttendanceAction
                     ->first();
 
                 if ($gatepass === null) {
-                    Notification::make()
-                        ->title('Invalid code')
-                        ->body('The gatepass code does not match this activity.')
-                        ->danger()
-                        ->send();
+                    AppNotification::invalidGatepassCode()->send();
 
                     return;
                 }
@@ -52,11 +48,7 @@ final class CheckInAttendanceAction
                     ->exists();
 
                 if ($existingAttendance) {
-                    Notification::make()
-                        ->title('Already checked in')
-                        ->body("{$childName} is already checked in to this activity.")
-                        ->warning()
-                        ->send();
+                    AppNotification::alreadyCheckedIn($childName)->send();
 
                     return;
                 }
@@ -76,11 +68,7 @@ final class CheckInAttendanceAction
                     'checked_in_at' => now(),
                 ]);
 
-                Notification::make()
-                    ->title('Checked in')
-                    ->body("{$childName} has been checked in successfully.")
-                    ->success()
-                    ->send();
+                AppNotification::checkedIn($childName)->send();
             });
     }
 

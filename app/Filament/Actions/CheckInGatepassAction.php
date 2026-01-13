@@ -6,10 +6,10 @@ namespace App\Filament\Actions;
 
 use App\Actions\GetCurrentKeeperAction;
 use App\Actions\IsCheckedInAction;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Attendance;
 use App\Models\Gatepass;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 
 final class CheckInGatepassAction
@@ -34,11 +34,7 @@ final class CheckInGatepassAction
                     ->exists();
 
                 if ($existingAttendance) {
-                    Notification::make()
-                        ->title('Already checked in')
-                        ->body("{$childName} is already checked in to this activity.")
-                        ->warning()
-                        ->send();
+                    AppNotification::alreadyCheckedIn($childName)->send();
 
                     return;
                 }
@@ -53,11 +49,7 @@ final class CheckInGatepassAction
                     'checked_in_at' => now(),
                 ]);
 
-                Notification::make()
-                    ->title('Checked in')
-                    ->body("{$childName} has been checked in successfully.")
-                    ->success()
-                    ->send();
+                AppNotification::checkedIn($childName)->send();
             });
     }
 }

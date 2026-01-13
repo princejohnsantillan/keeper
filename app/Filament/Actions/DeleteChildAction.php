@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Filament\Actions;
 
 use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Child;
 use App\Models\Relationship;
 use Filament\Actions\DeleteAction;
-use Filament\Notifications\Notification;
 
 final class DeleteChildAction
 {
@@ -20,10 +20,7 @@ final class DeleteChildAction
                     ->where('guardian_id', AuthUser::guardianId())
                     ->delete();
 
-                Notification::make()
-                    ->title('Deleted')
-                    ->danger()
-                    ->send();
+                AppNotification::deleted()->send();
             });
     }
 }

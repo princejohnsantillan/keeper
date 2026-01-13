@@ -6,6 +6,7 @@ namespace App\Filament\Actions;
 
 use App\AuthUser;
 use App\Enums\Relationship as RelationshipEnum;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Relationship;
@@ -15,7 +16,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
 
 final class UpdateChildGuardiansAction
@@ -78,10 +78,7 @@ final class UpdateChildGuardiansAction
 
                 $record->guardians()->sync($syncData);
 
-                Notification::make()
-                    ->title('Guardians updated')
-                    ->success()
-                    ->send();
+                AppNotification::guardiansUpdated()->send();
             });
     }
 
