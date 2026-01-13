@@ -7,9 +7,8 @@ namespace App\Filament\Actions;
 use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
-use App\Models\Attendance;
 use App\Models\Gatepass;
-use App\ReadableCode;
+use App\Services\Contracts\AttendanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
@@ -25,7 +24,11 @@ final class CheckInAttendanceAction
                 self::gatepassCodeInput()
                     ->autofocus(),
             ])
-            ->action(function (array $data, GetCurrentKeeperAction $getCurrentKeeper) use ($activity): void {
+            ->action(function (
+                array $data,
+                GetCurrentKeeperAction $getCurrentKeeper,
+                AttendanceServiceInterface $attendanceService,
+            ) use ($activity): void {
                 $gatepass = Gatepass::query()
                     ->with('child')
                     ->where('code', $data['code'])
@@ -38,37 +41,19 @@ final class CheckInAttendanceAction
                     return;
                 }
 
-                $childName = $gatepass->child->full_name;
+                $keeper = $getCurrentKeeper();
+                $result = $attendanceService->checkIn($activity, $gatepass, $keeper);
 
-                $existingAttendance = Attendance::query()
-                    ->where('activity_id', $activity->id)
-                    ->where('child_id', $gatepass->child_id)
-                    ->whereNotNull('checked_in_at')
-                    ->whereNull('checked_out_at')
-                    ->exists();
-
-                if ($existingAttendance) {
-                    AppNotification::alreadyCheckedIn($childName)->send();
+                if (! $result['success']) {
+                    match ($result['message']) {
+                        'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
+                        default => AppNotification::invalidGatepassCode()->send(),
+                    };
 
                     return;
                 }
 
-                $keeper = $getCurrentKeeper();
-
-                do {
-                    $attendeeCode = ReadableCode::generate();
-                } while (Attendance::query()->where('attendee_code', $attendeeCode)->exists());
-
-                Attendance::create([
-                    'attendee_code' => $attendeeCode,
-                    'activity_id' => $activity->id,
-                    'child_id' => $gatepass->child_id,
-                    'checkin_keeper_id' => $keeper->id,
-                    'checkin_gatepass_id' => $gatepass->id,
-                    'checked_in_at' => now(),
-                ]);
-
-                AppNotification::checkedIn($childName)->send();
+                AppNotification::checkedIn($result['child_name'])->send();
             });
     }
 

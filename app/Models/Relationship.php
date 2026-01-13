@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Relationship as RelationshipEnum;
+use Database\Factories\RelationshipFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -13,6 +15,9 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 final class Relationship extends Pivot
 {
+    /** @use HasFactory<RelationshipFactory> */
+    use HasFactory;
+
     protected $table = 'relationships';
 
     public $incrementing = true;

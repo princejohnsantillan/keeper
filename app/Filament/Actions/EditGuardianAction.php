@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Actions;
 
+use App\Actions\UpdateGuardianAction;
 use App\AuthUser;
 use App\Models\Child;
 use App\Models\Guardian;
@@ -35,13 +36,11 @@ final class EditGuardianAction
 
                 return $data;
             })
-            ->using(function (Guardian $record, array $data): Guardian {
+            ->using(function (Guardian $record, array $data, UpdateGuardianAction $updateGuardian): Guardian {
                 /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
                 $rows = $data['children'] ?? [];
 
                 unset($data['children']);
-
-                $record->update($data);
 
                 $syncData = [];
 
@@ -62,9 +61,7 @@ final class EditGuardianAction
                     ];
                 }
 
-                $record->children()->sync($syncData);
-
-                return $record;
+                return $updateGuardian($record, $data, $syncData);
             });
     }
 }

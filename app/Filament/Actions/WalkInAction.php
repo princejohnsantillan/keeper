@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Actions;
 
+use App\Actions\WalkInRegistrationAction;
+use App\Enums\Relationship;
 use App\Filament\Components\Forms\AppDatePicker;
 use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppTextarea;
@@ -11,13 +13,8 @@ use App\Filament\Components\Forms\AppTextInput;
 use App\Filament\Components\Forms\AppToggleButtons;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
-use App\Models\Child;
-use App\Models\Gatepass;
-use App\Models\Guardian;
-use App\ReadableCode;
 use Filament\Actions\Action;
 use Filament\Schemas\Components\Fieldset;
-use Illuminate\Support\Facades\DB;
 
 final class WalkInAction
 {
@@ -34,39 +31,30 @@ final class WalkInAction
                 self::childFieldset(),
                 self::relationshipFieldset(),
             ])
-            ->action(function (array $data, Activity $record): void {
-                DB::transaction(function () use ($data, $record): void {
-                    $guardian = Guardian::create([
-                        'first_name' => $data['guardian_first_name'],
-                        'middle_name' => $data['guardian_middle_name'],
-                        'last_name' => $data['guardian_last_name'],
-                        'birth_date' => $data['guardian_birth_date'],
-                        'gender' => $data['guardian_gender'],
-                        'email' => $data['guardian_email'],
-                        'phone' => $data['guardian_phone'],
-                    ]);
+            ->action(function (array $data, Activity $record, WalkInRegistrationAction $walkInRegistration): void {
+                $guardianData = [
+                    'first_name' => $data['guardian_first_name'],
+                    'middle_name' => $data['guardian_middle_name'],
+                    'last_name' => $data['guardian_last_name'],
+                    'birth_date' => $data['guardian_birth_date'],
+                    'gender' => $data['guardian_gender'],
+                    'email' => $data['guardian_email'],
+                    'phone' => $data['guardian_phone'],
+                ];
 
-                    $child = Child::create([
-                        'first_name' => $data['child_first_name'],
-                        'middle_name' => $data['child_middle_name'],
-                        'last_name' => $data['child_last_name'],
-                        'nickname' => $data['child_nickname'],
-                        'birth_date' => $data['child_birth_date'],
-                        'gender' => $data['child_gender'],
-                        'notes' => $data['child_notes'],
-                    ]);
+                $childData = [
+                    'first_name' => $data['child_first_name'],
+                    'middle_name' => $data['child_middle_name'],
+                    'last_name' => $data['child_last_name'],
+                    'nickname' => $data['child_nickname'],
+                    'birth_date' => $data['child_birth_date'],
+                    'gender' => $data['child_gender'],
+                    'notes' => $data['child_notes'],
+                ];
 
-                    $guardian->children()->attach($child->id, [
-                        'relationship' => $data['relationship'],
-                    ]);
+                $relationship = Relationship::from($data['relationship']);
 
-                    Gatepass::create([
-                        'guardian_id' => $guardian->id,
-                        'child_id' => $child->id,
-                        'activity_id' => $record->id,
-                        'code' => ReadableCode::generate(),
-                    ]);
-                });
+                $walkInRegistration($guardianData, $childData, $relationship, $record);
 
                 AppNotification::walkInRegistered()->send();
             });

@@ -7,8 +7,8 @@ namespace App\Filament\Actions;
 use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
-use App\Models\Attendance;
 use App\Models\Gatepass;
+use App\Services\Contracts\AttendanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
@@ -24,7 +24,11 @@ final class CheckOutAttendanceAction
                 self::gatepassCodeInput()
                     ->autofocus(),
             ])
-            ->action(function (array $data, GetCurrentKeeperAction $getCurrentKeeper) use ($activity): void {
+            ->action(function (
+                array $data,
+                GetCurrentKeeperAction $getCurrentKeeper,
+                AttendanceServiceInterface $attendanceService,
+            ) use ($activity): void {
                 $gatepass = Gatepass::query()
                     ->with('child')
                     ->where('code', $data['code'])
@@ -37,42 +41,20 @@ final class CheckOutAttendanceAction
                     return;
                 }
 
-                $childName = $gatepass->child->full_name;
-
-                $alreadyCheckedOut = Attendance::query()
-                    ->where('activity_id', $activity->id)
-                    ->where('child_id', $gatepass->child_id)
-                    ->whereNotNull('checked_out_at')
-                    ->exists();
-
-                if ($alreadyCheckedOut) {
-                    AppNotification::alreadyCheckedOut($childName)->send();
-
-                    return;
-                }
-
-                $attendance = Attendance::query()
-                    ->where('activity_id', $activity->id)
-                    ->where('child_id', $gatepass->child_id)
-                    ->whereNotNull('checked_in_at')
-                    ->whereNull('checked_out_at')
-                    ->first();
-
-                if ($attendance === null) {
-                    AppNotification::noCheckInFound($childName)->send();
-
-                    return;
-                }
-
                 $keeper = $getCurrentKeeper();
+                $result = $attendanceService->checkOut($activity, $gatepass, $keeper);
 
-                $attendance->update([
-                    'checkout_keeper_id' => $keeper->id,
-                    'checkout_gatepass_id' => $gatepass->id,
-                    'checked_out_at' => now(),
-                ]);
+                if (! $result['success']) {
+                    match ($result['message']) {
+                        'already_checked_out' => AppNotification::alreadyCheckedOut($result['child_name'])->send(),
+                        'no_check_in_found' => AppNotification::noCheckInFound($result['child_name'])->send(),
+                        default => AppNotification::invalidGatepassCode()->send(),
+                    };
 
-                AppNotification::checkedOut($childName)->send();
+                    return;
+                }
+
+                AppNotification::checkedOut($result['child_name'])->send();
             });
     }
 

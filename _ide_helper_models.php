@@ -347,6 +347,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Child $child
  * @property-read \App\Models\Guardian $guardian
+ * @method static \Database\Factories\RelationshipFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship query()

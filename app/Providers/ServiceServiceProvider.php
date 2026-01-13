@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\AttendanceService;
+use App\Services\Contracts\AttendanceServiceInterface;
 use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use App\Services\GatepassService;
@@ -23,6 +25,7 @@ final class ServiceServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     public array $bindings = [
+        AttendanceServiceInterface::class => AttendanceService::class,
         TermAcceptanceServiceInterface::class => TermAcceptanceService::class,
         GatepassServiceInterface::class => GatepassService::class,
     ];

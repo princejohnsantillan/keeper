@@ -54,7 +54,7 @@ final class ChildResource extends Resource
     {
         return [
             'Gender' => $record->gender->getLabel(),
-            'Nickname' => $record->getNickname(),
+            'Known As' => $record->known_as,
             'Birth date' => $record->birth_date->format('d M Y').' ('.$record->birth_date->age.' yrs)',
         ];
     }

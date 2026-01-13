@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Actions;
 
+use App\Actions\SyncChildGuardiansAction;
 use App\AuthUser;
 use App\Enums\Relationship as RelationshipEnum;
 use App\Filament\Notifications\AppNotification;
@@ -53,7 +54,7 @@ final class UpdateChildGuardiansAction
                 self::guardiansRepeater()
                     ->columnSpanFull(),
             ])
-            ->action(function (Child $record, array $data): void {
+            ->action(function (Child $record, array $data, SyncChildGuardiansAction $syncGuardians): void {
                 /** @var array<int, array{guardian_id?: int|string, relationship?: string|null}> $rows */
                 $rows = $data['guardians'] ?? [];
 
@@ -76,7 +77,7 @@ final class UpdateChildGuardiansAction
                     ];
                 }
 
-                $record->guardians()->sync($syncData);
+                $syncGuardians($record, $syncData);
 
                 AppNotification::guardiansUpdated()->send();
             });

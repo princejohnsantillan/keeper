@@ -25,7 +25,6 @@ final class RelationshipFactory extends Factory
             'guardian_id' => Guardian::factory(),
             'child_id' => Child::factory(),
             'relationship' => $this->faker->randomElement(Relationship::cases()),
-            'notes' => $this->faker->optional()->sentence(),
         ];
     }
 }

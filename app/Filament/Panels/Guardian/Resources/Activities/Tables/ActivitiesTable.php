@@ -25,7 +25,7 @@ final class ActivitiesTable
             ->columns([
                 Stack::make([
                     AppSpatieMediaLibraryImageColumn::thumbnail()
-                        ->height(200)
+                        ->imageHeight(200)
                         ->width('100%')
                         ->extraImgAttributes(['class' => 'rounded-t-xl object-cover w-full']),
                     Stack::make([
