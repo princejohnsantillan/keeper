@@ -10,8 +10,9 @@ use App\Filament\Panels\Guardian\Resources\Activities\ActivityResource;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
-use App\Models\TermAcceptance;
-use App\ReadableCode;
+use App\Models\Guardian;
+use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
@@ -48,7 +49,10 @@ final class AttendActivity extends Page
 
     public function getTitle(): string
     {
-        return $this->getRecord()->title;
+        /** @var Activity $activity */
+        $activity = $this->getRecord();
+
+        return $activity->title;
     }
 
     public function getSubheading(): string
@@ -95,29 +99,24 @@ final class AttendActivity extends Page
             ->get()
             ->keyBy('child_id');
 
-        $termAcceptance = null;
-        $hasGatepassWithAcceptance = false;
+        $termAcceptanceService = app(TermAcceptanceServiceInterface::class);
+
+        $hasAcceptance = false;
+        $isLocked = false;
 
         if ($activity->term !== null) {
-            $termAcceptance = TermAcceptance::query()
-                ->where('term_id', $activity->term->id)
-                ->where('guardian_id', $guardian->id)
-                ->first();
-
-            if ($termAcceptance !== null) {
-                $hasGatepassWithAcceptance = Gatepass::query()
-                    ->where('term_acceptance_id', $termAcceptance->id)
-                    ->exists();
-            }
+            $termAcceptance = $termAcceptanceService->getAcceptance($activity->term, $guardian);
+            $hasAcceptance = $termAcceptance !== null;
+            $isLocked = $termAcceptance !== null && $termAcceptanceService->isLocked($termAcceptance);
         }
 
         $this->form->fill([
-            'agree_to_terms' => $termAcceptance !== null,
-            'terms_locked' => $hasGatepassWithAcceptance,
+            'agree_to_terms' => $hasAcceptance,
+            'terms_locked' => $isLocked,
             'children' => $children->map(fn ($child) => [
                 'child_id' => $child->id,
                 'child_name' => $child->full_name,
-                'guardian_id' => $existingGatepasses->get($child->id)?->guardian_id ?? $guardian->id,
+                'guardian_id' => $existingGatepasses->get($child->id)->guardian_id ?? $guardian->id,
                 'gatepass_code' => $existingGatepasses->get($child->id)?->code,
             ])->toArray(),
         ]);
@@ -129,7 +128,7 @@ final class AttendActivity extends Page
         $activity = $this->getRecord();
 
         return $schema
-            ->components(array_filter([
+            ->components([
                 Form::make(array_filter([
                     $activity->term !== null ? Fieldset::make('Terms and Conditions')
                         ->columnSpanFull()
@@ -148,40 +147,20 @@ final class AttendActivity extends Page
                                 ->label('I have read and agree to the terms and conditions')
                                 ->disabled(fn (callable $get): bool => (bool) $get('terms_locked'))
                                 ->live()
-                                ->afterStateUpdated(function (bool $state) use ($activity): void {
+                                ->afterStateUpdated(function (bool $state, TermAcceptanceServiceInterface $termAcceptanceService) use ($activity): void {
                                     $guardian = AuthUser::guardian();
+                                    /** @var \App\Models\Term $term */
                                     $term = $activity->term;
 
-                                    if ($term === null) {
-                                        return;
-                                    }
-
                                     if ($state) {
-                                        TermAcceptance::query()->firstOrCreate(
-                                            [
-                                                'term_id' => $term->id,
-                                                'guardian_id' => $guardian->id,
-                                            ],
-                                            [
-                                                'ip_address' => request()->ip(),
-                                                'user_agent' => request()->userAgent(),
-                                            ]
+                                        $termAcceptanceService->accept(
+                                            $term,
+                                            $guardian,
+                                            request()->ip(),
+                                            request()->userAgent()
                                         );
                                     } else {
-                                        $termAcceptance = TermAcceptance::query()
-                                            ->where('term_id', $term->id)
-                                            ->where('guardian_id', $guardian->id)
-                                            ->first();
-
-                                        if ($termAcceptance !== null) {
-                                            $hasGatepassUsing = Gatepass::query()
-                                                ->where('term_acceptance_id', $termAcceptance->id)
-                                                ->exists();
-
-                                            if (! $hasGatepassUsing) {
-                                                $termAcceptance->delete();
-                                            }
-                                        }
+                                        $termAcceptanceService->revoke($term, $guardian);
                                     }
                                 }),
                         ]) : null,
@@ -228,7 +207,12 @@ final class AttendActivity extends Page
                                     ->color('primary')
                                     ->icon(Heroicon::Ticket)
                                     ->hidden(fn (callable $get): bool => ! empty($get('gatepass_code')))
-                                    ->action(function (callable $get, callable $set) use ($activity): void {
+                                    ->action(function (
+                                        callable $get,
+                                        callable $set,
+                                        TermAcceptanceServiceInterface $termAcceptanceService,
+                                        GatepassServiceInterface $gatepassService,
+                                    ) use ($activity): void {
                                         if ($activity->term !== null && ! $get('../../agree_to_terms')) {
                                             AppNotification::termsNotAgreed()->send();
 
@@ -242,34 +226,32 @@ final class AttendActivity extends Page
                                             return;
                                         }
 
-                                        $guardian = AuthUser::guardian();
-                                        $termAcceptanceId = null;
+                                        $requestingGuardian = AuthUser::guardian();
+                                        /** @var Child|null $child */
+                                        $child = Child::query()->find($childId);
+                                        /** @var Guardian|null $checkinGuardian */
+                                        $checkinGuardian = Guardian::query()->find($guardianId);
 
-                                        if ($activity->term !== null) {
-                                            $termAcceptance = TermAcceptance::query()
-                                                ->where('term_id', $activity->term->id)
-                                                ->where('guardian_id', $guardian->id)
-                                                ->first();
-
-                                            $termAcceptanceId = $termAcceptance?->id;
+                                        if ($child === null || $checkinGuardian === null) {
+                                            return;
                                         }
 
-                                        do {
-                                            $code = ReadableCode::generate();
-                                        } while (Gatepass::query()
-                                            ->where('activity_id', $activity->id)
-                                            ->where('code', $code)
-                                            ->exists());
+                                        $termAcceptance = null;
+                                        if ($activity->term !== null) {
+                                            $termAcceptance = $termAcceptanceService->getAcceptance(
+                                                $activity->term,
+                                                $requestingGuardian
+                                            );
+                                        }
 
-                                        Gatepass::query()->create([
-                                            'child_id' => $childId,
-                                            'guardian_id' => $guardianId,
-                                            'activity_id' => $activity->id,
-                                            'code' => $code,
-                                            'term_acceptance_id' => $termAcceptanceId,
-                                        ]);
+                                        $gatepass = $gatepassService->create(
+                                            $activity,
+                                            $child,
+                                            $checkinGuardian,
+                                            $termAcceptance
+                                        );
 
-                                        $set('gatepass_code', $code);
+                                        $set('gatepass_code', $gatepass->code);
                                         $set('../../terms_locked', true);
 
                                         AppNotification::registeredToActivity()->send();
@@ -282,7 +264,7 @@ final class AttendActivity extends Page
                             ]),
                         ]),
                 ])),
-            ]))
+            ])
             ->statePath('data');
     }
 }

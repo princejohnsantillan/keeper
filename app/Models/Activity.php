@@ -88,10 +88,10 @@ final class Activity extends Model implements HasMedia
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')
+            ->nonQueued()
             ->width(800)
             ->height(600)
-            ->sharpen(10)
-            ->nonQueued();
+            ->sharpen(10);
     }
 
     public function registerMediaCollections(): void

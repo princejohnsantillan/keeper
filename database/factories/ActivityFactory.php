@@ -25,7 +25,7 @@ final class ActivityFactory extends Factory
         return [
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->optional()->sentence(),
-            'location' => $this->faker->optional()->address(),
+            'location' => $this->faker->address(),
             'starts_at' => $startsAt,
             'ends_at' => (clone $startsAt)->modify('+2 hours'),
             'published_at' => now(),

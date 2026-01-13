@@ -6,7 +6,6 @@ namespace App;
 
 use App\Models\Organization;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 final class Subdomain
@@ -16,7 +15,7 @@ final class Subdomain
         return once(function (): ?Organization {
             $slug = Str::beforeLast(request()->host(), '.'.Config::string('app.domain'));
 
-            return rescue(fn(): ?Organization => Organization::query()->where('slug', $slug)->first());
+            return rescue(fn (): ?Organization => Organization::query()->where('slug', $slug)->first());
         });
     }
 

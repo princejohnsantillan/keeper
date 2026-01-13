@@ -89,8 +89,10 @@ final class GuardiansTable
                                 return '';
                             }
 
+                            /** @var Relationship $pivot */
+                            $pivot = $child->pivot;
                             /** @var RelationshipEnum|null $relationship */
-                            $relationship = $child->pivot->relationship;
+                            $relationship = $pivot->relationship;
 
                             $inverseLabel = $relationship?->inverse($child->gender)->getLabel() ?? '';
                             $age = $child->birth_date->age;

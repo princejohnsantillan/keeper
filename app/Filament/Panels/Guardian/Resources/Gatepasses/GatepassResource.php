@@ -39,8 +39,11 @@ final class GatepassResource extends Resource
                 $query->whereIn('child_id', AuthUser::guardian()->children()->pluck('children.id'));
             });
 
-        return parent::getEloquentQuery()
+        /** @var Builder<Gatepass> $query */
+        $query = parent::getEloquentQuery()
             ->whereIn('guardian_id', $guardians->pluck('guardians.id'));
+
+        return $query;
     }
 
     /**
@@ -55,9 +58,15 @@ final class GatepassResource extends Resource
         ];
     }
 
+    /**
+     * @return Builder<Gatepass>
+     */
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getGlobalSearchEloquentQuery()->with(['activity', 'guardian', 'child']);
+        /** @var Builder<Gatepass> $query */
+        $query = parent::getGlobalSearchEloquentQuery()->with(['activity', 'guardian', 'child']);
+
+        return $query;
     }
 
     public static function form(Schema $schema): Schema

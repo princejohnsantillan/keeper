@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\TermAcceptanceServiceInterface;
+use App\Services\GatepassService;
+use App\Services\TermAcceptanceService;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -19,7 +23,7 @@ final class ServiceServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     public array $bindings = [
-        // Example:
-        // \App\Services\Contracts\ChildServiceInterface::class => \App\Services\ChildService::class,
+        TermAcceptanceServiceInterface::class => TermAcceptanceService::class,
+        GatepassServiceInterface::class => GatepassService::class,
     ];
 }
