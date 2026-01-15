@@ -6,7 +6,9 @@ namespace App\Filament\Panels\Guardian\Resources\Gatepasses;
 
 use App\AuthUser;
 use App\Filament\Panels\Guardian\Resources\Gatepasses\Pages\ListGatepasses;
+use App\Filament\Panels\Guardian\Resources\Gatepasses\Pages\ViewGatepass;
 use App\Filament\Panels\Guardian\Resources\Gatepasses\Schemas\GatepassForm;
+use App\Filament\Panels\Guardian\Resources\Gatepasses\Schemas\GatepassInfolist;
 use App\Filament\Panels\Guardian\Resources\Gatepasses\Tables\GatepassesTable;
 use App\Models\Gatepass;
 use App\Models\Guardian;
@@ -79,6 +81,11 @@ final class GatepassResource extends Resource
         return GatepassesTable::configure($table);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return GatepassInfolist::configure($schema);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -90,6 +97,7 @@ final class GatepassResource extends Resource
     {
         return [
             'index' => ListGatepasses::route('/'),
+            'view' => ViewGatepass::route('/{record}'),
         ];
     }
 }

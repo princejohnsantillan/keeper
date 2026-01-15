@@ -6,7 +6,8 @@
 /* Remove table container styling for activities, children, and guardians resources */
 .fi-resource-activities .fi-ta-ctn,
 .fi-resource-children .fi-ta-ctn,
-.fi-resource-guardians .fi-ta-ctn {
+.fi-resource-guardians .fi-ta-ctn,
+.fi-resource-gatepasses .fi-ta-ctn{
     background-color: transparent;
     box-shadow: none;
     border: none;

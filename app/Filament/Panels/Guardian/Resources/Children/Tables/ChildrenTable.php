@@ -26,8 +26,9 @@ final class ChildrenTable
             ->searchable(false)
             ->paginated(false)
             ->persistSortInSession()
-            ->defaultSort('first_name', 'asc')
+            ->defaultSort('birth_date', 'asc')
             ->contentGrid([
+                'sm' => 1,
                 'md' => 2,
                 'xl' => 3,
             ])
@@ -44,9 +45,7 @@ final class ChildrenTable
                         ]),
                     ]),
                 ])->space(3),
-            ])
-            ->recordAction('edit')
-            ->recordActions([]);
+            ]);
     }
 
     private static function nicknameColumn(): TextColumn
@@ -56,9 +55,9 @@ final class ChildrenTable
             ->weight(FontWeight::Bold)
             ->icon(fn (Child $record) => $record->gender->getIcon())
             ->iconColor(fn (Child $record) => $record->gender->getColor())
-            ->getStateUsing(fn (Child $record): string => $record->getNickname())
+            ->getStateUsing(fn (Child $record): string => $record->known_as)
             ->description(fn (Child $record): string => $record->full_name)
-            ->sortable(['first_name', 'last_name']);
+            ->sortable(['created_at']);
     }
 
     private static function birthDateColumn(): TextColumn

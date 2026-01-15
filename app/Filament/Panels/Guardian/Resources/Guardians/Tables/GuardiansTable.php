@@ -29,6 +29,7 @@ final class GuardiansTable
             ->persistSortInSession()
             ->defaultSort('first_name', 'asc')
             ->contentGrid([
+                'sm' => 1,
                 'md' => 2,
                 'xl' => 3,
             ])
@@ -51,9 +52,7 @@ final class GuardiansTable
 
                     self::childrenColumn(),
                 ])->space(3),
-            ])
-            ->recordAction('view')
-            ->recordActions([]);
+            ]);
     }
 
     private static function fullNameColumn(): TextColumn

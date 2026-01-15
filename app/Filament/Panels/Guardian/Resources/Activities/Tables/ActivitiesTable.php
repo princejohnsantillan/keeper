@@ -36,9 +36,9 @@ final class ActivitiesTable
                 ]),
             ])
             ->contentGrid([
-                'default' => 1,
-                'sm' => 2,
-                'lg' => 3,
+                'sm' => 1,
+                'md' => 2,
+                'xl' => 3,
             ])
             ->recordAction('view_activity')
             ->recordActions([
