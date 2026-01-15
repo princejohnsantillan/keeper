@@ -36,14 +36,14 @@ final class GatepassResource extends Resource
      */
     public static function getEloquentQuery(): Builder
     {
-        $guardians = Guardian::query()
-            ->whereHas('relationships', function (Builder $query): void {
-                $query->whereIn('child_id', AuthUser::guardian()->children()->pluck('children.id'));
-            });
+        $childIds = AuthUser::guardian()->children()->pluck('children.id');
+
+        $guardianIds = Guardian::query()
+            ->whereHas('relationships', fn (Builder $query): Builder => $query->whereIn('child_id', $childIds))
+            ->pluck('guardians.id');
 
         /** @var Builder<Gatepass> $query */
-        $query = parent::getEloquentQuery()
-            ->whereIn('guardian_id', $guardians->pluck('guardians.id'));
+        $query = parent::getEloquentQuery()->whereIn('guardian_id', $guardianIds);
 
         return $query;
     }

@@ -58,24 +58,12 @@ final class UpdateChildGuardiansAction
                 /** @var array<int, array{guardian_id?: int|string, relationship?: string|null}> $rows */
                 $rows = $data['guardians'] ?? [];
 
-                $syncData = [];
-
-                foreach ($rows as $row) {
-                    $guardianId = (int) ($row['guardian_id'] ?? 0);
-                    $relationship = $row['relationship'] ?? null;
-
-                    if ($guardianId <= 0) {
-                        continue;
-                    }
-
-                    if ($relationship === null || $relationship === '') {
-                        continue;
-                    }
-
-                    $syncData[$guardianId] = [
-                        'relationship' => $relationship,
-                    ];
-                }
+                $syncData = collect($rows)
+                    ->filter(fn (array $row): bool => ((int) ($row['guardian_id'] ?? 0)) > 0 && ! empty($row['relationship']))
+                    ->mapWithKeys(fn (array $row): array => [
+                        (int) $row['guardian_id'] => ['relationship' => $row['relationship']],
+                    ])
+                    ->all();
 
                 $syncGuardians($record, $syncData);
 

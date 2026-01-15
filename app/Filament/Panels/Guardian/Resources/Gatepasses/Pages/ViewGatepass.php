@@ -14,17 +14,17 @@ final class ViewGatepass extends ViewRecord
 
     public function getHeading(): string
     {
-        /** @var Gatepass $record */
-        $record = $this->getRecord();
-
-        return $record->activity->title;
+        return $this->getGatepass()->activity->title;
     }
 
     public function getSubheading(): string
     {
-        /** @var Gatepass $record */
-        $record = $this->getRecord();
+        return 'Gate Pass: '.$this->getGatepass()->code;
+    }
 
-        return 'Gate Pass: '.$record->code;
+    private function getGatepass(): Gatepass
+    {
+        /** @var Gatepass */
+        return $this->getRecord();
     }
 }

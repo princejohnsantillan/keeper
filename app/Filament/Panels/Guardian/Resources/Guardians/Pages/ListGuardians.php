@@ -43,26 +43,14 @@ final class ListGuardians extends ListRecords
 
                     unset($data['children']);
 
-                    $guardian = Guardian::create($data);
+                    $guardian = Guardian::query()->create($data);
 
-                    $syncData = [];
-
-                    foreach ($rows as $row) {
-                        $childId = (int) ($row['child_id'] ?? 0);
-                        $relationship = $row['relationship'] ?? null;
-
-                        if ($childId <= 0) {
-                            continue;
-                        }
-
-                        if ($relationship === null || $relationship === '') {
-                            continue;
-                        }
-
-                        $syncData[$childId] = [
-                            'relationship' => $relationship,
-                        ];
-                    }
+                    $syncData = collect($rows)
+                        ->filter(fn (array $row): bool => ((int) ($row['child_id'] ?? 0)) > 0 && ! empty($row['relationship']))
+                        ->mapWithKeys(fn (array $row): array => [
+                            (int) $row['child_id'] => ['relationship' => $row['relationship']],
+                        ])
+                        ->all();
 
                     if (empty($syncData)) {
                         AppNotification::childRelationshipRequired()->send();
