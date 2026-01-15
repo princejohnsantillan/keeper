@@ -11,7 +11,8 @@ use App\Filament\Components\Infolists\AppTextEntry;
 use Carbon\CarbonImmutable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -23,23 +24,22 @@ final class GuardianInfolist
             ->columns(1)
             ->components([
                 Section::make()
-                    ->columns([
-                        'default' => 1,
-                        'sm' => 2,
-                    ])
+                    ->compact()
                     ->schema([
-                        AppSpatieMediaLibraryImageEntry::avatar(),
-                        Group::make([
-                            AppTextEntry::fullName(),
-                            AppTextEntry::age(),
-                            AppTextEntry::birthday(),
-                            AppIconEntry::gender(),
-                            AppTextEntry::email(),
-                            AppTextEntry::phone(),
-                        ]),
+                        Flex::make([
+                            AppSpatieMediaLibraryImageEntry::avatar(),
+                            Grid::make(2)
+                                ->schema([
+                                    AppTextEntry::fullName()
+                                        ->columnSpanFull(),
+                                    self::ageAndBirthdayEntry(),
+                                    self::genderAndContactEntry(),
+                                ]),
+                        ])->from('md'),
                     ]),
                 Section::make('Children')
                     ->icon('fas-children')
+                    ->compact()
                     ->collapsible()
                     ->schema([
                         self::childrenRepeatable(),
@@ -47,23 +47,41 @@ final class GuardianInfolist
             ]);
     }
 
+    private static function ageAndBirthdayEntry(): Grid
+    {
+        return Grid::make(2)
+            ->schema([
+                AppTextEntry::age(),
+                AppTextEntry::birthday(),
+            ]);
+    }
+
+    private static function genderAndContactEntry(): Grid
+    {
+        return Grid::make(3)
+            ->schema([
+                AppIconEntry::gender(),
+                AppTextEntry::email(),
+                AppTextEntry::phone(),
+            ]);
+    }
+
     private static function childrenRepeatable(): RepeatableEntry
     {
         return RepeatableEntry::make('children')
             ->hiddenLabel()
-            ->columns([
+            ->grid([
                 'default' => 1,
-                'sm' => 2,
+                'md' => 2,
             ])
             ->schema([
-                Group::make([
-                    self::childNameEntry(),
-                    self::relationshipEntry(),
-                ]),
-                Group::make([
-                    self::childAgeEntry(),
-                    AppTextEntry::nickname(),
-                ]),
+                Grid::make(2)
+                    ->schema([
+                        self::childNameEntry(),
+                        self::relationshipEntry(),
+                        self::childAgeEntry(),
+                        AppTextEntry::nickname(),
+                    ]),
             ]);
     }
 
