@@ -18,6 +18,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 final class GatepassResource extends Resource
 {
@@ -25,7 +26,9 @@ final class GatepassResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'entypo-lock';
 
-    protected static ?int $navigationSort = 4;
+    protected static string|UnitEnum|null $navigationGroup = 'Activity';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'code';
 

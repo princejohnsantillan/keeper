@@ -8,6 +8,7 @@ use App\Filament\Actions\DeleteChildAction;
 use App\Filament\Actions\EditChildAction;
 use App\Filament\Actions\UpdateChildGuardiansAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
 use App\Models\Child;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -20,8 +21,12 @@ use Filament\Tables\Table;
 
 final class ChildrenTable
 {
+    private static bool $isSortable = false;
+
     public static function configure(Table $table): Table
     {
+        self::$isSortable = ChildResource::getEloquentQuery()->count() >= 3;
+
         return $table
             ->searchable(false)
             ->paginated(false)
@@ -57,7 +62,7 @@ final class ChildrenTable
             ->iconColor(fn (Child $record) => $record->gender->getColor())
             ->getStateUsing(fn (Child $record): string => $record->known_as)
             ->description(fn (Child $record): string => $record->full_name)
-            ->sortable(['created_at']);
+            ->sortable(self::$isSortable ? ['created_at'] : false);
     }
 
     private static function birthDateColumn(): TextColumn
@@ -65,7 +70,7 @@ final class ChildrenTable
         return TextColumn::make('birth_date')
             ->date('d M Y')
             ->suffix(fn (Child $record): string => ' · '.$record->birth_date->age.' yrs')
-            ->sortable()
+            ->sortable(self::$isSortable)
             ->color('gray');
     }
 

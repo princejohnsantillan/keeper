@@ -8,6 +8,7 @@ use App\Enums\Relationship as RelationshipEnum;
 use App\Filament\Actions\DeleteGuardianAction;
 use App\Filament\Actions\EditGuardianAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
 use App\Models\Guardian;
 use App\Models\Relationship;
 use Filament\Actions\DeleteAction;
@@ -21,8 +22,12 @@ use Filament\Tables\Table;
 
 final class GuardiansTable
 {
+    private static bool $isSortable = false;
+
     public static function configure(Table $table): Table
     {
+        self::$isSortable = GuardianResource::getEloquentQuery()->count() >= 3;
+
         return $table
             ->searchable(false)
             ->paginated(false)
@@ -62,7 +67,7 @@ final class GuardiansTable
             ->weight(FontWeight::Bold)
             ->icon(fn (Guardian $record) => $record->gender->getIcon())
             ->iconColor(fn (Guardian $record) => $record->gender->getColor())
-            ->sortable(['first_name', 'last_name']);
+            ->sortable(self::$isSortable ? ['first_name', 'last_name'] : false);
     }
 
     private static function birthDateColumn(): TextColumn
@@ -70,7 +75,7 @@ final class GuardiansTable
         return TextColumn::make('birth_date')
             ->date('d M Y')
             ->suffix(fn (Guardian $record): string => ' · '.$record->birth_date->age.' yrs')
-            ->sortable()
+            ->sortable(self::$isSortable)
             ->color('gray');
     }
 
@@ -78,7 +83,7 @@ final class GuardiansTable
     {
         return TextColumn::make('email')
             ->icon(Heroicon::Envelope)
-            ->sortable()
+            ->sortable(self::$isSortable)
             ->copyable();
     }
 

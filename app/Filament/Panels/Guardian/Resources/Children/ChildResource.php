@@ -17,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
 
 final class ChildResource extends Resource
 {
@@ -24,7 +25,9 @@ final class ChildResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'fas-children';
 
-    protected static ?int $navigationSort = 2;
+    protected static string|UnitEnum|null $navigationGroup = 'Family';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
