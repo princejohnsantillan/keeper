@@ -32,16 +32,14 @@ final class ChildResource extends Resource
     protected static ?string $recordTitleAttribute = 'full_name';
 
     /**
-     * Scope to only the children whose guardian is the authenticated user.
+     * Scope to only the children owned by the authenticated user.
      *
      * @return Builder<Child>
      */
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->whereHas('relationships', function (Builder $query): void {
-                $query->where('guardian_id', AuthUser::guardianId());
-            })
+            ->where('owner_id', AuthUser::user()->id)
             ->with('guardians');
     }
 

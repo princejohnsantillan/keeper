@@ -43,6 +43,8 @@ final class ListGuardians extends ListRecords
 
                     unset($data['children']);
 
+                    $data['owner_id'] = AuthUser::userId();
+
                     $guardian = Guardian::query()->create($data);
 
                     $syncData = collect($rows)

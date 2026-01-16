@@ -32,21 +32,15 @@ final class GuardianResource extends Resource
     protected static ?string $recordTitleAttribute = 'full_name';
 
     /**
-     * Scope to only the guardians of the authenticated user's children.
+     * Scope to only the guardians owned by the authenticated user.
      *
      * @return Builder<Guardian>
      */
     public static function getEloquentQuery(): Builder
     {
-        $childIds = AuthUser::guardian()->children()->pluck('children.id');
-
         return parent::getEloquentQuery()
-            ->whereHas('relationships', function (Builder $query) use ($childIds): void {
-                $query->whereIn('child_id', $childIds);
-            })
-            ->with(['children' => function ($query) use ($childIds): void {
-                $query->whereIn('children.id', $childIds);
-            }]);
+            ->where('owner_id', AuthUser::user()->id)
+            ->with('children');
     }
 
     public static function getGloballySearchableAttributes(): array

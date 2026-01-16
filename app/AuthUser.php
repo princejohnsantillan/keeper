@@ -36,4 +36,9 @@ final class AuthUser
     {
         return self::guardian()->id;
     }
+
+    public static function userId(): int
+    {
+        return self::user()->id;
+    }
 }
