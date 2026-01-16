@@ -111,11 +111,11 @@ final class AppNotification
             ->title('At least one child relationship is required.');
     }
 
-    public static function deprecated(): Notification
+    public static function archived(): Notification
     {
         return Notification::make()
             ->success()
-            ->title('Deprecated')
-            ->body('This item has been deprecated and can no longer be used.');
+            ->title('Archived')
+            ->body('This item has been archived and can no longer be used.');
     }
 }

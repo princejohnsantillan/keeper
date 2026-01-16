@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Terms\Tables;
 
-use App\Filament\Actions\DeprecateTermAction;
+use App\Filament\Actions\ArchiveTermAction;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Filament\Panels\Keeper\Resources\Terms\Schemas\TermInfolist;
 use App\Models\Term;
@@ -21,7 +21,7 @@ final class TermsTable
         return $table
             ->columns([
                 AppTextColumn::name(),
-                self::deprecatedAtColumn(),
+                self::archivedAtColumn(),
                 self::createdAtColumn(),
             ])
             ->defaultSort('created_at', 'desc')
@@ -39,22 +39,22 @@ final class TermsTable
                         EditAction::make()
                             ->slideOver()
                             ->cancelParentActions()
-                            ->hidden(fn (Term $record): bool => $record->isDeprecated()),
-                        DeprecateTermAction::make()
+                            ->hidden(fn (Term $record): bool => $record->isArchived()),
+                        ArchiveTermAction::make()
                             ->cancelParentActions(),
                         DeleteAction::make()
                             ->cancelParentActions()
-                            ->hidden(fn (Term $record): bool => $record->isDeprecated()),
+                            ->hidden(fn (Term $record): bool => $record->isArchived()),
                     ]),
             ]);
     }
 
-    private static function deprecatedAtColumn(): TextColumn
+    private static function archivedAtColumn(): TextColumn
     {
-        return TextColumn::make('deprecated_at')
+        return TextColumn::make('archived_at')
             ->label('Status')
             ->badge()
-            ->formatStateUsing(fn (?string $state): string => $state ? 'Deprecated' : 'Active')
+            ->formatStateUsing(fn (?string $state): string => $state ? 'Archived' : 'Active')
             ->color(fn (?string $state): string => $state ? 'danger' : 'success');
     }
 

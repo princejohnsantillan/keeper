@@ -69,44 +69,44 @@ it('uses the correct navigation group', function () {
     expect(MessageResource::getNavigationGroup())->toBe('Activity');
 });
 
-it('can deprecate a message', function () {
+it('can archive a message', function () {
     $message = Message::factory()
         ->for($this->organization)
         ->create();
 
-    expect($message->isDeprecated())->toBeFalse();
+    expect($message->isArchived())->toBeFalse();
 
     Livewire::test(ListMessages::class)
-        ->callTableAction('deprecate', $message)
+        ->callTableAction('archive', $message)
         ->assertNotified();
 
-    expect($message->refresh()->isDeprecated())->toBeTrue();
+    expect($message->refresh()->isArchived())->toBeTrue();
 });
 
-it('hides the deprecate action for already deprecated messages', function () {
+it('hides the archive action for already archived messages', function () {
     $message = Message::factory()
         ->for($this->organization)
-        ->deprecated()
+        ->archived()
         ->create();
 
     Livewire::test(ListMessages::class)
-        ->assertTableActionHidden('deprecate', $message);
+        ->assertTableActionHidden('archive', $message);
 });
 
-it('hides the edit action for deprecated messages', function () {
+it('hides the edit action for archived messages', function () {
     $message = Message::factory()
         ->for($this->organization)
-        ->deprecated()
+        ->archived()
         ->create();
 
     Livewire::test(ListMessages::class)
         ->assertTableActionHidden('edit', $message);
 });
 
-it('hides the delete action for deprecated messages', function () {
+it('hides the delete action for archived messages', function () {
     $message = Message::factory()
         ->for($this->organization)
-        ->deprecated()
+        ->archived()
         ->create();
 
     Livewire::test(ListMessages::class)

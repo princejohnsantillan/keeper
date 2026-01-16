@@ -11,6 +11,46 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @mixin IdeHelperAttendance
+ *
+ * @property int $id
+ * @property string $attendee_code
+ * @property int $activity_id
+ * @property int $child_id
+ * @property int|null $checkin_keeper_id
+ * @property int|null $checkin_gatepass_id
+ * @property \Illuminate\Support\Carbon|null $checked_in_at
+ * @property int|null $checkout_keeper_id
+ * @property int|null $checkout_gatepass_id
+ * @property \Illuminate\Support\Carbon|null $checked_out_at
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Activity $activity
+ * @property-read \App\Models\Gatepass|null $checkinGatepass
+ * @property-read \App\Models\Keeper|null $checkinKeeper
+ * @property-read \App\Models\Gatepass|null $checkoutGatepass
+ * @property-read \App\Models\Keeper|null $checkoutKeeper
+ * @property-read \App\Models\Child $child
+ *
+ * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereActivityId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereAttendeeCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedInAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedOutAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckinGatepassId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckinKeeperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckoutGatepassId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckoutKeeperId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereChildId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
+ *
+ * @mixin \Eloquent
  */
 final class Attendance extends Pivot
 {

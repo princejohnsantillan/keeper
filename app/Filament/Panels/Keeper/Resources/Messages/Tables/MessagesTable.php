@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Messages\Tables;
 
-use App\Filament\Actions\DeprecateMessageAction;
+use App\Filament\Actions\ArchiveMessageAction;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Message;
 use Filament\Actions\DeleteAction;
@@ -19,7 +19,7 @@ final class MessagesTable
         return $table
             ->columns([
                 AppTextColumn::name(),
-                self::deprecatedAtColumn(),
+                self::archivedAtColumn(),
                 self::createdAtColumn(),
             ])
             ->defaultSort('created_at', 'desc')
@@ -27,19 +27,19 @@ final class MessagesTable
             ->recordActions([
                 EditAction::make()
                     ->slideOver()
-                    ->hidden(fn (Message $record): bool => $record->isDeprecated()),
-                DeprecateMessageAction::make(),
+                    ->hidden(fn (Message $record): bool => $record->isArchived()),
+                ArchiveMessageAction::make(),
                 DeleteAction::make()
-                    ->hidden(fn (Message $record): bool => $record->isDeprecated()),
+                    ->hidden(fn (Message $record): bool => $record->isArchived()),
             ]);
     }
 
-    private static function deprecatedAtColumn(): TextColumn
+    private static function archivedAtColumn(): TextColumn
     {
-        return TextColumn::make('deprecated_at')
+        return TextColumn::make('archived_at')
             ->label('Status')
             ->badge()
-            ->formatStateUsing(fn (?string $state): string => $state ? 'Deprecated' : 'Active')
+            ->formatStateUsing(fn (?string $state): string => $state ? 'Archived' : 'Active')
             ->color(fn (?string $state): string => $state ? 'danger' : 'success');
     }
 

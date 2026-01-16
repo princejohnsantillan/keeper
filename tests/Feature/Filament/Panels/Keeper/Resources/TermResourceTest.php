@@ -37,40 +37,40 @@ it('can list terms', function () {
         ->assertCanSeeTableRecords($terms);
 });
 
-it('can deprecate a term', function () {
+it('can archive a term', function () {
     $term = Term::factory()
         ->for($this->organization)
         ->create();
 
-    expect($term->isDeprecated())->toBeFalse();
+    expect($term->isArchived())->toBeFalse();
 
     Livewire::test(ListTerms::class)
         ->callAction([
             TestAction::make('view')->table($term),
-            'deprecate',
+            'archive',
         ])
         ->assertNotified();
 
-    expect($term->refresh()->isDeprecated())->toBeTrue();
+    expect($term->refresh()->isArchived())->toBeTrue();
 });
 
-it('hides the deprecate action for already deprecated terms', function () {
+it('hides the archive action for already archived terms', function () {
     $term = Term::factory()
         ->for($this->organization)
-        ->deprecated()
+        ->archived()
         ->create();
 
     Livewire::test(ListTerms::class)
         ->assertActionHidden([
             TestAction::make('view')->table($term),
-            'deprecate',
+            'archive',
         ]);
 });
 
-it('hides the edit action for deprecated terms', function () {
+it('hides the edit action for archived terms', function () {
     $term = Term::factory()
         ->for($this->organization)
-        ->deprecated()
+        ->archived()
         ->create();
 
     Livewire::test(ListTerms::class)
@@ -80,10 +80,10 @@ it('hides the edit action for deprecated terms', function () {
         ]);
 });
 
-it('hides the delete action for deprecated terms', function () {
+it('hides the delete action for archived terms', function () {
     $term = Term::factory()
         ->for($this->organization)
-        ->deprecated()
+        ->archived()
         ->create();
 
     Livewire::test(ListTerms::class)

@@ -30,6 +30,7 @@ return new class extends Migration
             'birth_date' => '1988-08-12',
             'phone' => '+639399308514',
             'user_id' => $user->id,
+            'owner_id' => $user->id,
         ]);
 
         $organization = Organization::create([
@@ -59,6 +60,7 @@ return new class extends Migration
             'birth_date' => '2025-01-01',
             'phone' => '+639177123519',
             'user_id' => $user2->id,
+            'owner_id' => $user2->id,
         ]);
 
         $organization2 = Organization::create([

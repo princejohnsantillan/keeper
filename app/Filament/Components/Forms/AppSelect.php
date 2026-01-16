@@ -24,7 +24,7 @@ final class AppSelect
             ->relationship(
                 name: 'term',
                 titleAttribute: 'name',
-                modifyQueryUsing: fn (Builder $query): Builder => $query->whereNull('deprecated_at'),
+                modifyQueryUsing: fn (Builder $query): Builder => $query->whereNull('archived_at'),
             )
             ->native(false);
     }

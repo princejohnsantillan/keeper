@@ -21,6 +21,7 @@ final class GuardianFactory extends Factory
     public function definition(): array
     {
         return [
+            'owner_id' => User::factory(),
             'first_name' => $this->faker->firstName(),
             'middle_name' => $this->faker->optional()->firstName(),
             'last_name' => $this->faker->lastName(),

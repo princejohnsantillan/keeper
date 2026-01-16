@@ -46,7 +46,7 @@ final class ActivityForm
             ->relationship(
                 name: 'message',
                 titleAttribute: 'name',
-                modifyQueryUsing: fn (Builder $query): Builder => $query->whereNull('deprecated_at'),
+                modifyQueryUsing: fn (Builder $query): Builder => $query->whereNull('archived_at'),
             )
             ->searchable()
             ->preload()

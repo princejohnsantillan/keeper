@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->text('content');
+            $table->timestamp('deprecated_at')->nullable();
             $table->timestamps();
         });
     }

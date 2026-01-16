@@ -27,10 +27,10 @@ final class MessageFactory extends Factory
         ];
     }
 
-    public function deprecated(): static
+    public function archived(): static
     {
         return $this->state(fn (array $attributes): array => [
-            'deprecated_at' => now(),
+            'archived_at' => now(),
         ]);
     }
 }
