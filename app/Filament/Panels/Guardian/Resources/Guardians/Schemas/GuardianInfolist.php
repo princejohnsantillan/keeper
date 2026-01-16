@@ -12,9 +12,10 @@ use Carbon\CarbonImmutable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Flex;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 
 final class GuardianInfolist
 {
@@ -23,46 +24,65 @@ final class GuardianInfolist
         return $schema
             ->columns(1)
             ->components([
-                Section::make()
-                    ->compact()
-                    ->schema([
-                        Flex::make([
-                            AppSpatieMediaLibraryImageEntry::avatar(),
-                            Grid::make(2)
-                                ->schema([
-                                    AppTextEntry::fullName()
-                                        ->columnSpanFull(),
-                                    self::ageAndBirthdayEntry(),
-                                    self::genderAndContactEntry(),
-                                ]),
-                        ])->from('md'),
-                    ]),
-                Section::make('Children')
-                    ->icon('fas-children')
-                    ->compact()
-                    ->collapsible()
-                    ->schema([
-                        self::childrenRepeatable(),
-                    ]),
+                self::profileSection(),
+                self::childrenSection(),
             ]);
     }
 
-    private static function ageAndBirthdayEntry(): Grid
+    private static function profileSection(): Section
     {
-        return Grid::make(2)
+        return Section::make()
+            ->compact()
+            ->extraAttributes(['class' => 'max-w-2xl'])
             ->schema([
-                AppTextEntry::age(),
-                AppTextEntry::birthday(),
+                Flex::make([
+                    AppSpatieMediaLibraryImageEntry::avatar()
+                        ->grow(false),
+                    Group::make([
+                        AppTextEntry::firstName()
+                            ->inlineLabel(),
+                        AppTextEntry::middleName()
+                            ->inlineLabel(),
+                        AppTextEntry::lastName()
+                            ->inlineLabel(),
+                        AppTextEntry::nickname()
+                            ->inlineLabel(),
+                        AppIconEntry::gender()
+                            ->inlineLabel(),
+                        self::birthDateWithAgeEntry()
+                            ->inlineLabel(),
+                        AppTextEntry::email()
+                            ->inlineLabel(),
+                        AppTextEntry::phone()
+                            ->inlineLabel(),
+                    ]),
+                ])->from('md'),
             ]);
     }
 
-    private static function genderAndContactEntry(): Grid
+    private static function birthDateWithAgeEntry(): TextEntry
     {
-        return Grid::make(3)
+        return TextEntry::make('birth_date')
+            ->label('Birth date')
+            ->icon('heroicon-o-cake')
+            ->formatStateUsing(function (CarbonImmutable $state): string {
+                $formattedDate = $state->format('F j, Y');
+                $age = $state->age;
+                $years = $age === 1 ? 'year' : 'years';
+
+                return "{$formattedDate} ({$age} {$years} old)";
+            });
+    }
+
+    private static function childrenSection(): Section
+    {
+        return Section::make('Children')
+            ->icon('fas-children')
+            ->compact()
+            ->extraAttributes(['class' => 'max-w-2xl'])
+            ->collapsible()
             ->schema([
-                AppIconEntry::gender(),
-                AppTextEntry::email(),
-                AppTextEntry::phone(),
+                self::childrenRepeatable(),
             ]);
     }
 
@@ -70,47 +90,55 @@ final class GuardianInfolist
     {
         return RepeatableEntry::make('children')
             ->hiddenLabel()
-            ->grid([
-                'default' => 1,
-                'md' => 2,
-            ])
+            ->contained(false)
             ->schema([
-                Grid::make(2)
-                    ->schema([
-                        self::childNameEntry(),
-                        self::relationshipEntry(),
-                        self::childAgeEntry(),
-                        AppTextEntry::nickname(),
-                    ]),
+                Flex::make([
+                    self::childNameEntry(),
+                    self::relationshipEntry(),
+                    self::childAgeEntry(),
+                    self::childNicknameEntry(),
+                ])->from('md'),
             ]);
     }
 
     private static function childNameEntry(): TextEntry
     {
         return TextEntry::make('full_name')
-            ->label('Name')
+            ->hiddenLabel()
+            ->weight(FontWeight::Medium)
             ->icon(fn ($record) => $record->gender->getIcon())
-            ->iconColor(fn ($record) => $record->gender->getColor());
+            ->iconColor(fn ($record) => $record->gender->getColor())
+            ->grow(false);
     }
 
     private static function relationshipEntry(): TextEntry
     {
         return TextEntry::make('pivot.relationship')
-            ->label('Relationship')
+            ->hiddenLabel()
             ->formatStateUsing(fn (RelationshipEnum $state, $record): string => $state->inverse($record->gender)->getLabel())
-            ->badge();
+            ->badge()
+            ->grow(false);
     }
 
     private static function childAgeEntry(): TextEntry
     {
         return TextEntry::make('birth_date')
-            ->label('Age')
+            ->hiddenLabel()
             ->icon('heroicon-o-cake')
             ->formatStateUsing(function (CarbonImmutable $state): string {
                 $age = $state->age;
                 $years = $age === 1 ? 'year' : 'years';
 
                 return "{$age} {$years} old";
-            });
+            })
+            ->grow(false);
+    }
+
+    private static function childNicknameEntry(): TextEntry
+    {
+        return TextEntry::make('nickname')
+            ->hiddenLabel()
+            ->icon('heroicon-o-chat-bubble-bottom-center-text')
+            ->placeholder('—');
     }
 }
