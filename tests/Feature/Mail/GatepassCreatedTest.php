@@ -61,12 +61,12 @@ it('contains the registration success message', function () {
     $mailable->assertSeeInHtml('You have successfully registered');
 });
 
-it('contains the excited message', function () {
+it('contains the keep code safe message', function () {
     $gatepass = Gatepass::factory()->create();
 
     $mailable = new GatepassCreated($gatepass);
 
-    $mailable->assertSeeInHtml("We're excited to see you!");
+    $mailable->assertSeeInHtml('Please keep this code safe');
 });
 
 it('has the correct subject', function () {
@@ -88,8 +88,8 @@ it('contains the organizer message when activity has a message template', functi
     $mailable = new GatepassCreated($gatepass);
 
     $mailable->assertSeeInHtml('Please bring sunscreen and water bottles.');
-    $mailable->assertSeeInHtml('Message from the Organizer');
-    $mailable->assertSeeInHtml('This message is from the organizer (Test Organization), not from Keeper.');
+    $mailable->assertSeeInHtml('A message from Test Organization');
+    $mailable->assertSeeInHtml('This message is from the event organizer (Test Organization), not Keeper.');
 });
 
 it('does not show organizer message section when activity has no message template', function () {
@@ -98,6 +98,6 @@ it('does not show organizer message section when activity has no message templat
 
     $mailable = new GatepassCreated($gatepass);
 
-    $mailable->assertDontSeeInHtml('Message from the Organizer');
-    $mailable->assertDontSeeInHtml('This message is from the organizer (');
+    $mailable->assertDontSeeInHtml('A message from');
+    $mailable->assertDontSeeInHtml('This message is from the event organizer');
 });

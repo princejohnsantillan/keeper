@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperTermAcceptance
- *
  * @property int $id
  * @property int $term_id
  * @property int $guardian_id
@@ -38,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TermAcceptance whereUserAgent($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperTermAcceptance
  */
 final class TermAcceptance extends Model
 {

@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @mixin IdeHelperAttendance
- *
  * @property int $id
  * @property string $attendee_code
  * @property int $activity_id
@@ -51,6 +49,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperAttendance
  */
 final class Attendance extends Pivot
 {

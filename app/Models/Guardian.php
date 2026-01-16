@@ -11,14 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
 /**
- * @mixin IdeHelperGuardian
- *
  * @property int $id
  * @property string $first_name
  * @property string|null $middle_name
@@ -27,7 +26,6 @@ use Spatie\Tags\HasTags;
  * @property Gender $gender
  * @property string $email
  * @property string|null $phone
- * @property int|null $user_id
  * @property int $owner_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -70,7 +68,6 @@ use Spatie\Tags\HasTags;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAllTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAllTagsOfAnyType($tags)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAnyTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
@@ -81,6 +78,7 @@ use Spatie\Tags\HasTags;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withoutTrashed()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperGuardian
  */
 final class Guardian extends Model implements HasMedia
 {
@@ -106,11 +104,11 @@ final class Guardian extends Model implements HasMedia
     }
 
     /**
-     * @return BelongsTo<User, $this>
+     * @return HasOne<User, $this>
      */
-    public function user(): BelongsTo
+    public function user(): HasOne
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(User::class);
     }
 
     /**

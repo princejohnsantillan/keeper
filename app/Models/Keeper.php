@@ -12,8 +12,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperKeeper
- *
  * @property int $id
  * @property int $organization_id
  * @property int $user_id
@@ -44,6 +42,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper withoutTrashed()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperKeeper
  */
 final class Keeper extends Model
 {

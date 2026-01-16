@@ -32,8 +32,10 @@ it('creates a user and guardian', function () {
         'first_name' => 'John',
         'last_name' => 'Doe',
         'email' => 'john.doe@example.com',
-        'user_id' => $user->id,
     ]);
+
+    expect($user->guardian_id)->not->toBeNull();
+    expect($user->guardian)->toBeInstanceOf(Guardian::class);
 });
 
 it('creates a guardian with optional fields', function () {
@@ -54,7 +56,7 @@ it('creates a guardian with optional fields', function () {
         ->toBeInstanceOf(User::class)
         ->name->toBe('Jane Smith');
 
-    $guardian = Guardian::query()->where('user_id', $user->id)->first();
+    $guardian = $user->guardian;
 
     expect($guardian)
         ->first_name->toBe('Jane')

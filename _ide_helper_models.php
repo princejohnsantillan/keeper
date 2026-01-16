@@ -36,7 +36,7 @@ namespace App\Models{
  * @property-read \App\Models\User $creator
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
  * @property-read int|null $gatepasses_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
  * @property-read \App\Models\Message|null $message
  * @property-read \App\Models\Organization $organization
@@ -113,12 +113,13 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $owner_id
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
  * @property string|null $nickname
  * @property \Carbon\CarbonImmutable $birth_date
- * @property \App\Enums\Gender $gender
+ * @property Gender $gender
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -136,6 +137,7 @@ namespace App\Models{
  * @property-read string $known_as
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read \App\Models\User $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
  * @property-read int|null $relationships_count
  * @property \Illuminate\Database\Eloquent\Collection<int, \Spatie\Tags\Tag> $tags
@@ -155,6 +157,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereMiddleName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereNickname($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAllTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAllTagsOfAnyType($tags)
@@ -209,10 +212,10 @@ namespace App\Models{
  * @property string|null $middle_name
  * @property string $last_name
  * @property \Carbon\CarbonImmutable $birth_date
- * @property \App\Enums\Gender $gender
+ * @property Gender $gender
  * @property string $email
  * @property string|null $phone
- * @property int|null $user_id
+ * @property int $owner_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -228,6 +231,7 @@ namespace App\Models{
  * @property-read int|null $media_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Organization> $organizations
  * @property-read int|null $organizations_count
+ * @property-read \App\Models\User $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
  * @property-read int|null $relationships_count
  * @property \Illuminate\Database\Eloquent\Collection<int, \Spatie\Tags\Tag> $tags
@@ -249,9 +253,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereLastName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereMiddleName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAllTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAllTagsOfAnyType($tags)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAnyTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
@@ -307,9 +311,9 @@ namespace App\Models{
  * @property int $organization_id
  * @property string $name
  * @property string $content
+ * @property \Carbon\CarbonImmutable|null $archived_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Carbon\CarbonImmutable|null $deprecated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \App\Models\Organization $organization
@@ -319,7 +323,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereDeprecatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereOrganizationId($value)
@@ -373,7 +377,7 @@ namespace App\Models{
  * @property int $id
  * @property int $guardian_id
  * @property int $child_id
- * @property \App\Enums\Relationship $relationship
+ * @property RelationshipEnum $relationship
  * @property bool $is_primary
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -403,10 +407,10 @@ namespace App\Models{
  * @property string $content
  * @property int $version
  * @property \Carbon\CarbonImmutable|null $published_at
+ * @property \Carbon\CarbonImmutable|null $archived_at
  * @property int $organization_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Carbon\CarbonImmutable|null $deprecated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TermAcceptance> $acceptances
  * @property-read int|null $acceptances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Guardian> $acceptedByGuardians
@@ -420,7 +424,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereDeprecatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereOrganizationId($value)
@@ -466,6 +470,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int|null $guardian_id
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -493,6 +498,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGuardianId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @mixin IdeHelperOrganization
- *
  * @property int $id
  * @property string $name
  * @property string $slug
@@ -48,6 +46,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization withoutTrashed()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperOrganization
  */
 final class Organization extends Model
 {

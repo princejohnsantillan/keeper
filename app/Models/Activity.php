@@ -16,8 +16,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
- * @mixin IdeHelperActivity
- *
  * @property int $id
  * @property string $title
  * @property string|null $description
@@ -68,6 +66,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperActivity
  */
 #[ScopedBy(OrganizationScope::class)]
 final class Activity extends Model implements HasMedia

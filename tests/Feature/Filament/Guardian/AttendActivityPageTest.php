@@ -16,8 +16,8 @@ beforeEach(function () {
     Filament::setCurrentPanel(Filament::getPanel('guardian'));
 
     $organization = Organization::factory()->create(['slug' => 'test-org']);
-    $user = User::factory()->create();
-    $guardian = Guardian::factory()->for($user)->create();
+    $guardian = Guardian::factory()->create();
+    $user = User::factory()->create(['guardian_id' => $guardian->id]);
     $guardian->organizations()->attach($organization);
 
     Config::set('app.domain', 'keeper.test');

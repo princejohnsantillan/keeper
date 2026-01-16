@@ -12,8 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperMessage
- *
  * @property int $id
  * @property int $organization_id
  * @property string $name
@@ -38,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperMessage
  */
 #[ScopedBy(OrganizationScope::class)]
 final class Message extends Model

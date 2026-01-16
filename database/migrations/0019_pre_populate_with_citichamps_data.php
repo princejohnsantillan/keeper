@@ -21,7 +21,7 @@ return new class extends Migration
             'password' => bcrypt('secret'),
         ]);
 
-        Guardian::create([
+        $guardian = Guardian::create([
             'first_name' => 'Prince John',
             'middle_name' => 'Jainar',
             'last_name' => 'Santillan',
@@ -29,9 +29,10 @@ return new class extends Migration
             'gender' => Gender::Male,
             'birth_date' => '1988-08-12',
             'phone' => '+639399308514',
-            'user_id' => $user->id,
             'owner_id' => $user->id,
         ]);
+
+        $user->update(['guardian_id' => $guardian->id]);
 
         $organization = Organization::create([
             'name' => 'Citichurch',
@@ -51,7 +52,7 @@ return new class extends Migration
             'password' => bcrypt('secret'),
         ]);
 
-        Guardian::create([
+        $guardian2 = Guardian::create([
             'first_name' => 'Pearl',
             'middle_name' => 'Ocenar',
             'last_name' => 'Lao',
@@ -59,9 +60,10 @@ return new class extends Migration
             'gender' => Gender::Female,
             'birth_date' => '2025-01-01',
             'phone' => '+639177123519',
-            'user_id' => $user2->id,
             'owner_id' => $user2->id,
         ]);
+
+        $user2->update(['guardian_id' => $guardian2->id]);
 
         $organization2 = Organization::create([
             'name' => 'Citichamps',

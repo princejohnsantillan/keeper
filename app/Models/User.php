@@ -9,15 +9,15 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @mixin IdeHelperUser
- *
  * @property int $id
+ * @property int|null $guardian_id
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -48,6 +48,7 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperUser
  */
 final class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
@@ -112,11 +113,11 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
     }
 
     /**
-     * @return HasOne<Guardian, $this>
+     * @return BelongsTo<Guardian, $this>
      */
-    public function guardian(): HasOne
+    public function guardian(): BelongsTo
     {
-        return $this->hasOne(Guardian::class);
+        return $this->belongsTo(Guardian::class);
     }
 
     /**

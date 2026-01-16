@@ -8,6 +8,7 @@ use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Models\TermAcceptance;
+use App\Models\User;
 use App\Services\Contracts\GatepassServiceInterface;
 use Illuminate\Support\Facades\Mail;
 
@@ -114,12 +115,13 @@ it('sends email to guardian when gatepass is created', function () {
     $activity = Activity::factory()->create();
     $child = Child::factory()->create();
     $guardian = Guardian::factory()->create();
+    $user = User::factory()->create(['guardian_id' => $guardian->id]);
 
     $gatepass = $service->create($activity, $child, $guardian);
 
-    Mail::assertQueued(GatepassCreated::class, function (GatepassCreated $mail) use ($gatepass, $guardian): bool {
+    Mail::assertQueued(GatepassCreated::class, function (GatepassCreated $mail) use ($gatepass, $user): bool {
         return $mail->gatepass->id === $gatepass->id
-            && $mail->hasTo($guardian->user->email);
+            && $mail->hasTo($user->email);
     });
 });
 
@@ -129,7 +131,7 @@ it('does not send email when guardian has no user', function () {
     $service = app(GatepassServiceInterface::class);
     $activity = Activity::factory()->create();
     $child = Child::factory()->create();
-    $guardian = Guardian::factory()->create(['user_id' => null]);
+    $guardian = Guardian::factory()->create();
 
     $service->create($activity, $child, $guardian);
 

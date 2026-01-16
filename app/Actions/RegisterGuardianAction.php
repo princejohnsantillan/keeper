@@ -22,7 +22,7 @@ final class RegisterGuardianAction
             'password' => $data['password'],
         ]);
 
-        Guardian::query()->create([
+        $guardian = Guardian::query()->create([
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'middle_name' => $data['middle_name'] ?? null,
@@ -30,9 +30,11 @@ final class RegisterGuardianAction
             'gender' => $data['gender'] ?? null,
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
-            'user_id' => $user->id,
+            'owner_id' => $user->id,
         ]);
 
-        return $user;
+        $user->update(['guardian_id' => $guardian->id]);
+
+        return $user->refresh();
     }
 }

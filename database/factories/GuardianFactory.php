@@ -29,7 +29,6 @@ final class GuardianFactory extends Factory
             'gender' => $this->faker->boolean(),
             'phone' => $this->faker->phoneNumber(),
             'email' => $this->faker->unique()->safeEmail(),
-            'user_id' => User::factory(),
         ];
     }
 

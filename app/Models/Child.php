@@ -19,8 +19,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Tags\HasTags;
 
 /**
- * @mixin IdeHelperChild
- *
  * @property int $id
  * @property int $owner_id
  * @property string $first_name
@@ -79,6 +77,7 @@ use Spatie\Tags\HasTags;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withoutTrashed()
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperChild
  */
 final class Child extends Model implements HasMedia
 {

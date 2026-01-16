@@ -11,8 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @mixin IdeHelperRelationship
- *
  * @property int $id
  * @property int $guardian_id
  * @property int $child_id
@@ -36,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperRelationship
  */
 final class Relationship extends Pivot
 {

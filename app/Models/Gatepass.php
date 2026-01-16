@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @mixin IdeHelperGatepass
- *
  * @property int $id
  * @property int $guardian_id
  * @property int $child_id
@@ -38,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereUpdatedAt($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperGatepass
  */
 final class Gatepass extends Model
 {

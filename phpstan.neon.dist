@@ -10,3 +10,12 @@ parameters:
         - _ide_helper_models.php
 
     level: 8
+
+    ignoreErrors:
+        # Spatie Tags trait auto-generated PHPDoc methods have generic array types
+        -
+            identifier: missingType.iterableValue
+            path: app/Models/*.php
+        -
+            identifier: missingType.generics
+            path: app/Models/*.php

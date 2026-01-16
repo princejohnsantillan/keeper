@@ -9,9 +9,11 @@ use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Models\Relationship as RelationshipModel;
+use App\Models\User;
 
 it('registers a walk-in guardian and child for an activity', function () {
     $activity = Activity::factory()->create();
+    $owner = User::factory()->create();
     $action = app(WalkInRegistrationAction::class);
 
     $guardianData = [
@@ -22,6 +24,7 @@ it('registers a walk-in guardian and child for an activity', function () {
         'gender' => true,
         'email' => 'john.doe@example.com',
         'phone' => '1234567890',
+        'owner_id' => $owner->id,
     ];
 
     $childData = [
@@ -32,6 +35,7 @@ it('registers a walk-in guardian and child for an activity', function () {
         'birth_date' => '2018-06-20',
         'gender' => false,
         'notes' => 'Allergic to peanuts',
+        'owner_id' => $owner->id,
     ];
 
     $gatepass = $action($guardianData, $childData, Relationship::Father, $activity);
@@ -69,6 +73,7 @@ it('registers a walk-in guardian and child for an activity', function () {
 
 it('creates all records in a transaction', function () {
     $activity = Activity::factory()->create();
+    $owner = User::factory()->create();
     $action = app(WalkInRegistrationAction::class);
 
     $guardianData = [
@@ -78,6 +83,7 @@ it('creates all records in a transaction', function () {
         'gender' => false,
         'email' => 'jane.smith@example.com',
         'phone' => '9876543210',
+        'owner_id' => $owner->id,
     ];
 
     $childData = [
@@ -85,6 +91,7 @@ it('creates all records in a transaction', function () {
         'last_name' => 'Smith',
         'birth_date' => '2015-01-10',
         'gender' => true,
+        'owner_id' => $owner->id,
     ];
 
     $gatepass = $action($guardianData, $childData, Relationship::Mother, $activity);
@@ -100,18 +107,19 @@ it('creates all records in a transaction', function () {
 
 it('creates gatepass with unique code', function () {
     $activity = Activity::factory()->create();
+    $owner = User::factory()->create();
     $action = app(WalkInRegistrationAction::class);
 
     $gatepass1 = $action(
-        ['first_name' => 'Parent1', 'last_name' => 'Test', 'birth_date' => '1975-01-01', 'gender' => true, 'email' => 'parent1@test.com', 'phone' => '1111111111'],
-        ['first_name' => 'Child1', 'last_name' => 'Test', 'birth_date' => '2020-01-01', 'gender' => true],
+        ['first_name' => 'Parent1', 'last_name' => 'Test', 'birth_date' => '1975-01-01', 'gender' => true, 'email' => 'parent1@test.com', 'phone' => '1111111111', 'owner_id' => $owner->id],
+        ['first_name' => 'Child1', 'last_name' => 'Test', 'birth_date' => '2020-01-01', 'gender' => true, 'owner_id' => $owner->id],
         Relationship::Guardian,
         $activity
     );
 
     $gatepass2 = $action(
-        ['first_name' => 'Parent2', 'last_name' => 'Test', 'birth_date' => '1975-01-01', 'gender' => true, 'email' => 'parent2@test.com', 'phone' => '2222222222'],
-        ['first_name' => 'Child2', 'last_name' => 'Test', 'birth_date' => '2020-01-01', 'gender' => false],
+        ['first_name' => 'Parent2', 'last_name' => 'Test', 'birth_date' => '1975-01-01', 'gender' => true, 'email' => 'parent2@test.com', 'phone' => '2222222222', 'owner_id' => $owner->id],
+        ['first_name' => 'Child2', 'last_name' => 'Test', 'birth_date' => '2020-01-01', 'gender' => false, 'owner_id' => $owner->id],
         Relationship::Guardian,
         $activity
     );

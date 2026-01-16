@@ -9,7 +9,6 @@ use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
 use App\Filament\Components\Forms\AppSpatieTagsInput;
 use App\Filament\Components\Forms\AppTextInput;
-use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 
 final class GuardianForm
@@ -28,15 +27,8 @@ final class GuardianForm
                 AppSelect::gender(),
                 AppTextInput::email(),
                 AppTextInput::phone(),
-                self::userSelect(),
                 AppSpatieTagsInput::tags()
                     ->columnSpanFull(),
             ]);
-    }
-
-    private static function userSelect(): Select
-    {
-        return Select::make('user_id')
-            ->relationship('user', 'name');
     }
 }

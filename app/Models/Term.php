@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperTerm
- *
  * @property int $id
  * @property string $name
  * @property string $content
@@ -47,6 +45,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereVersion($value)
  *
  * @mixin \Eloquent
+ * @mixin IdeHelperTerm
  */
 #[ScopedBy(OrganizationScope::class)]
 final class Term extends Model
