@@ -61,7 +61,7 @@ final class UpdateChildGuardiansAction
                 $syncData = collect($rows)
                     ->filter(fn (array $row): bool => ((int) ($row['guardian_id'] ?? 0)) > 0 && ! empty($row['relationship']))
                     ->mapWithKeys(fn (array $row): array => [
-                        (int) $row['guardian_id'] => ['relationship' => $row['relationship']],
+                        (int) ($row['guardian_id'] ?? 0) => ['relationship' => $row['relationship']],
                     ])
                     ->all();
 

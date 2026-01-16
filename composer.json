@@ -88,10 +88,13 @@
             "@php artisan ide-helper:models -M"
 
         ],
+        "analyse": [
+            "@php vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
         "qa": [
             "@ide",
             "@php vendor/bin/pint",
-            "@php vendor/bin/phpstan analyse --memory-limit=2G"
+            "@analyse"
         ]
     },
     "extra": {

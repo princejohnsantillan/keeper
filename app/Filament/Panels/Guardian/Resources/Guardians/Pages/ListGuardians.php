@@ -48,7 +48,7 @@ final class ListGuardians extends ListRecords
                     $syncData = collect($rows)
                         ->filter(fn (array $row): bool => ((int) ($row['child_id'] ?? 0)) > 0 && ! empty($row['relationship']))
                         ->mapWithKeys(fn (array $row): array => [
-                            (int) $row['child_id'] => ['relationship' => $row['relationship']],
+                            (int) ($row['child_id'] ?? 0) => ['relationship' => $row['relationship']],
                         ])
                         ->all();
 
