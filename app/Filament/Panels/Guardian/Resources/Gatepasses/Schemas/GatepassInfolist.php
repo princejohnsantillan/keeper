@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Gatepasses\Schemas;
 
-use App\Filament\Components\Infolists\AppIconEntry;
-use App\Filament\Components\Infolists\AppTextEntry;
+use App\Avatar;
 use App\Models\Gatepass;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontFamily;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 
 final class GatepassInfolist
@@ -20,80 +25,88 @@ final class GatepassInfolist
             ->columns(1)
             ->components([
                 Section::make()
-                    ->columns(2)
+                    ->compact()
+                    ->extraAttributes(['class' => 'max-w-md mx-auto'])
                     ->schema([
-                        self::codeEntry()
-                            ->columnSpanFull(),
-                        self::activityEntry(),
-                        self::startsAtEntry(),
-                        self::locationEntry()
-                            ->columnSpanFull(),
+                        self::codeEntry(),
+                        self::activitySection(),
+                        self::childSection(),
+                        self::guardianSection(),
                     ]),
-                Section::make('Guardian')
-                    ->icon(Heroicon::User)
-                    ->collapsible()
-                    ->schema([
-                        self::guardianNameEntry(),
-                        AppTextEntry::email('guardian.email'),
-                        AppTextEntry::phone('guardian.phone'),
-                    ])
-                    ->columns(2),
-                Section::make('Child')
-                    ->icon(Heroicon::FaceSmile)
-                    ->collapsible()
-                    ->schema([
-                        self::childNameEntry(),
-                        AppTextEntry::birthday('child.birth_date'),
-                        AppIconEntry::gender('child.gender'),
-                    ])
-                    ->columns(2),
             ]);
     }
 
     private static function codeEntry(): TextEntry
     {
         return TextEntry::make('code')
-            ->label('Gate Pass Code')
-            ->badge()
-            ->size('lg')
+            ->hiddenLabel()
+            ->weight(FontWeight::Bold)
+            ->size(TextSize::Large)
+            ->fontFamily(FontFamily::Mono)
+            ->color('primary')
             ->copyable();
     }
 
-    private static function activityEntry(): TextEntry
+    private static function activitySection(): Grid
     {
-        return TextEntry::make('activity.title')
-            ->label('Activity')
-            ->icon(Heroicon::Play);
+        return Grid::make(1)
+            ->schema([
+                TextEntry::make('activity.title')
+                    ->hiddenLabel()
+                    ->weight(FontWeight::SemiBold)
+                    ->icon(Heroicon::Play)
+                    ->iconColor('primary'),
+                TextEntry::make('activity.starts_at')
+                    ->hiddenLabel()
+                    ->dateTime('M d, Y \a\t h:i A')
+                    ->icon(Heroicon::Calendar)
+                    ->color('gray'),
+                TextEntry::make('activity.location')
+                    ->hiddenLabel()
+                    ->icon(Heroicon::MapPin)
+                    ->color('gray'),
+            ]);
     }
 
-    private static function startsAtEntry(): TextEntry
+    private static function childSection(): Flex
     {
-        return TextEntry::make('activity.starts_at')
-            ->label('Date & Time')
-            ->dateTime('M d, Y \a\t h:i A')
-            ->icon(Heroicon::Calendar);
+        return Flex::make([
+            SpatieMediaLibraryImageEntry::make('child.avatar')
+                ->hiddenLabel()
+                ->collection('avatar')
+                ->circular()
+                ->size(48)
+                ->grow(false)
+                ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->child->full_name)),
+            TextEntry::make('child.full_name')
+                ->hiddenLabel(),
+        ]);
     }
 
-    private static function locationEntry(): TextEntry
+    private static function guardianSection(): Flex
     {
-        return TextEntry::make('activity.location')
-            ->label('Location')
-            ->icon(Heroicon::MapPin);
-    }
+        return Flex::make([
+            SpatieMediaLibraryImageEntry::make('guardian.avatar')
+                ->hiddenLabel()
+                ->collection('avatar')
+                ->circular()
+                ->size(48)
+                ->grow(false)
+                ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->guardian->full_name)),
+            TextEntry::make('guardian.full_name')
+                ->hiddenLabel(),
+            TextEntry::make('relationship')
+                ->hiddenLabel()
+                ->badge()
+                ->grow(false)
+                ->getStateUsing(function (Gatepass $record): ?string {
+                    $relationship = \App\Models\Relationship::query()
+                        ->where('guardian_id', $record->guardian_id)
+                        ->where('child_id', $record->child_id)
+                        ->first();
 
-    private static function guardianNameEntry(): TextEntry
-    {
-        return TextEntry::make('guardian.full_name')
-            ->label('Name')
-            ->icon(fn (Gatepass $record) => $record->guardian->gender->getIcon())
-            ->iconColor(fn (Gatepass $record) => $record->guardian->gender->getColor());
-    }
-
-    private static function childNameEntry(): TextEntry
-    {
-        return TextEntry::make('child.full_name')
-            ->label('Name')
-            ->icon(fn (Gatepass $record) => $record->child->gender->getIcon())
-            ->iconColor(fn (Gatepass $record) => $record->child->gender->getColor());
+                    return $relationship?->relationship?->getLabel();
+                }),
+        ]);
     }
 }
