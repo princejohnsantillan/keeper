@@ -15,7 +15,7 @@ final class AppSpatieMediaLibraryImageEntry
             ->hiddenLabel()
             ->collection('avatar')
             ->circular()
-            ->size(120)
+            ->imageSize(160)
             ->defaultImageUrl(fn ($record): string => Avatar::generateUrl($record->full_name));
     }
 

@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Children\Schemas;
 
-use App\Avatar;
-use App\Models\Child;
+use App\Filament\Components\Infolists\AppIconEntry;
+use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
+use App\Filament\Components\Infolists\AppTextEntry;
 use Carbon\CarbonImmutable;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
 
 final class ChildInfolist
 {
@@ -24,81 +23,51 @@ final class ChildInfolist
         return $schema
             ->columns(1)
             ->components([
-                self::profileHeader(),
+                self::profileSection(),
                 self::guardiansSection(),
-                self::notesSection(),
             ]);
     }
 
-    private static function profileHeader(): Section
+    private static function profileSection(): Section
     {
         return Section::make()
             ->compact()
+            ->extraAttributes(['class' => 'max-w-2xl'])
             ->schema([
                 Flex::make([
-                    self::avatarEntry(),
+                    AppSpatieMediaLibraryImageEntry::avatar()
+                        ->grow(false),
                     Group::make([
-                        self::nameWithGenderEntry(),
-                        Flex::make([
-                            self::nicknameEntry(),
-                            self::ageEntry(),
-                            self::birthdayEntry(),
-                        ])->from('sm'),
-                    ])->grow(),
-                ])->from('sm'),
+                        AppTextEntry::firstName()
+                            ->inlineLabel(),
+                        AppTextEntry::middleName()
+                            ->inlineLabel(),
+                        AppTextEntry::lastName()
+                            ->inlineLabel(),
+                        AppTextEntry::nickname()
+                            ->inlineLabel(),
+                        AppIconEntry::gender()
+                            ->inlineLabel(),
+                        self::birthDateWithAgeEntry()
+                            ->inlineLabel(),
+                    ]),
+                ])->from('md'),
+                AppTextEntry::notes(),
             ]);
     }
 
-    private static function avatarEntry(): SpatieMediaLibraryImageEntry
-    {
-        return SpatieMediaLibraryImageEntry::make('avatar')
-            ->hiddenLabel()
-            ->collection('avatar')
-            ->circular()
-            ->size(72)
-            ->defaultImageUrl(fn (Child $record): string => Avatar::generateUrl($record->full_name))
-            ->grow(false);
-    }
-
-    private static function nameWithGenderEntry(): TextEntry
-    {
-        return TextEntry::make('full_name')
-            ->hiddenLabel()
-            ->size(TextSize::Large)
-            ->weight(FontWeight::Bold)
-            ->icon(fn (Child $record) => $record->gender->getIcon())
-            ->iconColor(fn (Child $record) => $record->gender->getColor());
-    }
-
-    private static function nicknameEntry(): TextEntry
-    {
-        return TextEntry::make('nickname')
-            ->label('Known as')
-            ->inlineLabel()
-            ->placeholder('—')
-            ->grow(false);
-    }
-
-    private static function ageEntry(): TextEntry
+    private static function birthDateWithAgeEntry(): TextEntry
     {
         return TextEntry::make('birth_date')
-            ->label('Age')
-            ->inlineLabel()
+            ->label('Birth date')
+            ->icon('heroicon-o-cake')
             ->formatStateUsing(function (CarbonImmutable $state): string {
+                $formattedDate = $state->format('F j, Y');
                 $age = $state->age;
+                $years = $age === 1 ? 'year' : 'years';
 
-                return $age === 1 ? '1 yr' : "{$age} yrs";
-            })
-            ->grow(false);
-    }
-
-    private static function birthdayEntry(): TextEntry
-    {
-        return TextEntry::make('birth_date')
-            ->label('Birthday')
-            ->inlineLabel()
-            ->date('M j, Y')
-            ->grow(false);
+                return "{$formattedDate} ({$age} {$years} old)";
+            });
     }
 
     private static function guardiansSection(): Section
@@ -106,6 +75,7 @@ final class ChildInfolist
         return Section::make('Guardians')
             ->icon('heroicon-o-users')
             ->compact()
+            ->extraAttributes(['class' => 'max-w-2xl'])
             ->collapsible()
             ->schema([
                 self::guardiansRepeatable(),
@@ -161,21 +131,5 @@ final class ChildInfolist
             ->icon('heroicon-o-envelope')
             ->copyable()
             ->placeholder('—');
-    }
-
-    private static function notesSection(): Section
-    {
-        return Section::make('Notes')
-            ->icon('heroicon-o-document-text')
-            ->compact()
-            ->collapsible()
-            ->collapsed(fn (Child $record): bool => empty($record->notes))
-            ->schema([
-                TextEntry::make('notes')
-                    ->hiddenLabel()
-                    ->placeholder('No notes recorded.')
-                    ->prose()
-                    ->markdown(),
-            ]);
     }
 }

@@ -35,7 +35,7 @@ final class AppTextEntry
             ->weight(FontWeight::Bold);
     }
 
-    public static function nickname(string $field = 'nickname', string $label = 'Known as'): TextEntry
+    public static function nickname(string $field = 'nickname', string $label = 'Nickname'): TextEntry
     {
         return TextEntry::make($field)->label($label)
             ->icon('heroicon-o-chat-bubble-bottom-center-text')
