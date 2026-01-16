@@ -50,7 +50,12 @@ final class ActivitiesTable
     {
         return TextColumn::make('starts_at')
             ->dateTime('D - h:i A')
-            ->description(fn (Activity $record) => $record->starts_at->format('F d'))
+            ->description(function (Activity $record): string {
+                /** @var \Carbon\CarbonImmutable $startsAt */
+                $startsAt = $record->starts_at;
+
+                return $startsAt->format('F d');
+            })
             ->sortable();
     }
 
@@ -58,7 +63,12 @@ final class ActivitiesTable
     {
         return TextColumn::make('ends_at')
             ->dateTime('D - h:i A')
-            ->description(fn (Activity $record) => $record->ends_at->format('F d'))
+            ->description(function (Activity $record): string {
+                /** @var \Carbon\CarbonImmutable $endsAt */
+                $endsAt = $record->ends_at;
+
+                return $endsAt->format('F d');
+            })
             ->sortable();
     }
 

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Organization;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('terms', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('name')->index();
             $table->text('content');
             $table->unsignedInteger('version')->default(1);
             $table->timestamp('published_at')->nullable();
             $table->timestamp('deprecated_at')->nullable();
-            $table->foreignIdFor(Organization::class)->constrained();
+            $table->foreignUlid('organization_id')->constrained();
             $table->timestamps();
         });
     }

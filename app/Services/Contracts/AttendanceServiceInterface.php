@@ -28,17 +28,17 @@ interface AttendanceServiceInterface
     /**
      * Check if a child is currently checked in for an activity.
      */
-    public function isCheckedIn(int $activityId, int $childId): bool;
+    public function isCheckedIn(string $activityId, string $childId): bool;
 
     /**
      * Find an active attendance record (checked in but not checked out).
      */
-    public function findActiveAttendance(int $activityId, int $childId): ?Attendance;
+    public function findActiveAttendance(string $activityId, string $childId): ?Attendance;
 
     /**
      * Check if a child has already been checked out for an activity.
      */
-    public function isAlreadyCheckedOut(int $activityId, int $childId): bool;
+    public function isAlreadyCheckedOut(string $activityId, string $childId): bool;
 
     /**
      * Generate a unique attendee code.

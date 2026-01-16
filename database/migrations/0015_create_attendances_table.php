@@ -1,9 +1,5 @@
 <?php
 
-use App\Models\Activity;
-use App\Models\Child;
-use App\Models\Gatepass;
-use App\Models\Keeper;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
 
             $table->string('attendee_code')->unique();
-            $table->foreignIdFor(Activity::class)->constrained();
-            $table->foreignIdFor(Child::class)->constrained();
+            $table->foreignUlid('activity_id')->constrained();
+            $table->foreignUlid('child_id')->constrained();
 
-            $table->foreignIdFor(Keeper::class, 'checkin_keeper_id')->nullable()->constrained();
-            $table->foreignIdFor(Gatepass::class, 'checkin_gatepass_id')->nullable()->constrained();
+            $table->foreignUlid('checkin_keeper_id')->nullable()->constrained('keepers');
+            $table->foreignUlid('checkin_gatepass_id')->nullable()->constrained('gatepasses');
             $table->timestamp('checked_in_at')->nullable();
 
-            $table->foreignIdFor(Keeper::class, 'checkout_keeper_id')->nullable()->constrained();
-            $table->foreignIdFor(Gatepass::class, 'checkout_gatepass_id')->nullable()->constrained();
+            $table->foreignUlid('checkout_keeper_id')->nullable()->constrained('keepers');
+            $table->foreignUlid('checkout_gatepass_id')->nullable()->constrained('gatepasses');
             $table->timestamp('checked_out_at')->nullable();
 
             $table->text('notes')->nullable();

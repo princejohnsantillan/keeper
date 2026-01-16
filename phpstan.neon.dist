@@ -11,6 +11,8 @@ parameters:
 
     level: 8
 
+    reportUnmatchedIgnoredErrors: false
+
     ignoreErrors:
         # Spatie Tags trait auto-generated PHPDoc methods have generic array types
         -

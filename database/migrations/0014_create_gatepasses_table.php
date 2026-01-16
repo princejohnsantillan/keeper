@@ -1,9 +1,5 @@
 <?php
 
-use App\Models\Activity;
-use App\Models\Child;
-use App\Models\Guardian;
-use App\Models\TermAcceptance;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('gatepasses', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Guardian::class)->constrained();
-            $table->foreignIdFor(Child::class)->constrained();
-            $table->foreignIdFor(Activity::class)->constrained();
-            $table->foreignIdFor(TermAcceptance::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('guardian_id')->constrained();
+            $table->foreignUlid('child_id')->constrained();
+            $table->foreignUlid('activity_id')->constrained();
+            $table->foreignUlid('term_acceptance_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('code');
             $table->timestamps();
 

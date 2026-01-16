@@ -1,9 +1,5 @@
 <?php
 
-use App\Models\Message;
-use App\Models\Organization;
-use App\Models\Term;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('activities', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('title')->index();
             $table->string('description')->nullable();
             $table->string('location')->index();
@@ -25,10 +21,10 @@ return new class extends Migration
             $table->timestamp('ends_at')->index();
             $table->timestamp('published_at')->nullable();
             $table->text('notes')->nullable();
-            $table->foreignIdFor(Organization::class)->constrained();
-            $table->foreignIdFor(Term::class)->nullable()->constrained();
-            $table->foreignIdFor(Message::class)->nullable()->constrained()->nullOnDelete();
-            $table->foreignIdFor(User::class, 'created_by')->constrained();
+            $table->foreignUlid('organization_id')->constrained();
+            $table->foreignUlid('term_id')->nullable()->constrained();
+            $table->foreignUlid('message_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUlid('created_by')->constrained('users');
             $table->timestamps();
         });
     }

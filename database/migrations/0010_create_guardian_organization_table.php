@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Guardian;
-use App\Models\Organization;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('guardian_organization', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Guardian::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Organization::class)->constrained()->cascadeOnDelete();
+            $table->foreignUlid('guardian_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('organization_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
 
             $table->unique(['guardian_id', 'organization_id']);

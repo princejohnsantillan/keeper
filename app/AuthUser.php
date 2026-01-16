@@ -32,12 +32,12 @@ final class AuthUser
         return $guardian;
     }
 
-    public static function guardianId(): int
+    public static function guardianId(): string
     {
         return self::guardian()->id;
     }
 
-    public static function userId(): int
+    public static function userId(): string
     {
         return self::user()->id;
     }

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('organization_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('organization_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->text('content');
             $table->timestamp('deprecated_at')->nullable();

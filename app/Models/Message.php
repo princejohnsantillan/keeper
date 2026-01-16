@@ -6,43 +6,24 @@ namespace App\Models;
 
 use App\Models\Scopes\OrganizationScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ScopedBy(OrganizationScope::class)]
 /**
- * @property int $id
- * @property int $organization_id
- * @property string $name
- * @property string $content
- * @property \Carbon\CarbonImmutable|null $archived_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
- * @property-read int|null $activities_count
- * @property-read \App\Models\Organization $organization
- *
- * @method static \Database\Factories\MessageFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereContent($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereArchivedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereOrganizationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereUpdatedAt($value)
- *
- * @mixin \Eloquent
  * @mixin IdeHelperMessage
  */
-#[ScopedBy(OrganizationScope::class)]
 final class Message extends Model
 {
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
+
+    use HasUlids;
+
+    protected $keyType = 'string';
 
     protected function casts(): array
     {

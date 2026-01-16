@@ -13,7 +13,7 @@
 
 namespace App\Models{
 /**
- * @property int $id
+ * @property string $id
  * @property string $title
  * @property string|null $description
  * @property string $location
@@ -22,10 +22,10 @@ namespace App\Models{
  * @property \Carbon\CarbonImmutable $ends_at
  * @property \Carbon\CarbonImmutable|null $published_at
  * @property string|null $notes
- * @property int $organization_id
- * @property int|null $term_id
- * @property int|null $message_id
- * @property int $created_by
+ * @property string $organization_id
+ * @property string|null $term_id
+ * @property string|null $message_id
+ * @property string $created_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Attendance> $attendance
@@ -36,7 +36,7 @@ namespace App\Models{
  * @property-read \App\Models\User $creator
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Gatepass> $gatepasses
  * @property-read int|null $gatepasses_count
- * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read \App\Models\Message|null $message
  * @property-read \App\Models\Organization $organization
@@ -68,15 +68,15 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
+ * @property string $id
  * @property string $attendee_code
- * @property int $activity_id
- * @property int $child_id
- * @property int|null $checkin_keeper_id
- * @property int|null $checkin_gatepass_id
+ * @property string $activity_id
+ * @property string $child_id
+ * @property string|null $checkin_keeper_id
+ * @property string|null $checkin_gatepass_id
  * @property \Illuminate\Support\Carbon|null $checked_in_at
- * @property int|null $checkout_keeper_id
- * @property int|null $checkout_gatepass_id
+ * @property string|null $checkout_keeper_id
+ * @property string|null $checkout_gatepass_id
  * @property \Illuminate\Support\Carbon|null $checked_out_at
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -112,14 +112,14 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $owner_id
+ * @property string $id
+ * @property string $owner_id
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
  * @property string|null $nickname
  * @property \Carbon\CarbonImmutable $birth_date
- * @property Gender $gender
+ * @property \App\Enums\Gender $gender
  * @property string|null $notes
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -175,11 +175,11 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $guardian_id
- * @property int $child_id
- * @property int $activity_id
- * @property int|null $term_acceptance_id
+ * @property string $id
+ * @property string $guardian_id
+ * @property string $child_id
+ * @property string $activity_id
+ * @property string|null $term_acceptance_id
  * @property string $code
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -207,15 +207,15 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
+ * @property string $id
  * @property string $first_name
  * @property string|null $middle_name
  * @property string $last_name
  * @property \Carbon\CarbonImmutable $birth_date
- * @property Gender $gender
+ * @property \App\Enums\Gender $gender
  * @property string $email
  * @property string|null $phone
- * @property int $owner_id
+ * @property string $owner_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -272,9 +272,9 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $organization_id
- * @property int $user_id
+ * @property string $id
+ * @property string $organization_id
+ * @property string $user_id
  * @property string|null $permissions
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -307,8 +307,8 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $organization_id
+ * @property string $id
+ * @property string $organization_id
  * @property string $name
  * @property string $content
  * @property \Carbon\CarbonImmutable|null $archived_at
@@ -321,9 +321,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereOrganizationId($value)
@@ -336,10 +336,10 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $slug
- * @property int $owner_id
+ * @property string $owner_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -374,10 +374,10 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $guardian_id
- * @property int $child_id
- * @property RelationshipEnum $relationship
+ * @property string $id
+ * @property string $guardian_id
+ * @property string $child_id
+ * @property \App\Enums\Relationship $relationship
  * @property bool $is_primary
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -402,13 +402,13 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
+ * @property string $id
  * @property string $name
  * @property string $content
  * @property int $version
  * @property \Carbon\CarbonImmutable|null $published_at
  * @property \Carbon\CarbonImmutable|null $archived_at
- * @property int $organization_id
+ * @property string $organization_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TermAcceptance> $acceptances
@@ -422,9 +422,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereOrganizationId($value)
@@ -439,9 +439,9 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int $term_id
- * @property int $guardian_id
+ * @property string $id
+ * @property string $term_id
+ * @property string $guardian_id
  * @property string|null $ip_address
  * @property string|null $user_agent
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -469,8 +469,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
- * @property int|null $guardian_id
+ * @property string $id
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
@@ -478,6 +477,7 @@ namespace App\Models{
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $guardian_id
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $createdActivities
  * @property-read int|null $created_activities_count
  * @property-read \App\Models\Guardian|null $guardian
@@ -493,12 +493,12 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmailVerifiedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGuardianId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereGuardianId($value)
  * @mixin \Eloquent
  */
 	#[\AllowDynamicProperties]

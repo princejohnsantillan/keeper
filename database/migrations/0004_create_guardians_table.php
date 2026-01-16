@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('guardians', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('first_name', 80)->index();
             $table->string('middle_name', 80)->nullable()->index();
             $table->string('last_name', 80)->index();
@@ -21,7 +20,7 @@ return new class extends Migration
             $table->boolean('gender')->index();
             $table->string('email')->index();
             $table->string('phone')->nullable();
-            $table->foreignIdFor(User::class, 'owner_id')->constrained('users');
+            $table->foreignUlid('owner_id')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

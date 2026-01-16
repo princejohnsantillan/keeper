@@ -89,12 +89,12 @@ final class AttendanceService implements AttendanceServiceInterface
         ];
     }
 
-    public function isCheckedIn(int $activityId, int $childId): bool
+    public function isCheckedIn(string $activityId, string $childId): bool
     {
         return $this->findActiveAttendance($activityId, $childId) !== null;
     }
 
-    public function findActiveAttendance(int $activityId, int $childId): ?Attendance
+    public function findActiveAttendance(string $activityId, string $childId): ?Attendance
     {
         return Attendance::query()
             ->where('activity_id', $activityId)
@@ -104,7 +104,7 @@ final class AttendanceService implements AttendanceServiceInterface
             ->first();
     }
 
-    public function isAlreadyCheckedOut(int $activityId, int $childId): bool
+    public function isAlreadyCheckedOut(string $activityId, string $childId): bool
     {
         return Attendance::query()
             ->where('activity_id', $activityId)

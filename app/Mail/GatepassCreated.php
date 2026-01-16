@@ -34,7 +34,7 @@ final class GatepassCreated extends Mailable implements ShouldQueue
                 'childName' => $this->gatepass->child->full_name,
                 'guardianName' => $this->gatepass->guardian->full_name,
                 'activityTitle' => $this->gatepass->activity->title,
-                'organizerName' => $this->gatepass->activity->organization->name,
+                'organizerName' => $this->gatepass->activity->organization?->name,
                 'organizerMessage' => $this->gatepass->activity->message?->content,
             ],
         );

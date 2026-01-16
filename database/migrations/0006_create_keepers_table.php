@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\Organization;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('keepers', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(Organization::class)->constrained();
-            $table->foreignIdFor(User::class)->constrained();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('organization_id')->constrained();
+            $table->foreignUlid('user_id')->constrained();
             $table->json('permissions')->nullable();
             $table->timestamps();
             $table->softDeletes();
