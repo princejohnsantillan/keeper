@@ -41,4 +41,11 @@ final class TermFactory extends Factory
             'version' => $version,
         ]);
     }
+
+    public function deprecated(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'deprecated_at' => now(),
+        ]);
+    }
 }

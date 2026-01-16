@@ -68,3 +68,47 @@ it('can delete a message', function () {
 it('uses the correct navigation group', function () {
     expect(MessageResource::getNavigationGroup())->toBe('Activity');
 });
+
+it('can deprecate a message', function () {
+    $message = Message::factory()
+        ->for($this->organization)
+        ->create();
+
+    expect($message->isDeprecated())->toBeFalse();
+
+    Livewire::test(ListMessages::class)
+        ->callTableAction('deprecate', $message)
+        ->assertNotified();
+
+    expect($message->refresh()->isDeprecated())->toBeTrue();
+});
+
+it('hides the deprecate action for already deprecated messages', function () {
+    $message = Message::factory()
+        ->for($this->organization)
+        ->deprecated()
+        ->create();
+
+    Livewire::test(ListMessages::class)
+        ->assertTableActionHidden('deprecate', $message);
+});
+
+it('hides the edit action for deprecated messages', function () {
+    $message = Message::factory()
+        ->for($this->organization)
+        ->deprecated()
+        ->create();
+
+    Livewire::test(ListMessages::class)
+        ->assertTableActionHidden('edit', $message);
+});
+
+it('hides the delete action for deprecated messages', function () {
+    $message = Message::factory()
+        ->for($this->organization)
+        ->deprecated()
+        ->create();
+
+    Livewire::test(ListMessages::class)
+        ->assertTableActionHidden('delete', $message);
+});

@@ -11,6 +11,7 @@ use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 final class ActivityForm
 {
@@ -42,7 +43,11 @@ final class ActivityForm
     {
         return Select::make('message_id')
             ->label('Gate Pass Message')
-            ->relationship('message', 'name')
+            ->relationship(
+                name: 'message',
+                titleAttribute: 'name',
+                modifyQueryUsing: fn (Builder $query): Builder => $query->whereNull('deprecated_at'),
+            )
             ->searchable()
             ->preload()
             ->placeholder('Select a message template...')

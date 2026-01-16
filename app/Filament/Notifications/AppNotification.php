@@ -110,4 +110,12 @@ final class AppNotification
             ->danger()
             ->title('At least one child relationship is required.');
     }
+
+    public static function deprecated(): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Deprecated')
+            ->body('This item has been deprecated and can no longer be used.');
+    }
 }

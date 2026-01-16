@@ -23,7 +23,7 @@ Please keep this code safe. You will need it for check-in and check-out.
 {!! $organizerMessage !!}
 </div>
 <div style="font-size: 11px; color: #868e96; margin-top: 16px; font-style: italic;">
-The message in this block is from the organizer ({{ $organizerName }}), not from Keeper.
+    This message is from the event organizer ({{ $organizerName }}), not Keeper.
 </div>
 </div>
 @endif

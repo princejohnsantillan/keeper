@@ -13,6 +13,7 @@
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperActivity
  * @property int $id
  * @property string $title
  * @property string|null $description
@@ -24,6 +25,7 @@ namespace App\Models{
  * @property string|null $notes
  * @property int $organization_id
  * @property int|null $term_id
+ * @property int|null $message_id
  * @property int $created_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -37,6 +39,7 @@ namespace App\Models{
  * @property-read int|null $gatepasses_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
+ * @property-read \App\Models\Message|null $message
  * @property-read \App\Models\Organization $organization
  * @property-read \App\Models\Term|null $term
  * @method static \Database\Factories\ActivityFactory factory($count = null, $state = [])
@@ -50,6 +53,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereLocation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereLocationMapLink($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity wherePublishedAt($value)
@@ -57,14 +61,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereTermId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereUpdatedAt($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperActivity {}
+	final class Activity extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperAttendance
  * @property int $id
  * @property string $attendee_code
  * @property int $activity_id
@@ -101,14 +104,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperAttendance {}
+	final class Attendance extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperChild
  * @property int $id
  * @property string $first_name
  * @property string|null $middle_name
@@ -161,14 +163,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withoutTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withoutTrashed()
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperChild {}
+	final class Child extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperGatepass
  * @property int $id
  * @property int $guardian_id
  * @property int $child_id
@@ -193,14 +194,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereTermAcceptanceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereUpdatedAt($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperGatepass {}
+	final class Gatepass extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperGuardian
  * @property int $id
  * @property string $first_name
  * @property string|null $middle_name
@@ -257,14 +257,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withoutTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withoutTrashed()
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperGuardian {}
+	final class Guardian extends \Eloquent implements \Spatie\MediaLibrary\HasMedia {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperKeeper
  * @property int $id
  * @property int $organization_id
  * @property int $user_id
@@ -292,14 +291,41 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper withoutTrashed()
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperKeeper {}
+	final class Keeper extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperMessage
+ * @property int $id
+ * @property int $organization_id
+ * @property string $name
+ * @property string $content
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Carbon\CarbonImmutable|null $deprecated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
+ * @property-read int|null $activities_count
+ * @property-read \App\Models\Organization $organization
+ * @method static \Database\Factories\MessageFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereDeprecatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereUpdatedAt($value)
+ */
+	final class Message extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @mixin IdeHelperOrganization
  * @property int $id
  * @property string $name
  * @property string $slug
@@ -330,14 +356,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Organization withoutTrashed()
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperOrganization {}
+	final class Organization extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperRelationship
  * @property int $id
  * @property int $guardian_id
  * @property int $child_id
@@ -358,14 +383,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereIsPrimary($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereRelationship($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Relationship whereUpdatedAt($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperRelationship {}
+	final class Relationship extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperTerm
  * @property int $id
  * @property string $name
  * @property string $content
@@ -374,6 +398,7 @@ namespace App\Models{
  * @property int $organization_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Carbon\CarbonImmutable|null $deprecated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TermAcceptance> $acceptances
  * @property-read int|null $acceptances_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Guardian> $acceptedByGuardians
@@ -387,20 +412,20 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereDeprecatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term wherePublishedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereVersion($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperTerm {}
+	final class Term extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperTermAcceptance
  * @property int $id
  * @property int $term_id
  * @property int $guardian_id
@@ -423,14 +448,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TermAcceptance whereTermId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TermAcceptance whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TermAcceptance whereUserAgent($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperTermAcceptance {}
+	final class TermAcceptance extends \Eloquent {}
 }
 
 namespace App\Models{
 /**
+ * @mixin IdeHelperUser
  * @property int $id
  * @property string $name
  * @property string $email
@@ -459,9 +483,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
- * @mixin \Eloquent
  */
-	#[\AllowDynamicProperties]
-	final class IdeHelperUser {}
+	final class User extends \Eloquent implements \Filament\Models\Contracts\FilamentUser, \Illuminate\Contracts\Auth\MustVerifyEmail {}
 }
 

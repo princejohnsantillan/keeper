@@ -26,4 +26,11 @@ final class MessageFactory extends Factory
             'content' => fake()->paragraphs(2, true),
         ];
     }
+
+    public function deprecated(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'deprecated_at' => now(),
+        ]);
+    }
 }

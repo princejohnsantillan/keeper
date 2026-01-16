@@ -26,7 +26,13 @@ final class Term extends Model
         return [
             'version' => 'integer',
             'published_at' => 'immutable_datetime',
+            'deprecated_at' => 'immutable_datetime',
         ];
+    }
+
+    public function isDeprecated(): bool
+    {
+        return $this->deprecated_at !== null;
     }
 
     /**

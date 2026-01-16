@@ -20,6 +20,18 @@ final class Message extends Model
     /** @use HasFactory<\Database\Factories\MessageFactory> */
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'deprecated_at' => 'immutable_datetime',
+        ];
+    }
+
+    public function isDeprecated(): bool
+    {
+        return $this->deprecated_at !== null;
+    }
+
     /**
      * @return BelongsTo<Organization, $this>
      */

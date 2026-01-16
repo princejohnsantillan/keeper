@@ -7,6 +7,7 @@ namespace App\Filament\Components\Forms;
 use App\Enums\Gender;
 use App\Enums\Relationship;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
 
 final class AppSelect
 {
@@ -20,7 +21,11 @@ final class AppSelect
     public static function term(string $field = 'term_id', string $label = 'Terms & Conditions'): Select
     {
         return Select::make($field)->label($label)
-            ->relationship('term', 'name')
+            ->relationship(
+                name: 'term',
+                titleAttribute: 'name',
+                modifyQueryUsing: fn (Builder $query): Builder => $query->whereNull('deprecated_at'),
+            )
             ->native(false);
     }
 
