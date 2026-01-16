@@ -18,7 +18,10 @@ final class CreateChildAction
      */
     public function __invoke(array $childData, Guardian $guardian, RelationshipEnum $relationship): Child
     {
-        $child = Child::query()->create($childData);
+        $child = Child::query()->create([
+            ...$childData,
+            'owner_id' => $guardian->owner_id,
+        ]);
 
         Relationship::query()->create([
             'guardian_id' => $guardian->id,

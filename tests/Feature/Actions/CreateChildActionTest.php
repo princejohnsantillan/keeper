@@ -26,11 +26,13 @@ it('creates a child and establishes a relationship with the guardian', function 
     expect($child)
         ->toBeInstanceOf(Child::class)
         ->first_name->toBe('Alice')
-        ->last_name->toBe('Doe');
+        ->last_name->toBe('Doe')
+        ->owner_id->toBe($guardian->owner_id);
 
     $this->assertDatabaseHas(Child::class, [
         'first_name' => 'Alice',
         'last_name' => 'Doe',
+        'owner_id' => $guardian->owner_id,
     ]);
 
     $this->assertDatabaseHas(RelationshipModel::class, [
