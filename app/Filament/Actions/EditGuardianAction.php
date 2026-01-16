@@ -37,15 +37,15 @@ final class EditGuardianAction
                 return $data;
             })
             ->using(function (Guardian $record, array $data, UpdateGuardianAction $updateGuardian): Guardian {
-                /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
+                /** @var array<int, array{child_id?: string, relationship?: string|null}> $rows */
                 $rows = $data['children'] ?? [];
 
                 unset($data['children']);
 
                 $syncData = collect($rows)
-                    ->filter(fn (array $row): bool => ((int) ($row['child_id'] ?? 0)) > 0 && ! empty($row['relationship']))
+                    ->filter(fn (array $row): bool => ! empty($row['child_id']) && ! empty($row['relationship']))
                     ->mapWithKeys(fn (array $row): array => [
-                        (int) ($row['child_id'] ?? 0) => ['relationship' => $row['relationship']],
+                        $row['child_id'] => ['relationship' => $row['relationship']],
                     ])
                     ->all();
 

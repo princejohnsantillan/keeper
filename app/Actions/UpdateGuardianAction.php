@@ -12,7 +12,7 @@ final class UpdateGuardianAction
      * Update a guardian and optionally sync children relationships.
      *
      * @param  array<string, mixed>  $guardianData
-     * @param  array<int, array{relationship: string}>|null  $childrenSyncData  Child IDs mapped to pivot data
+     * @param  array<string, array{relationship: string}>|null  $childrenSyncData  Child IDs (ULIDs) mapped to pivot data
      */
     public function __invoke(
         Guardian $guardian,
