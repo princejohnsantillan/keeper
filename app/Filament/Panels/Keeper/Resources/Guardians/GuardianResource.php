@@ -12,6 +12,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use UnitEnum;
 
 final class GuardianResource extends Resource
 {
@@ -19,7 +20,9 @@ final class GuardianResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'entypo-shield';
 
-    protected static ?int $navigationSort = 3;
+    protected static string|UnitEnum|null $navigationGroup = 'People';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

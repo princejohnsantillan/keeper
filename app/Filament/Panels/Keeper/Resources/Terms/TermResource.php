@@ -14,12 +14,17 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 final class TermResource extends Resource
 {
     protected static ?string $model = Term::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Activity';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $navigationLabel = 'Terms & Conditions';
 

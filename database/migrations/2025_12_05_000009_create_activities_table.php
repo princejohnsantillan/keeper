@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Message;
 use App\Models\Organization;
 use App\Models\Term;
 use App\Models\User;
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->foreignIdFor(Organization::class)->constrained();
             $table->foreignIdFor(Term::class)->nullable()->constrained();
+            $table->foreignIdFor(Message::class)->nullable()->constrained()->nullOnDelete();
             $table->foreignIdFor(User::class, 'created_by')->constrained();
             $table->timestamps();
         });

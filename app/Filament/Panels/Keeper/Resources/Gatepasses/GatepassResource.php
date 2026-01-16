@@ -12,6 +12,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use UnitEnum;
 
 final class GatepassResource extends Resource
 {
@@ -19,7 +20,9 @@ final class GatepassResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'entypo-lock';
 
-    protected static ?int $navigationSort = 4;
+    protected static string|UnitEnum|null $navigationGroup = 'Activity';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'code';
 

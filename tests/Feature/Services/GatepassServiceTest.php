@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
+use App\Mail\GatepassCreated;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Models\TermAcceptance;
 use App\Services\Contracts\GatepassServiceInterface;
+use Illuminate\Support\Facades\Mail;
 
 it('creates a gatepass for a child attending an activity', function () {
+    Mail::fake();
+
     $service = app(GatepassServiceInterface::class);
     $activity = Activity::factory()->create();
     $child = Child::factory()->create();
@@ -34,6 +38,8 @@ it('creates a gatepass for a child attending an activity', function () {
 });
 
 it('creates a gatepass with term acceptance', function () {
+    Mail::fake();
+
     $service = app(GatepassServiceInterface::class);
     $activity = Activity::factory()->create();
     $child = Child::factory()->create();
@@ -64,6 +70,8 @@ it('generates unique codes for an activity', function () {
 });
 
 it('generates codes that are unique within the activity', function () {
+    Mail::fake();
+
     $service = app(GatepassServiceInterface::class);
     $activity = Activity::factory()->create();
     $child = Child::factory()->create();
@@ -97,4 +105,33 @@ it('allows same code for different activities', function () {
 
     expect($gatepass1->code)->toBe($gatepass2->code);
     expect($gatepass1->activity_id)->not->toBe($gatepass2->activity_id);
+});
+
+it('sends email to guardian when gatepass is created', function () {
+    Mail::fake();
+
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create();
+    $guardian = Guardian::factory()->create();
+
+    $gatepass = $service->create($activity, $child, $guardian);
+
+    Mail::assertQueued(GatepassCreated::class, function (GatepassCreated $mail) use ($gatepass, $guardian): bool {
+        return $mail->gatepass->id === $gatepass->id
+            && $mail->hasTo($guardian->user->email);
+    });
+});
+
+it('does not send email when guardian has no user', function () {
+    Mail::fake();
+
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create();
+    $guardian = Guardian::factory()->create(['user_id' => null]);
+
+    $service->create($activity, $child, $guardian);
+
+    Mail::assertNothingQueued();
 });

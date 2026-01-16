@@ -18,7 +18,6 @@ final class ActivitySeeder extends Seeder
         $organization = Organization::query()->where('slug', 'citichurch')->firstOrFail();
         $createdBy = $organization->owner_id;
 
-        dd($createdBy);
         $activities = [
             [
                 'title' => 'Sunday Service',

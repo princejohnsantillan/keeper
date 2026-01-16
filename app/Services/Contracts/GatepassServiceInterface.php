@@ -18,6 +18,11 @@ interface GatepassServiceInterface
     public function create(Activity $activity, Child $child, Guardian $guardian, ?TermAcceptance $termAcceptance = null): Gatepass;
 
     /**
+     * Send email notification to guardian about the created gatepass.
+     */
+    public function sendCreatedEmail(Gatepass $gatepass): void;
+
+    /**
      * Generate a unique code for an activity.
      */
     public function generateUniqueCode(Activity $activity): string;

@@ -9,6 +9,7 @@ use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
 use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
+use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
 
 final class ActivityForm
@@ -30,8 +31,21 @@ final class ActivityForm
                 AppDateTimePicker::publishedAt(),
                 AppSelect::term()
                     ->columnSpanFull(),
+                self::messageSelect()
+                    ->columnSpanFull(),
                 AppTextarea::notes()
                     ->columnSpanFull(),
             ])->columns(2);
+    }
+
+    private static function messageSelect(): Select
+    {
+        return Select::make('message_id')
+            ->label('Gate Pass Message')
+            ->relationship('message', 'name')
+            ->searchable()
+            ->preload()
+            ->placeholder('Select a message template...')
+            ->helperText('This message will be appended to gate pass emails for this activity.');
     }
 }

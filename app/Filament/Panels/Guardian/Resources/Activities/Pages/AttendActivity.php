@@ -114,11 +114,24 @@ final class AttendActivity extends Page
         return $schema
             ->components([
                 Form::make(array_filter([
+                    $activity->description !== null ? self::descriptionPlaceholder($activity) : null,
                     $activity->term !== null ? self::termsFieldset($activity) : null,
                     self::childrenRepeater($activity),
                 ])),
             ])
             ->statePath('data');
+    }
+
+    private static function descriptionPlaceholder(Activity $activity): Placeholder
+    {
+        return Placeholder::make('description')
+            ->label('Description')
+            ->state(new HtmlString(
+                '<div class="fi-prose prose dark:prose-invert max-w-none">'.
+                Str::markdown($activity->description ?? '').
+                '</div>'
+            ))
+            ->html();
     }
 
     private static function termsFieldset(Activity $activity): Fieldset

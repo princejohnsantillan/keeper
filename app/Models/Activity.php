@@ -85,6 +85,14 @@ final class Activity extends Model implements HasMedia
         return $this->hasMany(Attendance::class);
     }
 
+    /**
+     * @return BelongsTo<Message, $this>
+     */
+    public function message(): BelongsTo
+    {
+        return $this->belongsTo(Message::class);
+    }
+
     public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumbnail')

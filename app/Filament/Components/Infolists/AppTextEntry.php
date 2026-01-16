@@ -103,7 +103,7 @@ final class AppTextEntry
     {
         return TextEntry::make($field)->label($label)
             ->hiddenLabel()
-            ->markdown();
+            ->html();
     }
 
     public static function createdAt(string $field = 'created_at', string $label = 'Created at'): TextEntry
