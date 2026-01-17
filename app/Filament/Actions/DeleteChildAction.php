@@ -16,13 +16,14 @@ final class DeleteChildAction
     public static function make(?string $name = 'delete'): DeleteAction
     {
         return DeleteAction::make($name)
-            ->using(function (Child $record, DetachChildFromGuardianAction $detachChild): void {
+            ->using(function (Child $record, DetachChildFromGuardianAction $detachChild): bool {
                 $guardian = AuthUser::guardian();
 
                 $detachChild($record, $guardian);
 
-                AppNotification::deleted()->send();
+                return true;
             })
+            ->successNotification(AppNotification::deleted())
             ->successRedirectUrl(ChildResource::getUrl('index'));
     }
 }

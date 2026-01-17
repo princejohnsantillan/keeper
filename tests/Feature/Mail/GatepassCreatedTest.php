@@ -53,6 +53,28 @@ it('contains the activity title', function () {
     $mailable->assertSeeInHtml('Summer Camp 2026');
 });
 
+it('contains the activity start date and time', function () {
+    $activity = Activity::factory()->create([
+        'starts_at' => '2026-07-15 09:00:00',
+    ]);
+    $gatepass = Gatepass::factory()->for($activity)->create();
+
+    $mailable = new GatepassCreated($gatepass);
+
+    $mailable->assertSeeInHtml('Wednesday, July 15, 2026 at 9:00 AM');
+});
+
+it('contains the activity location', function () {
+    $activity = Activity::factory()->create([
+        'location' => 'City Park Recreation Center',
+    ]);
+    $gatepass = Gatepass::factory()->for($activity)->create();
+
+    $mailable = new GatepassCreated($gatepass);
+
+    $mailable->assertSeeInHtml('City Park Recreation Center');
+});
+
 it('contains the registration success message', function () {
     $gatepass = Gatepass::factory()->create();
 

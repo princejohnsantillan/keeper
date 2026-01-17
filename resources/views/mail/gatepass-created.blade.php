@@ -1,9 +1,20 @@
 <x-mail::message>
-# You have successfully registered!
-
 Hi {{ $guardianName }},
 
 You have successfully registered **{{ $childName }}** for **{{ $activityTitle }}**.
+
+@if($activityStartsAt || $activityLocation)
+<x-mail::table>
+| | |
+|:--|:--|
+@if($activityStartsAt)
+| **When** | {{ $activityStartsAt->format('l, F j, Y \a\t g:i A') }} |
+@endif
+@if($activityLocation)
+| **Where** | {{ $activityLocation }} |
+@endif
+</x-mail::table>
+@endif
 
 Your Gate Pass code is:
 

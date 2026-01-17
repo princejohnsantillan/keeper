@@ -16,14 +16,15 @@ final class DeleteGuardianAction
     public static function make(?string $name = 'delete'): DeleteAction
     {
         return DeleteAction::make($name)
-            ->using(function (Guardian $record, DetachGuardianFromChildrenAction $detachGuardian): void {
+            ->using(function (Guardian $record, DetachGuardianFromChildrenAction $detachGuardian): bool {
                 $childIds = AuthUser::guardian()->children()->pluck('children.id');
 
                 $detachGuardian($record, $childIds);
 
-                AppNotification::deleted()->send();
+                return true;
             })
             ->visible(fn (Guardian $record): bool => AuthUser::guardianId() !== $record->id)
+            ->successNotification(AppNotification::deleted())
             ->successRedirectUrl(GuardianResource::getUrl('index'));
     }
 }
