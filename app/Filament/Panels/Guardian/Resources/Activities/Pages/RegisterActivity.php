@@ -17,7 +17,6 @@ use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
@@ -28,14 +27,13 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 /**
  * @property-read Schema $form
  */
-final class AttendActivity extends Page
+final class RegisterActivity extends Page
 {
     use InteractsWithRecord;
 
@@ -82,17 +80,14 @@ final class AttendActivity extends Page
         $termAcceptanceService = app(TermAcceptanceServiceInterface::class);
 
         $hasAcceptance = false;
-        $isLocked = false;
 
         if ($activity->term !== null) {
             $termAcceptance = $termAcceptanceService->getAcceptance($activity->term, $guardian);
             $hasAcceptance = $termAcceptance !== null;
-            $isLocked = $termAcceptance !== null && $termAcceptanceService->isLocked($termAcceptance);
         }
 
         $this->form->fill([
             'agree_to_terms' => $hasAcceptance,
-            'terms_locked' => $isLocked,
             'child_id' => null,
             'guardian_id' => null,
         ]);
@@ -132,9 +127,9 @@ final class AttendActivity extends Page
         return Fieldset::make('Terms and Conditions')
             ->columnSpanFull()
             ->columns(1)
+            ->extraAttributes(['class' => 'bg-white dark:bg-gray-900 rounded-xl'])
             ->schema([
                 self::termsContentPlaceholder($activity),
-                self::termsLockedHidden(),
                 self::agreeToTermsCheckbox($activity),
             ]);
     }
@@ -144,23 +139,17 @@ final class AttendActivity extends Page
         return Placeholder::make('terms_content')
             ->hiddenLabel()
             ->state(new HtmlString(
-                '<div class="fi-prose prose dark:prose-invert max-w-none max-h-64 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">'.
+                '<div class="fi-prose prose dark:prose-invert max-w-none">'.
                 Str::markdown($activity->term?->content ?: '').
                 '</div>'
             ))
             ->html();
     }
 
-    private static function termsLockedHidden(): Hidden
-    {
-        return Hidden::make('terms_locked');
-    }
-
     private static function agreeToTermsCheckbox(Activity $activity): Checkbox
     {
         return Checkbox::make('agree_to_terms')
             ->label('I have read and agree to the terms and conditions')
-            ->disabled(fn (callable $get): bool => (bool) $get('terms_locked'))
             ->live()
             ->afterStateUpdated(function (bool $state, TermAcceptanceServiceInterface $termAcceptanceService) use ($activity): void {
                 $guardian = AuthUser::guardian();
@@ -184,7 +173,6 @@ final class AttendActivity extends Page
     {
         return Section::make('Register for Activity')
             ->key('registration-section')
-            ->icon(Heroicon::Ticket)
             ->compact()
             ->columns(2)
             ->schema([
@@ -203,7 +191,7 @@ final class AttendActivity extends Page
             ->options(function (): array {
                 $guardian = AuthUser::guardian();
 
-                return $guardian->children()->pluck('first_name', 'children.id')->toArray();
+                return $guardian->children()->get()->pluck('full_name', 'id')->toArray();
             })
             ->searchable()
             ->live()
@@ -238,7 +226,6 @@ final class AttendActivity extends Page
     {
         return Action::make('register')
             ->label('Register')
-            ->icon(Heroicon::Ticket)
             ->color('primary')
             ->action(function (
                 Get $schemaGet,
@@ -298,11 +285,12 @@ final class AttendActivity extends Page
                     $termAcceptance
                 );
 
-                $schemaSet('terms_locked', true);
                 $schemaSet('child_id', null);
                 $schemaSet('guardian_id', null);
 
                 AppNotification::registeredToActivity()->send();
+
+                redirect(ActivityResource::getUrl('register', ['record' => $activity]));
             });
     }
 
@@ -319,9 +307,8 @@ final class AttendActivity extends Page
 
         if ($gatepasses->isEmpty()) {
             return Section::make('Registered Children')
-                ->icon(Heroicon::Users)
+                ->icon('entypo-lock')
                 ->compact()
-                ->collapsed()
                 ->schema([
                     Placeholder::make('no_registrations')
                         ->hiddenLabel()
@@ -339,9 +326,8 @@ final class AttendActivity extends Page
         })->implode('');
 
         return Section::make('Registered Children')
-            ->icon(Heroicon::Users)
+            ->icon('entypo-lock')
             ->compact()
-            ->collapsed()
             ->schema([
                 Placeholder::make('registrations')
                     ->hiddenLabel()

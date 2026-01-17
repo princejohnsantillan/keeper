@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Filament\Panels\Guardian\Resources\Activities\Pages\AttendActivity;
+use App\Filament\Panels\Guardian\Resources\Activities\Pages\RegisterActivity;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
@@ -40,7 +40,7 @@ it('shows description when activity has a description', function () {
         'published_at' => now(),
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->assertSuccessful()
         ->assertSee('This is a test description for the activity.');
 });
@@ -51,7 +51,7 @@ it('does not show description placeholder when activity has no description', fun
         'published_at' => now(),
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->assertSuccessful();
 });
 
@@ -66,7 +66,7 @@ it('shows description before terms and conditions', function () {
         'published_at' => now(),
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->assertSuccessful()
         ->assertSee('Activity description here.')
         ->assertSee('Terms and Conditions');
@@ -83,10 +83,10 @@ it('displays child dropdown with guardian children', function () {
         'published_at' => now(),
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->assertSuccessful()
         ->assertSee('Register for Activity')
-        ->assertSee($child->first_name);
+        ->assertSee($child->full_name);
 });
 
 it('creates a gatepass when registering a child', function () {
@@ -100,7 +100,7 @@ it('creates a gatepass when registering a child', function () {
         'published_at' => now(),
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->set('data.child_id', $child->id)
         ->set('data.guardian_id', $this->guardian->id)
         ->callAction(TestAction::make('register')->schemaComponent('registration-section'))
@@ -130,7 +130,7 @@ it('shows warning when registering duplicate child-guardian combination', functi
         'guardian_id' => $this->guardian->id,
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->set('data.child_id', $child->id)
         ->set('data.guardian_id', $this->guardian->id)
         ->callAction(TestAction::make('register')->schemaComponent('registration-section'))
@@ -162,7 +162,7 @@ it('displays existing gatepasses in the registered children section', function (
         'code' => 'ABC123',
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->assertSuccessful()
         ->assertSee('Registered Children')
         ->assertSee($child->full_name)
@@ -185,7 +185,7 @@ it('requires terms agreement before registering when activity has terms', functi
         'published_at' => now(),
     ]);
 
-    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+    Livewire::test(RegisterActivity::class, ['record' => $activity->id])
         ->set('data.child_id', $child->id)
         ->set('data.guardian_id', $this->guardian->id)
         ->callAction(TestAction::make('register')->schemaComponent('registration-section'))

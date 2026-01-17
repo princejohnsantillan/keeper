@@ -8,13 +8,13 @@ use App\Filament\Panels\Guardian\Resources\Activities\ActivityResource;
 use App\Models\Activity;
 use Filament\Actions\Action;
 
-final class AttendActivityAction
+final class RegisterActivityAction
 {
     public static function make(?string $name = 'register_activity', string $label = 'Register'): Action
     {
         return Action::make($name)
             ->label($label)
             ->button()
-            ->url(fn (Activity $record): string => ActivityResource::getUrl('attend', ['record' => $record]));
+            ->url(fn (Activity $record): string => ActivityResource::getUrl('register', ['record' => $record]));
     }
 }

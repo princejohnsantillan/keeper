@@ -12,7 +12,6 @@ use App\Models\Guardian;
 use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
-use Filament\Support\Icons\Heroicon;
 
 final class RequestGatePassAction
 {
@@ -21,7 +20,6 @@ final class RequestGatePassAction
         return Action::make($name)->label($label)
             ->button()
             ->color('primary')
-            ->icon(Heroicon::Ticket)
             ->hidden(fn (callable $get): bool => ! empty($get('gatepass_code')))
             ->action(function (
                 callable $get,

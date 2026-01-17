@@ -47,7 +47,7 @@ final class ViewActivityAction
                         self::organizationEntry(),
                     ]),
 
-                AttendActivityAction::make('attend_from_view', 'Attend Activity')
+                RegisterActivityAction::make('register_from_view', 'Register')
                     ->extraAttributes(['class' => 'w-full justify-center']),
             ]);
     }

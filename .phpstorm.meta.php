@@ -3421,7 +3421,7 @@ namespace PHPSTORM_META {
         registerArgumentsSet('routes', 
 'filament.exports.download','filament.imports.failed-rows.download','filament.guardian.auth.login','filament.guardian.auth.password-reset.request','filament.guardian.auth.password-reset.reset',
 'filament.guardian.auth.register','filament.guardian.auth.logout','filament.guardian.auth.profile','filament.guardian.auth.email-verification.prompt','filament.guardian.auth.email-verification.verify',
-'filament.guardian.auth.email-change-verification.verify','filament.guardian.auth.email-change-verification.block-verification','filament.guardian.home','filament.guardian.resources.activities.index','filament.guardian.resources.activities.attend',
+'filament.guardian.auth.email-change-verification.verify','filament.guardian.auth.email-change-verification.block-verification','filament.guardian.home','filament.guardian.resources.activities.index','filament.guardian.resources.activities.register',
 'filament.guardian.resources.children.index','filament.guardian.resources.children.view','filament.guardian.resources.gatepasses.index','filament.guardian.resources.gatepasses.view','filament.guardian.resources.guardians.index',
 'filament.guardian.resources.guardians.view','filament.guardian.resources.history.index','filament.guardian.resources.history.view','filament.keeper.auth.login','filament.keeper.auth.password-reset.request',
 'filament.keeper.auth.password-reset.reset','filament.keeper.auth.logout','filament.keeper.auth.profile','filament.keeper.auth.email-verification.prompt','filament.keeper.auth.email-verification.verify',

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Activities\Tables;
 
-use App\Filament\Actions\AttendActivityAction;
+use App\Filament\Actions\RegisterActivityAction;
 use App\Filament\Actions\ViewActivityAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
 use Filament\Support\Enums\FontWeight;
@@ -43,7 +43,7 @@ final class ActivitiesTable
             ->recordAction('view_activity')
             ->recordActions([
                 ViewActivityAction::make(),
-                AttendActivityAction::make(),
+                RegisterActivityAction::make(),
             ]);
     }
 

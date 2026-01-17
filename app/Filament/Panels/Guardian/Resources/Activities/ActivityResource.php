@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Activities;
 
-use App\Filament\Panels\Guardian\Resources\Activities\Pages\AttendActivity;
 use App\Filament\Panels\Guardian\Resources\Activities\Pages\ListActivities;
+use App\Filament\Panels\Guardian\Resources\Activities\Pages\RegisterActivity;
 use App\Filament\Panels\Guardian\Resources\Activities\Schemas\ActivityForm;
 use App\Filament\Panels\Guardian\Resources\Activities\Tables\ActivitiesTable;
 use App\Models\Activity;
@@ -60,7 +60,7 @@ final class ActivityResource extends Resource
     {
         return [
             'index' => ListActivities::route('/'),
-            'attend' => AttendActivity::route('/{record}/attend'),
+            'register' => RegisterActivity::route('/{record}/register'),
         ];
     }
 }
