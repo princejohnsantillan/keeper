@@ -6,26 +6,29 @@ namespace App\Filament\Panels\Guardian\Resources\Activities\Pages;
 
 use App\AuthUser;
 use App\Filament\Actions\BackToActivitiesAction;
-use App\Filament\Actions\RequestGatePassAction;
+use App\Filament\Notifications\AppNotification;
 use App\Filament\Panels\Guardian\Resources\Activities\ActivityResource;
+use App\Filament\Panels\Guardian\Resources\Gatepasses\GatepassResource;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
+use App\Models\Guardian;
+use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
@@ -75,13 +78,6 @@ final class AttendActivity extends Page
         /** @var Activity $activity */
         $activity = $this->getRecord();
         $guardian = AuthUser::guardian();
-        $children = $guardian->children()->with('guardians')->get();
-
-        $existingGatepasses = Gatepass::query()
-            ->where('activity_id', $activity->id)
-            ->whereIn('child_id', $children->pluck('id'))
-            ->get()
-            ->keyBy('child_id');
 
         $termAcceptanceService = app(TermAcceptanceServiceInterface::class);
 
@@ -97,12 +93,8 @@ final class AttendActivity extends Page
         $this->form->fill([
             'agree_to_terms' => $hasAcceptance,
             'terms_locked' => $isLocked,
-            'children' => $children->map(fn ($child) => [
-                'child_id' => $child->id,
-                'child_name' => $child->full_name,
-                'guardian_id' => $existingGatepasses->get($child->id)->guardian_id ?? $guardian->id,
-                'gatepass_code' => $existingGatepasses->get($child->id)?->code,
-            ])->toArray(),
+            'child_id' => null,
+            'guardian_id' => null,
         ]);
     }
 
@@ -116,7 +108,8 @@ final class AttendActivity extends Page
                 Form::make(array_filter([
                     $activity->description !== null ? self::descriptionPlaceholder($activity) : null,
                     $activity->term !== null ? self::termsFieldset($activity) : null,
-                    self::childrenRepeater($activity),
+                    self::registrationSection($activity),
+                    self::existingGatepassesSection($activity),
                 ])),
             ])
             ->statePath('data');
@@ -187,37 +180,35 @@ final class AttendActivity extends Page
             });
     }
 
-    private static function childrenRepeater(Activity $activity): Repeater
+    private static function registrationSection(Activity $activity): Section
     {
-        return Repeater::make('children')
-            ->hiddenLabel()
-            ->addable(false)
-            ->deletable(false)
-            ->reorderable(false)
-            ->table([
-                TableColumn::make('Child'),
-                TableColumn::make('Guardian for Check-in/out'),
-                TableColumn::make('Gate Pass'),
-            ])
+        return Section::make('Register for Activity')
+            ->key('registration-section')
+            ->icon(Heroicon::Ticket)
+            ->compact()
+            ->columns(2)
             ->schema([
-                self::childIdHidden(),
-                self::childNameInput(),
+                self::childSelect(),
                 self::guardianSelect(),
-                self::gatepassFlex($activity),
+            ])
+            ->footerActions([
+                self::registerAction($activity),
             ]);
     }
 
-    private static function childIdHidden(): Hidden
+    private static function childSelect(): Select
     {
-        return Hidden::make('child_id');
-    }
-
-    private static function childNameInput(): TextInput
-    {
-        return TextInput::make('child_name')
+        return Select::make('child_id')
             ->label('Child')
-            ->disabled()
-            ->dehydrated(false);
+            ->options(function (): array {
+                $guardian = AuthUser::guardian();
+
+                return $guardian->children()->pluck('first_name', 'children.id')->toArray();
+            })
+            ->searchable()
+            ->live()
+            ->afterStateUpdated(fn (callable $set) => $set('guardian_id', null))
+            ->required();
     }
 
     private static function guardianSelect(): Select
@@ -227,7 +218,7 @@ final class AttendActivity extends Page
             ->options(function (callable $get): array {
                 $childId = $get('child_id');
 
-                if (! is_int($childId)) {
+                if (empty($childId)) {
                     return [];
                 }
 
@@ -239,30 +230,123 @@ final class AttendActivity extends Page
 
                 return $child->guardians->pluck('full_name', 'id')->toArray();
             })
-            ->disabled(fn (callable $get): bool => ! empty($get('gatepass_code')))
+            ->searchable()
             ->required();
     }
 
-    private static function gatepassFlex(Activity $activity): Flex
+    private static function registerAction(Activity $activity): Action
     {
-        return Flex::make([
-            self::gatepassCodeHidden(),
-            RequestGatePassAction::make($activity),
-            self::gatepassDisplayPlaceholder(),
-        ]);
+        return Action::make('register')
+            ->label('Register')
+            ->icon(Heroicon::Ticket)
+            ->color('primary')
+            ->action(function (
+                Get $schemaGet,
+                Set $schemaSet,
+                TermAcceptanceServiceInterface $termAcceptanceService,
+                GatepassServiceInterface $gatepassService,
+            ) use ($activity): void {
+                $agreeToTerms = $schemaGet('agree_to_terms');
+                $childId = $schemaGet('child_id');
+                $guardianId = $schemaGet('guardian_id');
+
+                if ($activity->term !== null && ! $agreeToTerms) {
+                    AppNotification::termsNotAgreed()->send();
+
+                    return;
+                }
+
+                if (empty($childId) || empty($guardianId)) {
+                    return;
+                }
+
+                $requestingGuardian = AuthUser::guardian();
+                /** @var Child|null $child */
+                $child = Child::query()->find($childId);
+                /** @var Guardian|null $checkinGuardian */
+                $checkinGuardian = Guardian::query()->find($guardianId);
+
+                if ($child === null || $checkinGuardian === null) {
+                    return;
+                }
+
+                $existingGatepass = Gatepass::query()
+                    ->where('activity_id', $activity->id)
+                    ->where('child_id', $childId)
+                    ->where('guardian_id', $guardianId)
+                    ->first();
+
+                if ($existingGatepass !== null) {
+                    $gatepassUrl = GatepassResource::getUrl('view', ['record' => $existingGatepass]);
+                    AppNotification::alreadyRegisteredForActivity($gatepassUrl)->send();
+
+                    return;
+                }
+
+                $termAcceptance = null;
+                if ($activity->term !== null) {
+                    $termAcceptance = $termAcceptanceService->getAcceptance(
+                        $activity->term,
+                        $requestingGuardian
+                    );
+                }
+
+                $gatepassService->create(
+                    $activity,
+                    $child,
+                    $checkinGuardian,
+                    $termAcceptance
+                );
+
+                $schemaSet('terms_locked', true);
+                $schemaSet('child_id', null);
+                $schemaSet('guardian_id', null);
+
+                AppNotification::registeredToActivity()->send();
+            });
     }
 
-    private static function gatepassCodeHidden(): Hidden
+    private static function existingGatepassesSection(Activity $activity): Section
     {
-        return Hidden::make('gatepass_code');
-    }
+        $guardian = AuthUser::guardian();
+        $childIds = $guardian->children()->pluck('children.id');
 
-    private static function gatepassDisplayPlaceholder(): Placeholder
-    {
-        return Placeholder::make('gatepass_display')
-            ->label('Gate Pass')
-            ->hiddenLabel()
-            ->content(fn (callable $get): ?string => $get('gatepass_code'))
-            ->hidden(fn (callable $get): bool => empty($get('gatepass_code')));
+        $gatepasses = Gatepass::query()
+            ->where('activity_id', $activity->id)
+            ->whereIn('child_id', $childIds)
+            ->with(['child', 'guardian'])
+            ->get();
+
+        if ($gatepasses->isEmpty()) {
+            return Section::make('Registered Children')
+                ->icon(Heroicon::Users)
+                ->compact()
+                ->collapsed()
+                ->schema([
+                    Placeholder::make('no_registrations')
+                        ->hiddenLabel()
+                        ->state('No children registered yet.'),
+                ]);
+        }
+
+        $content = $gatepasses->map(function (Gatepass $gatepass): string {
+            return sprintf(
+                '<div class="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-700 last:border-0"><span class="font-medium">%s</span><span class="text-gray-500 dark:text-gray-400">with %s</span><code class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono">%s</code></div>',
+                e($gatepass->child->full_name),
+                e($gatepass->guardian->full_name),
+                e($gatepass->code)
+            );
+        })->implode('');
+
+        return Section::make('Registered Children')
+            ->icon(Heroicon::Users)
+            ->compact()
+            ->collapsed()
+            ->schema([
+                Placeholder::make('registrations')
+                    ->hiddenLabel()
+                    ->state(new HtmlString('<div class="divide-y divide-gray-200 dark:divide-gray-700">'.$content.'</div>'))
+                    ->html(),
+            ]);
     }
 }

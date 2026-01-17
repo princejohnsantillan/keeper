@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 use App\Filament\Panels\Guardian\Resources\Activities\Pages\AttendActivity;
 use App\Models\Activity;
+use App\Models\Child;
+use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Models\Organization;
+use App\Models\Relationship;
 use App\Models\Term;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Config;
 use Livewire\Livewire;
@@ -27,6 +31,7 @@ beforeEach(function () {
     $this->actingAs($user);
 
     $this->organization = $organization;
+    $this->guardian = $guardian;
 });
 
 it('shows description when activity has a description', function () {
@@ -65,4 +70,130 @@ it('shows description before terms and conditions', function () {
         ->assertSuccessful()
         ->assertSee('Activity description here.')
         ->assertSee('Terms and Conditions');
+});
+
+it('displays child dropdown with guardian children', function () {
+    $child = Child::factory()->create();
+    Relationship::factory()->create([
+        'guardian_id' => $this->guardian->id,
+        'child_id' => $child->id,
+    ]);
+
+    $activity = Activity::factory()->for($this->organization)->create([
+        'published_at' => now(),
+    ]);
+
+    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+        ->assertSuccessful()
+        ->assertSee('Register for Activity')
+        ->assertSee($child->first_name);
+});
+
+it('creates a gatepass when registering a child', function () {
+    $child = Child::factory()->create();
+    Relationship::factory()->create([
+        'guardian_id' => $this->guardian->id,
+        'child_id' => $child->id,
+    ]);
+
+    $activity = Activity::factory()->for($this->organization)->create([
+        'published_at' => now(),
+    ]);
+
+    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+        ->set('data.child_id', $child->id)
+        ->set('data.guardian_id', $this->guardian->id)
+        ->callAction(TestAction::make('register')->schemaComponent('registration-section'))
+        ->assertNotified('Successfully registered');
+
+    $this->assertDatabaseHas(Gatepass::class, [
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $this->guardian->id,
+    ]);
+});
+
+it('shows warning when registering duplicate child-guardian combination', function () {
+    $child = Child::factory()->create();
+    Relationship::factory()->create([
+        'guardian_id' => $this->guardian->id,
+        'child_id' => $child->id,
+    ]);
+
+    $activity = Activity::factory()->for($this->organization)->create([
+        'published_at' => now(),
+    ]);
+
+    Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $this->guardian->id,
+    ]);
+
+    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+        ->set('data.child_id', $child->id)
+        ->set('data.guardian_id', $this->guardian->id)
+        ->callAction(TestAction::make('register')->schemaComponent('registration-section'))
+        ->assertNotified('Already registered');
+
+    expect(Gatepass::query()
+        ->where('activity_id', $activity->id)
+        ->where('child_id', $child->id)
+        ->where('guardian_id', $this->guardian->id)
+        ->count()
+    )->toBe(1);
+});
+
+it('displays existing gatepasses in the registered children section', function () {
+    $child = Child::factory()->create();
+    Relationship::factory()->create([
+        'guardian_id' => $this->guardian->id,
+        'child_id' => $child->id,
+    ]);
+
+    $activity = Activity::factory()->for($this->organization)->create([
+        'published_at' => now(),
+    ]);
+
+    $gatepass = Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $this->guardian->id,
+        'code' => 'ABC123',
+    ]);
+
+    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+        ->assertSuccessful()
+        ->assertSee('Registered Children')
+        ->assertSee($child->full_name)
+        ->assertSee('ABC123');
+});
+
+it('requires terms agreement before registering when activity has terms', function () {
+    $child = Child::factory()->create();
+    Relationship::factory()->create([
+        'guardian_id' => $this->guardian->id,
+        'child_id' => $child->id,
+    ]);
+
+    $term = Term::factory()->for($this->organization)->published()->create([
+        'content' => 'These are the terms and conditions.',
+    ]);
+
+    $activity = Activity::factory()->for($this->organization)->create([
+        'term_id' => $term->id,
+        'published_at' => now(),
+    ]);
+
+    Livewire::test(AttendActivity::class, ['record' => $activity->id])
+        ->set('data.child_id', $child->id)
+        ->set('data.guardian_id', $this->guardian->id)
+        ->callAction(TestAction::make('register')->schemaComponent('registration-section'))
+        ->assertNotified('Agreement Required');
+
+    $this->assertDatabaseMissing(Gatepass::class, [
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $this->guardian->id,
+    ]);
 });

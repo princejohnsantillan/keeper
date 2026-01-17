@@ -10,7 +10,7 @@ use Filament\Actions\Action;
 
 final class AttendActivityAction
 {
-    public static function make(?string $name = 'attend_activity', string $label = 'Attend'): Action
+    public static function make(?string $name = 'register_activity', string $label = 'Register'): Action
     {
         return Action::make($name)
             ->label($label)

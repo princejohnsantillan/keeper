@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Notifications;
 
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 final class AppNotification
@@ -75,6 +76,19 @@ final class AppNotification
             ->warning()
             ->title('Already checked out')
             ->body("{$childName} has already been checked out of this activity.");
+    }
+
+    public static function alreadyRegisteredForActivity(string $gatepassUrl): Notification
+    {
+        return Notification::make()
+            ->warning()
+            ->title('Already registered')
+            ->body('This child is already registered for this activity with this guardian.')
+            ->actions([
+                Action::make('view_gatepass')
+                    ->label('View Gate Pass')
+                    ->url($gatepassUrl),
+            ]);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
