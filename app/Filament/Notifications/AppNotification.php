@@ -125,6 +125,13 @@ final class AppNotification
             ->title('At least one child relationship is required.');
     }
 
+    public static function guardianRelationshipRequired(): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('At least one guardian relationship is required.');
+    }
+
     public static function archived(): Notification
     {
         return Notification::make()

@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Actions;
 
+use App\Actions\SyncChildGuardiansAction;
 use App\Actions\UpdateChildAction;
 use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
 use App\Models\Child;
+use App\Models\Guardian;
 use App\Models\Relationship;
 use Filament\Actions\EditAction;
 
@@ -17,24 +20,56 @@ final class EditChildAction
         return EditAction::make($name)
             ->slideOver()
             ->mutateRecordDataUsing(function (array $data, Child $record): array {
-                $relationship = Relationship::query()
-                    ->where('child_id', $record->id)
-                    ->whereNotNull('guardian_id')
-                    ->where('guardian_id', AuthUser::guardianId())
-                    ->first();
+                $guardians = Guardian::query()
+                    ->where('owner_id', AuthUser::userId())
+                    ->get();
 
-                $data['relationship'] = $relationship?->relationship;
+                $relationshipsByGuardianId = Relationship::query()
+                    ->where('child_id', $record->id)
+                    ->whereIn('guardian_id', $guardians->pluck('id'))
+                    ->get()
+                    ->keyBy('guardian_id');
+
+                $data['guardians'] = $guardians
+                    ->map(fn (Guardian $guardian): array => [
+                        'guardian_id' => $guardian->id,
+                        'guardian_name' => $guardian->full_name,
+                        'relationship' => $relationshipsByGuardianId->get($guardian->id)?->relationship?->value,
+                    ])
+                    ->all();
 
                 return $data;
             })
-            ->using(function (Child $record, array $data, UpdateChildAction $updateChild): Child {
-                $relationshipValue = $data['relationship'] ?? null;
+            ->using(function (
+                EditAction $editAction,
+                Child $record,
+                array $data,
+                UpdateChildAction $updateChild,
+                SyncChildGuardiansAction $syncGuardians,
+            ): Child {
+                /** @var array<int, array{guardian_id?: string, relationship?: string|null}> $rows */
+                $rows = $data['guardians'] ?? [];
 
-                unset($data['relationship']);
+                unset($data['guardians']);
 
-                $guardian = AuthUser::guardian();
+                $syncData = collect($rows)
+                    ->filter(fn (array $row): bool => ! empty($row['guardian_id']) && ! empty($row['relationship']))
+                    ->mapWithKeys(fn (array $row): array => [
+                        $row['guardian_id'] => ['relationship' => $row['relationship']],
+                    ])
+                    ->all();
 
-                return $updateChild($record, $data, $guardian, $relationshipValue);
+                if (empty($syncData)) {
+                    AppNotification::guardianRelationshipRequired()->send();
+
+                    $editAction->halt(true);
+                }
+
+                $child = $updateChild($record, $data);
+
+                $syncGuardians($child, $syncData);
+
+                return $child;
             });
     }
 }

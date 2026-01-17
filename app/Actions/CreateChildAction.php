@@ -4,32 +4,21 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\Enums\Relationship as RelationshipEnum;
+use App\AuthUser;
 use App\Models\Child;
-use App\Models\Guardian;
-use App\Models\Relationship;
 
 final class CreateChildAction
 {
     /**
-     * Create a new child and establish a relationship with the guardian.
+     * Create a new child with owner_id from the current authenticated user.
      *
      * @param  array<string, mixed>  $childData
      */
-    public function __invoke(array $childData, Guardian $guardian, RelationshipEnum $relationship): Child
+    public function __invoke(array $childData): Child
     {
-        $child = Child::query()->create([
+        return Child::query()->create([
             ...$childData,
-            'owner_id' => $guardian->owner_id,
+            'owner_id' => AuthUser::userId(),
         ]);
-
-        Relationship::query()->create([
-            'guardian_id' => $guardian->id,
-            'child_id' => $child->id,
-            'relationship' => $relationship,
-            'is_primary' => true,
-        ]);
-
-        return $child;
     }
 }
