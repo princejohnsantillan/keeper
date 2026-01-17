@@ -33,7 +33,7 @@ final class GuardianInfolist
     {
         return Section::make()
             ->compact()
-            ->extraAttributes(['class' => 'max-w-2xl'])
+            ->extraAttributes(['class' => 'max-w-3xl'])
             ->schema([
                 Flex::make([
                     AppSpatieMediaLibraryImageEntry::avatar()
@@ -77,7 +77,7 @@ final class GuardianInfolist
         return Section::make('Children')
             ->icon('fas-children')
             ->compact()
-            ->extraAttributes(['class' => 'max-w-2xl'])
+            ->extraAttributes(['class' => 'max-w-3xl'])
             ->collapsible()
             ->schema([
                 self::childrenRepeatable(),

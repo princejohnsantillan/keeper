@@ -32,7 +32,7 @@ final class ChildInfolist
     {
         return Section::make()
             ->compact()
-            ->extraAttributes(['class' => 'max-w-2xl'])
+            ->extraAttributes(['class' => 'max-w-3xl'])
             ->schema([
                 Flex::make([
                     AppSpatieMediaLibraryImageEntry::avatar()
@@ -75,7 +75,7 @@ final class ChildInfolist
         return Section::make('Guardians')
             ->icon('entypo-shield')
             ->compact()
-            ->extraAttributes(['class' => 'max-w-2xl'])
+            ->extraAttributes(['class' => 'max-w-3xl'])
             ->collapsible()
             ->schema([
                 self::guardiansRepeatable(),
