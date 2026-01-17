@@ -38,7 +38,7 @@ final class ListGuardians extends ListRecords
                     ];
                 })
                 ->using(function (CreateAction $action, array $data): Guardian {
-                    /** @var array<int, array{child_id?: int|string, relationship?: string|null}> $rows */
+                    /** @var array<int, array{child_id?: string, relationship?: string|null}> $rows */
                     $rows = $data['children'] ?? [];
 
                     unset($data['children']);
@@ -48,9 +48,9 @@ final class ListGuardians extends ListRecords
                     $guardian = Guardian::query()->create($data);
 
                     $syncData = collect($rows)
-                        ->filter(fn (array $row): bool => ((int) ($row['child_id'] ?? 0)) > 0 && ! empty($row['relationship']))
+                        ->filter(fn (array $row): bool => ! empty($row['child_id']) && ! empty($row['relationship']))
                         ->mapWithKeys(fn (array $row): array => [
-                            (int) ($row['child_id'] ?? 0) => ['relationship' => $row['relationship']],
+                            $row['child_id'] => ['relationship' => $row['relationship']],
                         ])
                         ->all();
 

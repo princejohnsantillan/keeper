@@ -55,13 +55,13 @@ final class UpdateChildGuardiansAction
                     ->columnSpanFull(),
             ])
             ->action(function (Child $record, array $data, SyncChildGuardiansAction $syncGuardians): void {
-                /** @var array<int, array{guardian_id?: int|string, relationship?: string|null}> $rows */
+                /** @var array<int, array{guardian_id?: string, relationship?: string|null}> $rows */
                 $rows = $data['guardians'] ?? [];
 
                 $syncData = collect($rows)
-                    ->filter(fn (array $row): bool => ((int) ($row['guardian_id'] ?? 0)) > 0 && ! empty($row['relationship']))
+                    ->filter(fn (array $row): bool => ! empty($row['guardian_id']) && ! empty($row['relationship']))
                     ->mapWithKeys(fn (array $row): array => [
-                        (int) ($row['guardian_id'] ?? 0) => ['relationship' => $row['relationship']],
+                        $row['guardian_id'] => ['relationship' => $row['relationship']],
                     ])
                     ->all();
 
