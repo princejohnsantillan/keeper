@@ -45,7 +45,16 @@ final class HistoryResource extends Resource
         $childIds = AuthUser::guardian()->children()->pluck('children.id');
 
         /** @var Builder<Attendance> $query */
-        $query = parent::getEloquentQuery()->whereIn('child_id', $childIds);
+        $query = parent::getEloquentQuery()
+            ->whereIn('child_id', $childIds)
+            ->with([
+                'activity.organization',
+                'child',
+                'checkinGatepass.guardian',
+                'checkoutGatepass.guardian',
+                'checkinKeeper.user',
+                'checkoutKeeper.user',
+            ]);
 
         return $query;
     }

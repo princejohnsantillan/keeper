@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\History\Tables;
 
-use App\Models\Attendance;
-use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
+use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\Layout\Split;
-use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -18,42 +14,25 @@ final class HistoriesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->searchable(false)
-            ->paginated(false)
             ->defaultSort('created_at', 'desc')
-            ->contentGrid([
-                'md' => 2,
-                'xl' => 3,
-            ])
             ->columns([
-                Stack::make([
-                    self::activityTitleColumn(),
-                    self::childColumn(),
-                    Split::make([
-                        self::checkedInAtColumn(),
-                        self::checkedOutAtColumn(),
-                    ]),
-                ])->space(2),
+                AppTextColumn::title('activity.title', 'Activity'),
+                AppTextColumn::fullName('child.full_name', 'Child'),
+                self::guardianColumn(),
+                self::checkedInAtColumn(),
+                self::checkedOutAtColumn(),
             ])
             ->recordAction('view')
             ->recordActions([]);
     }
 
-    private static function activityTitleColumn(): TextColumn
+    private static function guardianColumn(): TextColumn
     {
-        return TextColumn::make('activity.title')
-            ->weight(FontWeight::Bold)
-            ->size(TextSize::Large);
-    }
-
-    private static function childColumn(): TextColumn
-    {
-        return TextColumn::make('child.full_name')
-            ->label('Child')
-            ->icon(fn (Attendance $record) => $record->child->gender->getIcon())
-            ->iconColor(fn (Attendance $record) => $record->child->gender->getColor())
-            ->getStateUsing(fn (Attendance $record): string => $record->child->getNickname())
-            ->description(fn (Attendance $record): string => $record->child->full_name);
+        return TextColumn::make('checkinGatepass.guardian.full_name')
+            ->label('Guardian')
+            ->searchable()
+            ->sortable()
+            ->placeholder('—');
     }
 
     private static function checkedInAtColumn(): TextColumn
@@ -63,6 +42,7 @@ final class HistoriesTable
             ->icon(Heroicon::ArrowRightStartOnRectangle)
             ->iconColor('success')
             ->dateTime('d M Y, g:i A')
+            ->sortable()
             ->placeholder('Not checked in');
     }
 
@@ -73,6 +53,7 @@ final class HistoriesTable
             ->icon(Heroicon::ArrowRightEndOnRectangle)
             ->iconColor('danger')
             ->dateTime('d M Y, g:i A')
+            ->sortable()
             ->placeholder('Not checked out');
     }
 }
