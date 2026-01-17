@@ -8,7 +8,7 @@ use App\Models\Child;
 use App\Models\Guardian;
 use App\Models\Relationship as RelationshipModel;
 
-it('detaches a child from a guardian', function () {
+it('soft deletes a child while preserving relationships', function () {
     $guardian = Guardian::factory()->create();
     $child = Child::factory()->create();
 
@@ -22,12 +22,12 @@ it('detaches a child from a guardian', function () {
 
     $action($child, $guardian);
 
-    $this->assertDatabaseMissing(RelationshipModel::class, [
+    $this->assertDatabaseHas(RelationshipModel::class, [
         'guardian_id' => $guardian->id,
         'child_id' => $child->id,
     ]);
 
-    $this->assertDatabaseHas(Child::class, [
+    $this->assertSoftDeleted(Child::class, [
         'id' => $child->id,
     ]);
 
@@ -36,7 +36,7 @@ it('detaches a child from a guardian', function () {
     ]);
 });
 
-it('only removes the specific guardian-child relationship', function () {
+it('preserves all relationships when soft deleting a child', function () {
     $guardian1 = Guardian::factory()->create();
     $guardian2 = Guardian::factory()->create();
     $child = Child::factory()->create();
@@ -57,7 +57,7 @@ it('only removes the specific guardian-child relationship', function () {
 
     $action($child, $guardian1);
 
-    $this->assertDatabaseMissing(RelationshipModel::class, [
+    $this->assertDatabaseHas(RelationshipModel::class, [
         'guardian_id' => $guardian1->id,
         'child_id' => $child->id,
     ]);
@@ -66,9 +66,13 @@ it('only removes the specific guardian-child relationship', function () {
         'guardian_id' => $guardian2->id,
         'child_id' => $child->id,
     ]);
+
+    $this->assertSoftDeleted(Child::class, [
+        'id' => $child->id,
+    ]);
 });
 
-it('does nothing if relationship does not exist', function () {
+it('soft deletes child even if relationship does not exist', function () {
     $guardian = Guardian::factory()->create();
     $child = Child::factory()->create();
 
@@ -77,4 +81,8 @@ it('does nothing if relationship does not exist', function () {
     $action($child, $guardian);
 
     expect(RelationshipModel::query()->count())->toBe(0);
+
+    $this->assertSoftDeleted(Child::class, [
+        'id' => $child->id,
+    ]);
 });

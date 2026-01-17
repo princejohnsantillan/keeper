@@ -77,6 +77,7 @@ final class Child extends Model implements HasMedia
     public function guardians(): BelongsToMany
     {
         return $this->belongsToMany(Guardian::class, 'relationships')
+            ->withoutTrashed()
             ->using(Relationship::class)
             ->withPivot('relationship');
     }

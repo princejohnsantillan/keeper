@@ -69,6 +69,7 @@ final class Guardian extends Model implements HasMedia
     public function children(): BelongsToMany
     {
         return $this->belongsToMany(Child::class, 'relationships')
+            ->withoutTrashed()
             ->using(Relationship::class)
             ->withPivot('relationship')
             ->withTimestamps();

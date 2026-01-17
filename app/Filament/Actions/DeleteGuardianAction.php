@@ -7,6 +7,7 @@ namespace App\Filament\Actions;
 use App\Actions\DetachGuardianFromChildrenAction;
 use App\AuthUser;
 use App\Filament\Notifications\AppNotification;
+use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
 use App\Models\Guardian;
 use Filament\Actions\DeleteAction;
 
@@ -22,6 +23,7 @@ final class DeleteGuardianAction
 
                 AppNotification::deleted()->send();
             })
-            ->visible(fn (Guardian $record): bool => AuthUser::guardianId() !== $record->id);
+            ->visible(fn (Guardian $record): bool => AuthUser::guardianId() !== $record->id)
+            ->successRedirectUrl(GuardianResource::getUrl('index'));
     }
 }

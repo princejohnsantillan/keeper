@@ -7,6 +7,7 @@ namespace App\Filament\Actions;
 use App\Actions\DetachChildFromGuardianAction;
 use App\AuthUser;
 use App\Filament\Notifications\AppNotification;
+use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
 use App\Models\Child;
 use Filament\Actions\DeleteAction;
 
@@ -21,6 +22,7 @@ final class DeleteChildAction
                 $detachChild($record, $guardian);
 
                 AppNotification::deleted()->send();
-            });
+            })
+            ->successRedirectUrl(ChildResource::getUrl('index'));
     }
 }
