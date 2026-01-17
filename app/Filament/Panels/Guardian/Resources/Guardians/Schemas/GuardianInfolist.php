@@ -45,8 +45,6 @@ final class GuardianInfolist
                             ->inlineLabel(),
                         AppTextEntry::lastName()
                             ->inlineLabel(),
-                        AppTextEntry::nickname()
-                            ->inlineLabel(),
                         AppIconEntry::gender()
                             ->inlineLabel(),
                         self::birthDateWithAgeEntry()
