@@ -134,9 +134,8 @@ final class GuardianInfolist
 
     private static function childNicknameEntry(): TextEntry
     {
-        return TextEntry::make('nickname')
+        return TextEntry::make('known_as')
             ->hiddenLabel()
-            ->icon('heroicon-o-chat-bubble-bottom-center-text')
-            ->placeholder('—');
+            ->icon('heroicon-o-chat-bubble-bottom-center-text');
     }
 }

@@ -73,7 +73,7 @@ final class ChildInfolist
     private static function guardiansSection(): Section
     {
         return Section::make('Guardians')
-            ->icon('heroicon-o-users')
+            ->icon('entypo-shield')
             ->compact()
             ->extraAttributes(['class' => 'max-w-2xl'])
             ->collapsible()
@@ -102,7 +102,8 @@ final class ChildInfolist
         return TextEntry::make('full_name')
             ->hiddenLabel()
             ->weight(FontWeight::Medium)
-            ->icon('heroicon-o-user')
+            ->icon(fn ($record) => $record->gender->getIcon())
+            ->iconColor(fn ($record) => $record->gender->getColor())
             ->grow(false);
     }
 
