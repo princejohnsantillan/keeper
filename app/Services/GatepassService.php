@@ -55,4 +55,22 @@ final class GatepassService implements GatepassServiceInterface
 
         return $code;
     }
+
+    public function findByCodeAndActivity(string $code, string $activityId): ?Gatepass
+    {
+        return Gatepass::query()
+            ->with('child')
+            ->where('code', $code)
+            ->where('activity_id', $activityId)
+            ->first();
+    }
+
+    public function findExisting(Activity $activity, Child $child, Guardian $guardian): ?Gatepass
+    {
+        return Gatepass::query()
+            ->where('activity_id', $activity->id)
+            ->where('child_id', $child->id)
+            ->where('guardian_id', $guardian->id)
+            ->first();
+    }
 }

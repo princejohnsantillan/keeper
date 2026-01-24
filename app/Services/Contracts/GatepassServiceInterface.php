@@ -26,4 +26,14 @@ interface GatepassServiceInterface
      * Generate a unique code for an activity.
      */
     public function generateUniqueCode(Activity $activity): string;
+
+    /**
+     * Find a gatepass by code and activity.
+     */
+    public function findByCodeAndActivity(string $code, string $activityId): ?Gatepass;
+
+    /**
+     * Find an existing gatepass for a child, guardian, and activity combination.
+     */
+    public function findExisting(Activity $activity, Child $child, Guardian $guardian): ?Gatepass;
 }

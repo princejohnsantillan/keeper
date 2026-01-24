@@ -137,3 +137,133 @@ it('does not send email when guardian has no user', function () {
 
     Mail::assertNothingQueued();
 });
+
+it('finds a gatepass by code and activity', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create();
+    $guardian = Guardian::factory()->create();
+
+    $gatepass = Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $guardian->id,
+        'code' => 'ABCDE',
+    ]);
+
+    $found = $service->findByCodeAndActivity('ABCDE', $activity->id);
+
+    expect($found)
+        ->not->toBeNull()
+        ->id->toBe($gatepass->id)
+        ->code->toBe('ABCDE');
+});
+
+it('returns null when gatepass code does not exist', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+
+    $found = $service->findByCodeAndActivity('NOTEX', $activity->id);
+
+    expect($found)->toBeNull();
+});
+
+it('returns null when code exists but for different activity', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity1 = Activity::factory()->create();
+    $activity2 = Activity::factory()->create();
+
+    Gatepass::factory()->create([
+        'activity_id' => $activity1->id,
+        'code' => 'ABCDE',
+    ]);
+
+    $found = $service->findByCodeAndActivity('ABCDE', $activity2->id);
+
+    expect($found)->toBeNull();
+});
+
+it('loads child relationship when finding by code and activity', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create(['first_name' => 'TestChild']);
+
+    Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'code' => 'ABCDE',
+    ]);
+
+    $found = $service->findByCodeAndActivity('ABCDE', $activity->id);
+
+    expect($found)
+        ->not->toBeNull()
+        ->child->not->toBeNull()
+        ->child->first_name->toBe('TestChild');
+});
+
+it('finds an existing gatepass for activity, child, and guardian', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create();
+    $guardian = Guardian::factory()->create();
+
+    $gatepass = Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $guardian->id,
+    ]);
+
+    $found = $service->findExisting($activity, $child, $guardian);
+
+    expect($found)
+        ->not->toBeNull()
+        ->id->toBe($gatepass->id);
+});
+
+it('returns null when no existing gatepass for combination', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create();
+    $guardian = Guardian::factory()->create();
+
+    $found = $service->findExisting($activity, $child, $guardian);
+
+    expect($found)->toBeNull();
+});
+
+it('returns null when gatepass exists but for different child', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child1 = Child::factory()->create();
+    $child2 = Child::factory()->create();
+    $guardian = Guardian::factory()->create();
+
+    Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child1->id,
+        'guardian_id' => $guardian->id,
+    ]);
+
+    $found = $service->findExisting($activity, $child2, $guardian);
+
+    expect($found)->toBeNull();
+});
+
+it('returns null when gatepass exists but for different guardian', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create();
+    $child = Child::factory()->create();
+    $guardian1 = Guardian::factory()->create();
+    $guardian2 = Guardian::factory()->create();
+
+    Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $guardian1->id,
+    ]);
+
+    $found = $service->findExisting($activity, $child, $guardian2);
+
+    expect($found)->toBeNull();
+});

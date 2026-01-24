@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Actions;
 
+use App\Actions\ArchiveMessageAction as ArchiveMessageBusinessAction;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Message;
 use Filament\Actions\Action;
@@ -23,8 +24,8 @@ final class ArchiveMessageAction
             ->modalDescription('Are you sure you want to archive this message? This action is irreversible and this item will no longer be available for selection when creating activities.')
             ->modalSubmitActionLabel('Yes, archive')
             ->hidden(fn (Message $record): bool => $record->isArchived())
-            ->action(function (Message $record): void {
-                $record->update(['archived_at' => now()]);
+            ->action(function (Message $record, ArchiveMessageBusinessAction $archiveMessage): void {
+                $archiveMessage($record);
 
                 AppNotification::archived()->send();
             });

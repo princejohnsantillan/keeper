@@ -7,8 +7,8 @@ namespace App\Filament\Actions;
 use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Activity;
-use App\Models\Gatepass;
 use App\Services\Contracts\AttendanceServiceInterface;
+use App\Services\Contracts\GatepassServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Icons\Heroicon;
@@ -28,12 +28,9 @@ final class CheckInAttendanceAction
                 array $data,
                 GetCurrentKeeperAction $getCurrentKeeper,
                 AttendanceServiceInterface $attendanceService,
+                GatepassServiceInterface $gatepassService,
             ) use ($activity): void {
-                $gatepass = Gatepass::query()
-                    ->with('child')
-                    ->where('code', $data['code'])
-                    ->where('activity_id', $activity->id)
-                    ->first();
+                $gatepass = $gatepassService->findByCodeAndActivity($data['code'], $activity->id);
 
                 if ($gatepass === null) {
                     AppNotification::invalidGatepassCode()->send();

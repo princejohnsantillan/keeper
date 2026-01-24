@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\Guardians\Pages;
 
+use App\Actions\CreateGuardianAction;
 use App\AuthUser;
 use App\Filament\Notifications\AppNotification;
 use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
@@ -37,15 +38,11 @@ final class ListGuardians extends ListRecords
                             ->all(),
                     ];
                 })
-                ->using(function (CreateAction $action, array $data): Guardian {
+                ->using(function (CreateAction $createAction, array $data, CreateGuardianAction $createGuardian): Guardian {
                     /** @var array<int, array{child_id?: string, relationship?: string|null}> $rows */
                     $rows = $data['children'] ?? [];
 
                     unset($data['children']);
-
-                    $data['owner_id'] = AuthUser::userId();
-
-                    $guardian = Guardian::query()->create($data);
 
                     $syncData = collect($rows)
                         ->filter(fn (array $row): bool => ! empty($row['child_id']) && ! empty($row['relationship']))
@@ -57,12 +54,10 @@ final class ListGuardians extends ListRecords
                     if (empty($syncData)) {
                         AppNotification::childRelationshipRequired()->send();
 
-                        $action->halt(true);
+                        $createAction->halt(true);
                     }
 
-                    $guardian->children()->sync($syncData);
-
-                    return $guardian;
+                    return $createGuardian($data, $syncData);
                 }),
         ];
     }

@@ -11,7 +11,6 @@ use App\Filament\Panels\Guardian\Resources\Activities\ActivityResource;
 use App\Filament\Panels\Guardian\Resources\Gatepasses\GatepassResource;
 use App\Models\Activity;
 use App\Models\Child;
-use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
@@ -257,11 +256,7 @@ final class RegisterActivity extends Page
                     return;
                 }
 
-                $existingGatepass = Gatepass::query()
-                    ->where('activity_id', $activity->id)
-                    ->where('child_id', $childId)
-                    ->where('guardian_id', $guardianId)
-                    ->first();
+                $existingGatepass = $gatepassService->findExisting($activity, $child, $checkinGuardian);
 
                 if ($existingGatepass !== null) {
                     $gatepassUrl = GatepassResource::getUrl('view', ['record' => $existingGatepass]);

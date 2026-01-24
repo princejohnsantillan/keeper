@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Actions;
 
+use App\Actions\ArchiveTermAction as ArchiveTermBusinessAction;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Term;
 use Filament\Actions\Action;
@@ -23,8 +24,8 @@ final class ArchiveTermAction
             ->modalDescription('Are you sure you want to archive these terms and conditions? This action is irreversible and this item will no longer be available for selection when creating activities.')
             ->modalSubmitActionLabel('Yes, archive')
             ->hidden(fn (Term $record): bool => $record->isArchived())
-            ->action(function (Term $record): void {
-                $record->update(['archived_at' => now()]);
+            ->action(function (Term $record, ArchiveTermBusinessAction $archiveTerm): void {
+                $archiveTerm($record);
 
                 AppNotification::archived()->send();
             });
