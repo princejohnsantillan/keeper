@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\KeeperRole;
+use App\Enums\KeeperStatus;
 use App\Mail\KeeperInvitationMail;
 use App\Models\Keeper;
 use App\Models\KeeperInvitation;
@@ -42,12 +43,21 @@ final class KeeperInvitationService implements KeeperInvitationServiceInterface
         return Keeper::query()
             ->where('user_id', $user->id)
             ->where('organization_id', $organization->id)
+            ->where('status', '!=', KeeperStatus::Pending)
             ->exists();
     }
 
     public function createInvitation(User $user, Organization $organization, User $invitedBy, KeeperRole $role): KeeperInvitation
     {
         $token = $this->generateUniqueToken();
+
+        // Create a pending Keeper record
+        Keeper::query()->create([
+            'user_id' => $user->id,
+            'organization_id' => $organization->id,
+            'role' => $role,
+            'status' => KeeperStatus::Pending,
+        ]);
 
         return KeeperInvitation::query()->create([
             'user_id' => $user->id,
@@ -74,11 +84,15 @@ final class KeeperInvitationService implements KeeperInvitationServiceInterface
 
     public function acceptInvitation(KeeperInvitation $invitation): Keeper
     {
-        $keeper = Keeper::query()->create([
-            'user_id' => $invitation->user_id,
-            'organization_id' => $invitation->organization_id,
-            'role' => $invitation->role,
-        ]);
+        // Find and update the pending Keeper record
+        $keeper = Keeper::query()
+            ->where('user_id', $invitation->user_id)
+            ->where('organization_id', $invitation->organization_id)
+            ->where('status', KeeperStatus::Pending)
+            ->firstOrFail();
+
+        $keeper->status = KeeperStatus::Active;
+        $keeper->save();
 
         $invitation->accept();
 

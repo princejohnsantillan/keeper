@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\KeeperRole;
+use App\Enums\KeeperStatus;
 use Database\Factories\KeeperFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,6 +31,7 @@ final class Keeper extends Model
     {
         return [
             'role' => KeeperRole::class,
+            'status' => KeeperStatus::class,
         ];
     }
 
@@ -41,6 +43,21 @@ final class Keeper extends Model
     public function isGatekeeper(): bool
     {
         return $this->role === KeeperRole::Gatekeeper;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === KeeperStatus::Active;
+    }
+
+    public function isInactive(): bool
+    {
+        return $this->status === KeeperStatus::Inactive;
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === KeeperStatus::Pending;
     }
 
     /**
