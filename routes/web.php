@@ -6,6 +6,10 @@ use App\Http\Middleware\RequireOrganizationSubdomain;
 use App\Subdomain;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/print', function () {
+    echo 'This is my name';
+});
+
 Route::get('/', function () {
 
     if (Subdomain::defined()) {

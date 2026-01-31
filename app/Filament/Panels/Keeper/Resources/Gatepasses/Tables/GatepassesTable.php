@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Gatepasses\Tables;
 
+use App\Avatar;
 use App\Filament\Actions\CheckInGatepassAction;
 use App\Filament\Actions\CheckOutGatepassAction;
 use App\Filament\Components\Tables\AppTextColumn;
+use App\Models\Gatepass;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,7 +24,11 @@ final class GatepassesTable
             ->columns([
                 AppTextColumn::code(),
                 self::activityTitleColumn(),
+                self::guardianAvatarColumn(),
+                self::guardianGenderColumn(),
                 self::guardianFullNameColumn(),
+                self::childAvatarColumn(),
+                self::childGenderColumn(),
                 self::childFullNameColumn(),
             ])
             ->recordActions([
@@ -34,6 +42,22 @@ final class GatepassesTable
         return TextColumn::make('activity.title')
             ->searchable()
             ->sortable();
+    }
+
+    private static function guardianAvatarColumn(): SpatieMediaLibraryImageColumn
+    {
+        return SpatieMediaLibraryImageColumn::make('guardian.avatar')
+            ->label('')
+            ->collection('avatar')
+            ->circular()
+            ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->guardian->full_name));
+    }
+
+    private static function guardianGenderColumn(): IconColumn
+    {
+        return IconColumn::make('guardian.gender')
+            ->label('')
+            ->boolean();
     }
 
     private static function guardianFullNameColumn(): TextColumn
@@ -52,6 +76,22 @@ final class GatepassesTable
                     ->orderBy('guardians.last_name', $direction)
                     ->select('gatepasses.*');
             });
+    }
+
+    private static function childAvatarColumn(): SpatieMediaLibraryImageColumn
+    {
+        return SpatieMediaLibraryImageColumn::make('child.avatar')
+            ->label('')
+            ->collection('avatar')
+            ->circular()
+            ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->child->full_name));
+    }
+
+    private static function childGenderColumn(): IconColumn
+    {
+        return IconColumn::make('child.gender')
+            ->label('')
+            ->boolean();
     }
 
     private static function childFullNameColumn(): TextColumn

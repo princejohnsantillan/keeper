@@ -6,18 +6,22 @@
     <title>Print Sticker - {{ $childName }}</title>
     <style>
         @media print {
-            @page {
-                size: 2in 1in;
-                margin: 0;
-            }
 
-            body {
-                margin: 0;
-                padding: 0;
-            }
 
             .no-print {
                 display: none !important;
+            }
+
+            .sticker {
+                position: absolute !important;
+                top: 2mm !important;
+                left: 2mm !important;
+                right: 2mm !important;
+                margin: 0 auto !important;
+                height: auto !important;
+                padding: 2mm 4mm !important;
+                width: 90mm !important;
+                text-align: center;
             }
         }
 
@@ -39,26 +43,25 @@
         }
 
         .sticker {
-            width: 2in;
-            height: 1in;
+            width: 100mm;
+            height: 100%;
             background: white;
             border: 2px dashed #d1d5db;
             border-radius: 4px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            justify-content: center;
-            padding: 0.25in;
-            text-align: center;
+            justify-content: space-between;
+            padding: 2mm 5mm;
+            text-align: left;
         }
 
         .child-name {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             color: #111827;
             line-height: 1.2;
-            margin-bottom: 4px;
-            max-width: 100%;
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -70,6 +73,8 @@
             color: #1f2937;
             letter-spacing: 2px;
             font-family: 'Courier New', Courier, monospace;
+            flex-shrink: 0;
+            margin-left: 4mm;
         }
 
         .actions {
