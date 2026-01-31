@@ -38,3 +38,55 @@ it('can list tags for the organization', function () {
     Livewire::test(ListTags::class)
         ->assertCanSeeTableRecords([$tag]);
 });
+
+it('can create a tag', function () {
+    Livewire::test(ListTags::class)
+        ->callAction('create', ['name' => 'New Tag'])
+        ->assertNotified();
+
+    expect(Tag::where('name', 'New Tag')->exists())->toBeTrue();
+});
+
+it('cannot create a tag with a duplicate name', function () {
+    Tag::findOrCreateFromString('Existing');
+
+    Livewire::test(ListTags::class)
+        ->callAction('create', ['name' => 'Existing'])
+        ->assertHasActionErrors(['name']);
+});
+
+it('cannot create a tag with a case-insensitive duplicate name', function () {
+    Tag::findOrCreateFromString('existing');
+
+    Livewire::test(ListTags::class)
+        ->callAction('create', ['name' => 'EXISTING'])
+        ->assertHasActionErrors(['name']);
+});
+
+it('can edit a tag', function () {
+    $tag = Tag::findOrCreateFromString('Original');
+
+    Livewire::test(ListTags::class)
+        ->callTableAction('edit', $tag, ['name' => 'Updated'])
+        ->assertNotified();
+
+    expect($tag->fresh()->name)->toBe('Updated');
+});
+
+it('cannot edit a tag to a duplicate name', function () {
+    Tag::findOrCreateFromString('Taken');
+    $tag = Tag::findOrCreateFromString('Original');
+
+    Livewire::test(ListTags::class)
+        ->callTableAction('edit', $tag, ['name' => 'Taken'])
+        ->assertHasTableActionErrors(['name']);
+});
+
+it('cannot edit a tag to a case-insensitive duplicate name', function () {
+    Tag::findOrCreateFromString('taken');
+    $tag = Tag::findOrCreateFromString('Original');
+
+    Livewire::test(ListTags::class)
+        ->callTableAction('edit', $tag, ['name' => 'TAKEN'])
+        ->assertHasTableActionErrors(['name']);
+});

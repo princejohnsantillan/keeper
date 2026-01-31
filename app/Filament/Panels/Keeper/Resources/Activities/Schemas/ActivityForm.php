@@ -7,7 +7,7 @@ namespace App\Filament\Panels\Keeper\Resources\Activities\Schemas;
 use App\Filament\Components\Forms\AppDateTimePicker;
 use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
-use App\Filament\Components\Forms\AppTagsSelect;
+use App\Filament\Components\Forms\AppTagsInput;
 use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
 use Filament\Forms\Components\Select;
@@ -35,7 +35,7 @@ final class ActivityForm
                     ->columnSpanFull(),
                 self::messageSelect()
                     ->columnSpanFull(),
-                AppTagsSelect::tags()
+                AppTagsInput::tags()
                     ->columnSpanFull(),
                 AppTextarea::notes()
                     ->columnSpanFull(),
