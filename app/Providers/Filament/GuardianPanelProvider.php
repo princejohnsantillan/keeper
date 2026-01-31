@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Filament\Panels\Guardian\Pages\Login;
 use App\Filament\Panels\Guardian\Pages\Register;
 use App\Http\Middleware\RedirectGuardianDashboard;
 use Filament\Http\Middleware\Authenticate;
@@ -28,7 +29,7 @@ final class GuardianPanelProvider extends PanelProvider
             ->id('guardian')
             ->path('dashboard')
             ->registration(Register::class)
-            ->login()
+            ->login(Login::class)
             ->passwordReset()
             ->emailVerification()
             ->emailChangeVerification()

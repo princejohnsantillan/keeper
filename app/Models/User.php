@@ -8,6 +8,7 @@ use App\Subdomain;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,6 +48,16 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * @return Attribute<string, string>
+     */
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value): string => strtolower($value),
+        );
     }
 
     public function canAccessPanel(Panel $panel): bool

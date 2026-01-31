@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Filament\Panels\Keeper\Pages\Login;
 use App\Http\Middleware\RequireOrganizationSubdomain;
 use App\Subdomain;
 use Filament\Http\Middleware\Authenticate;
@@ -28,7 +29,7 @@ final class KeeperPanelProvider extends PanelProvider
             ->id('keeper')
             ->path('admin')
             ->brandName(Subdomain::organization()?->name ?: 'Keeper')
-            ->login()
+            ->login(Login::class)
             ->passwordReset()
             ->emailVerification()
             ->emailChangeVerification()
