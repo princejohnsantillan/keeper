@@ -23,12 +23,19 @@ interface GatepassServiceInterface
     public function sendCreatedEmail(Gatepass $gatepass): void;
 
     /**
-     * Generate a unique code for an activity.
+     * Generate a globally unique code.
      */
-    public function generateUniqueCode(Activity $activity): string;
+    public function generateUniqueCode(): string;
+
+    /**
+     * Find a gatepass by code (globally unique).
+     */
+    public function findByCode(string $code): ?Gatepass;
 
     /**
      * Find a gatepass by code and activity.
+     *
+     * @deprecated Use findByCode() instead. Codes are now globally unique.
      */
     public function findByCodeAndActivity(string $code, string $activityId): ?Gatepass;
 

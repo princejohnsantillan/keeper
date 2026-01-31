@@ -15,6 +15,7 @@
         "owenvoke/blade-entypo": "^2.3",
         "owenvoke/blade-fontawesome": "^2.9",
         "resend/resend-php": "^1.1",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-medialibrary": "^11.0"
     },
     "require-dev": {

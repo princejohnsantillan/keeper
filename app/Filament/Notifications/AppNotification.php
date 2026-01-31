@@ -110,6 +110,14 @@ final class AppNotification
             ->body('The gatepass code does not match this activity.');
     }
 
+    public static function gatepassNotFound(): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Gatepass not found')
+            ->body('No gatepass was found with that code.');
+    }
+
     public static function noCheckInFound(string $childName): Notification
     {
         return Notification::make()

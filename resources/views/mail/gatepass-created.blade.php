@@ -19,12 +19,15 @@ You have successfully registered **{{ $childName }}** for **{{ $activityTitle }}
 Your Gate Pass code is:
 
 <x-mail::panel>
-<div style="text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 4px;">
+<div style="text-align: center;">
+<img src="{{ $qrCode }}" alt="Gate Pass QR Code" style="width: 200px; height: 200px; margin: 0 auto 16px;">
+<div style="font-size: 24px; font-weight: bold; letter-spacing: 4px;">
 {{ $code }}
+</div>
 </div>
 </x-mail::panel>
 
-Please keep this code safe. You will need it for check-in and check-out.
+Please keep this code safe. You can present the QR code or enter the code manually for check-in and check-out.
 
 
 @if($organizerMessage)

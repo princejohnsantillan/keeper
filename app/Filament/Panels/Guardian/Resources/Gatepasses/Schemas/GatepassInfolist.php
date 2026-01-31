@@ -8,6 +8,7 @@ use App\Avatar;
 use App\Models\Gatepass;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -28,12 +29,20 @@ final class GatepassInfolist
                     ->compact()
                     ->extraAttributes(['class' => 'max-w-md mx-auto'])
                     ->schema([
+                        self::qrCodeEntry(),
                         self::codeEntry(),
                         self::activitySection(),
                         self::childSection(),
                         self::guardianSection(),
                     ]),
             ]);
+    }
+
+    private static function qrCodeEntry(): ViewEntry
+    {
+        return ViewEntry::make('code')
+            ->hiddenLabel()
+            ->view('filament.infolists.components.qr-code-entry');
     }
 
     private static function codeEntry(): TextEntry

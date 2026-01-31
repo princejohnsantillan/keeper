@@ -9,6 +9,7 @@ use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
+use App\Models\Scopes\OrganizationScope;
 use App\Models\TermAcceptance;
 use App\ReadableCode;
 use App\Services\Contracts\GatepassServiceInterface;
@@ -18,7 +19,7 @@ final class GatepassService implements GatepassServiceInterface
 {
     public function create(Activity $activity, Child $child, Guardian $guardian, ?TermAcceptance $termAcceptance = null): Gatepass
     {
-        $code = $this->generateUniqueCode($activity);
+        $code = $this->generateUniqueCode();
 
         $gatepass = Gatepass::query()->create([
             'child_id' => $child->id,
@@ -44,16 +45,25 @@ final class GatepassService implements GatepassServiceInterface
         Mail::to($email)->queue(new GatepassCreated($gatepass));
     }
 
-    public function generateUniqueCode(Activity $activity): string
+    public function generateUniqueCode(): string
     {
         do {
             $code = ReadableCode::generate();
-        } while (Gatepass::query()
-            ->where('activity_id', $activity->id)
-            ->where('code', $code)
-            ->exists());
+        } while (Gatepass::query()->where('code', $code)->exists());
 
         return $code;
+    }
+
+    public function findByCode(string $code): ?Gatepass
+    {
+        return Gatepass::query()
+            ->with([
+                'child',
+                'guardian',
+                'activity' => fn ($query) => $query->withoutGlobalScope(OrganizationScope::class),
+            ])
+            ->where('code', $code)
+            ->first();
     }
 
     public function findByCodeAndActivity(string $code, string $activityId): ?Gatepass

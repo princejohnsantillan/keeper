@@ -1,0 +1,291 @@
+<x-filament::page>
+    @php
+        $gatepass = $this->getGatepass();
+    @endphp
+
+    <div class="space-y-6">
+        {{-- Code Input Form --}}
+        <form wire:submit="lookup" class="max-w-md">
+            {{ $this->form }}
+            <div class="mt-4 flex flex-wrap gap-3">
+                <x-filament::button type="submit" icon="heroicon-o-magnifying-glass">
+                    Look Up
+                </x-filament::button>
+                <x-filament::button
+                    type="button"
+                    color="gray"
+                    icon="heroicon-o-camera"
+                    x-data=""
+                    x-on:click="$dispatch('toggle-camera')"
+                >
+                    <span x-text="$store.qrScanner?.isScanning ? 'Stop Camera' : 'Scan QR Code'">Scan QR Code</span>
+                </x-filament::button>
+            </div>
+        </form>
+
+        {{-- Camera Scanner --}}
+        <div
+            x-data="qrScanner"
+            x-on:toggle-camera.window="toggle()"
+            class="max-w-md"
+        >
+            <div
+                x-show="isScanning"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 transform scale-95"
+                x-transition:enter-end="opacity-100 transform scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 transform scale-100"
+                x-transition:leave-end="opacity-0 transform scale-95"
+                class="rounded-lg overflow-hidden bg-gray-900"
+            >
+                <div id="qr-reader" class="w-full"></div>
+                <div class="p-3 text-center text-sm text-gray-400">
+                    Point your camera at a QR code to scan
+                </div>
+            </div>
+        </div>
+
+        {{-- Gatepass Details --}}
+        @if ($gatepass)
+            <x-filament::section>
+                <x-slot name="heading">
+                    <div class="flex items-center justify-between">
+                        <span>Gatepass Details</span>
+                        <x-filament::badge
+                            :color="match ($this->attendanceStatus) {
+                                'not_checked_in' => 'gray',
+                                'checked_in' => 'success',
+                                'checked_out' => 'info',
+                                default => 'gray',
+                            }"
+                        >
+                            {{ match ($this->attendanceStatus) {
+                                'not_checked_in' => 'Not Checked In',
+                                'checked_in' => 'Checked In',
+                                'checked_out' => 'Checked Out',
+                                default => 'Unknown',
+                            } }}
+                        </x-filament::badge>
+                    </div>
+                </x-slot>
+
+                <div class="grid gap-6 md:grid-cols-3">
+                    {{-- Activity Info --}}
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Activity</h3>
+                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                            {{ $gatepass->activity->title }}
+                        </p>
+                        @if ($gatepass->activity->starts_at)
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ $gatepass->activity->starts_at->format('M d, Y') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    {{-- Child Info --}}
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Child</h3>
+                        <div class="flex items-center gap-3">
+                            @if ($gatepass->child->getFirstMediaUrl('avatar'))
+                                <img
+                                    src="{{ $gatepass->child->getFirstMediaUrl('avatar') }}"
+                                    alt="{{ $gatepass->child->full_name }}"
+                                    class="h-12 w-12 rounded-full object-cover"
+                                />
+                            @else
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+                                    <x-filament::icon
+                                        icon="heroicon-o-user"
+                                        class="h-6 w-6 text-gray-500 dark:text-gray-400"
+                                    />
+                                </div>
+                            @endif
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ $gatepass->child->full_name }}
+                                </p>
+                                @if ($gatepass->child->birth_date)
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $gatepass->child->age }} years old
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Guardian Info --}}
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Guardian</h3>
+                        <div class="flex items-center gap-3">
+                            @if ($gatepass->guardian->getFirstMediaUrl('avatar'))
+                                <img
+                                    src="{{ $gatepass->guardian->getFirstMediaUrl('avatar') }}"
+                                    alt="{{ $gatepass->guardian->full_name }}"
+                                    class="h-12 w-12 rounded-full object-cover"
+                                />
+                            @else
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
+                                    <x-filament::icon
+                                        icon="heroicon-o-user"
+                                        class="h-6 w-6 text-gray-500 dark:text-gray-400"
+                                    />
+                                </div>
+                            @endif
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ $gatepass->guardian->full_name }}
+                                </p>
+                                @if ($gatepass->guardian->user?->email)
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $gatepass->guardian->user->email }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Code Display --}}
+                <div class="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Gatepass Code</p>
+                            <p class="font-mono text-2xl font-bold tracking-wider text-gray-900 dark:text-white">
+                                {{ $gatepass->code }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Actions --}}
+                <div class="mt-6 flex flex-wrap gap-3">
+                    @if ($this->attendanceStatus === 'not_checked_in')
+                        <x-filament::button
+                            wire:click="checkIn"
+                            color="success"
+                            icon="heroicon-o-arrow-right-end-on-rectangle"
+                        >
+                            Check In
+                        </x-filament::button>
+                    @elseif ($this->attendanceStatus === 'checked_in')
+                        <x-filament::button
+                            wire:click="checkOut"
+                            color="warning"
+                            icon="heroicon-o-arrow-left-start-on-rectangle"
+                        >
+                            Check Out
+                        </x-filament::button>
+                    @endif
+
+                    <x-filament::button
+                        wire:click="clearGatepass"
+                        color="gray"
+                        icon="heroicon-o-x-mark"
+                    >
+                        Clear
+                    </x-filament::button>
+                </div>
+            </x-filament::section>
+        @else
+            <x-filament::section>
+                <div class="py-12 text-center">
+                    <x-filament::icon
+                        icon="heroicon-o-qr-code"
+                        class="mx-auto h-12 w-12 text-gray-400"
+                    />
+                    <h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-white">
+                        Ready to Scan
+                    </h3>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Enter or scan a gatepass code to view details and manage attendance.
+                    </p>
+                </div>
+            </x-filament::section>
+        @endif
+    </div>
+
+    @push('scripts')
+        <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+        <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('qrScanner', () => ({
+                    isScanning: false,
+                    scanner: null,
+
+                    init() {
+                        Alpine.store('qrScanner', this);
+                    },
+
+                    async toggle() {
+                        if (this.isScanning) {
+                            await this.stop();
+                        } else {
+                            await this.start();
+                        }
+                    },
+
+                    async start() {
+                        this.isScanning = true;
+                        await this.$nextTick();
+
+                        this.scanner = new Html5Qrcode("qr-reader");
+
+                        try {
+                            await this.scanner.start(
+                                { facingMode: "environment" },
+                                {
+                                    fps: 10,
+                                    qrbox: { width: 250, height: 250 },
+                                    aspectRatio: 1.0,
+                                },
+                                (decodedText) => {
+                                    this.onScanSuccess(decodedText);
+                                },
+                                (errorMessage) => {
+                                    // Ignore scan errors (no QR found in frame)
+                                }
+                            );
+                        } catch (err) {
+                            console.error('Camera error:', err);
+                            this.isScanning = false;
+
+                            // Show error notification
+                            new FilamentNotification()
+                                .title('Camera Error')
+                                .body('Could not access camera. Please check permissions.')
+                                .danger()
+                                .send();
+                        }
+                    },
+
+                    async stop() {
+                        if (this.scanner) {
+                            try {
+                                await this.scanner.stop();
+                            } catch (err) {
+                                console.error('Error stopping scanner:', err);
+                            }
+                            this.scanner = null;
+                        }
+                        this.isScanning = false;
+                    },
+
+                    async onScanSuccess(decodedText) {
+                        // Stop scanning
+                        await this.stop();
+
+                        // Set the code in the form and trigger lookup
+                        @this.set('data.code', decodedText);
+                        @this.call('lookup');
+                    },
+
+                    destroy() {
+                        this.stop();
+                    }
+                }));
+            });
+        </script>
+    @endpush
+</x-filament::page>
