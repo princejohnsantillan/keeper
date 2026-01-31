@@ -12,6 +12,7 @@
 /.fleet
 /.idea
 /.nova
+/.opencode
 /.phpunit.cache
 /.vscode
 /.zed
