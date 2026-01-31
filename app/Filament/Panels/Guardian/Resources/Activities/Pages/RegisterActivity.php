@@ -11,6 +11,7 @@ use App\Filament\Panels\Guardian\Resources\Activities\ActivityResource;
 use App\Filament\Panels\Guardian\Resources\Gatepasses\GatepassResource;
 use App\Models\Activity;
 use App\Models\Child;
+use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;

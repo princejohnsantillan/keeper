@@ -6,7 +6,7 @@ namespace App\Filament\Panels\Keeper\Resources\Children\Tables;
 
 use App\Filament\Components\Tables\AppIconColumn;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
-use App\Filament\Components\Tables\AppSpatieTagsColumn;
+use App\Filament\Components\Tables\AppTagsColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -25,7 +25,7 @@ final class ChildrenTable
                 AppTextColumn::nickname(),
                 AppTextColumn::birthDate(),
                 AppIconColumn::gender(),
-                AppSpatieTagsColumn::tags(),
+                AppTagsColumn::tags(),
             ])
             ->filters([
                 //

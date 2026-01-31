@@ -7,7 +7,7 @@ namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
 use App\Filament\Components\Forms\AppDatePicker;
 use App\Filament\Components\Forms\AppSelect;
 use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
-use App\Filament\Components\Forms\AppSpatieTagsInput;
+use App\Filament\Components\Forms\AppTagsSelect;
 use App\Filament\Components\Forms\AppTextInput;
 use Filament\Schemas\Schema;
 
@@ -27,7 +27,7 @@ final class GuardianForm
                 AppSelect::gender(),
                 AppTextInput::email(),
                 AppTextInput::phone(),
-                AppSpatieTagsInput::tags()
+                AppTagsSelect::tags()
                     ->columnSpanFull(),
             ]);
     }

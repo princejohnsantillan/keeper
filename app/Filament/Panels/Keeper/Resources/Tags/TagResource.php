@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Tags;
 
-use App\Filament\Panels\Keeper\Resources\Tags\Pages\CreateTag;
-use App\Filament\Panels\Keeper\Resources\Tags\Pages\EditTag;
 use App\Filament\Panels\Keeper\Resources\Tags\Pages\ListTags;
 use App\Filament\Panels\Keeper\Resources\Tags\Schemas\TagForm;
 use App\Filament\Panels\Keeper\Resources\Tags\Tables\TagsTable;
+use App\Models\Tag;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Spatie\Tags\Tag;
 use UnitEnum;
 
 final class TagResource extends Resource
@@ -37,19 +35,10 @@ final class TagResource extends Resource
         return TagsTable::configure($table);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
             'index' => ListTags::route('/'),
-            'create' => CreateTag::route('/create'),
-            'edit' => EditTag::route('/{record}/edit'),
         ];
     }
 }

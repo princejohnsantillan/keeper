@@ -177,7 +177,7 @@ return $table->columns([
     AppTextColumn::lastName(),
     AppTextColumn::birthDate(),
     AppIconColumn::gender(),
-    AppSpatieTagsColumn::tags()
+    AppTagsColumn::tags()
         ->toggleable(),
 ]);
 ```
@@ -409,7 +409,7 @@ private static function guardianFullNameColumn(): TextColumn
 | `AppTextarea` | `notes()`, `description()` |
 | `AppToggleButtons` | `gender()` |
 | `AppSpatieMediaLibraryFileUpload` | `avatar()`, `thumbnail()` |
-| `AppSpatieTagsInput` | `tags()` |
+| `AppTagsSelect` | `tags()` |
 | `AppMarkdownEditor` | `content()` |
 
 ### Infolists
@@ -425,4 +425,4 @@ private static function guardianFullNameColumn(): TextColumn
 | `AppTextColumn` | `firstName()`, `middleName()`, `lastName()`, `fullName()`, `nickname()`, `email()`, `phone()`, `birthDate()`, `title()`, `location()`, `code()`, `name()`, `type()`, `createdAt()`, `updatedAt()` |
 | `AppIconColumn` | `gender()` |
 | `AppSpatieMediaLibraryImageColumn` | `avatar()`, `thumbnail()` |
-| `AppSpatieTagsColumn` | `tags()` |
+| `AppTagsColumn` | `tags()` |

@@ -13,8 +13,10 @@ final class TagForm
     {
         return $schema
             ->components([
-                AppTextInput::name(),
-                AppTextInput::type(),
+                AppTextInput::name()
+                    ->label('Tag name')
+                    ->required()
+                    ->autofocus(),
             ]);
     }
 }

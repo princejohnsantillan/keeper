@@ -8,10 +8,12 @@ use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
 use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianForm;
 use App\Filament\Panels\Keeper\Resources\Guardians\Tables\GuardiansTable;
 use App\Models\Guardian;
+use App\Subdomain;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 final class GuardianResource extends Resource
@@ -29,6 +31,16 @@ final class GuardianResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return ['first_name', 'last_name', 'email', 'phone'];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organization = Subdomain::organization();
+
+        return parent::getEloquentQuery()
+            ->whereHas('gatepasses.activity', function (Builder $query) use ($organization): void {
+                $query->where('organization_id', $organization?->id);
+            });
     }
 
     public static function form(Schema $schema): Schema

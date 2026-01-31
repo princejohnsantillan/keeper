@@ -10,10 +10,12 @@ use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildForm;
 use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildInfolist;
 use App\Filament\Panels\Keeper\Resources\Children\Tables\ChildrenTable;
 use App\Models\Child;
+use App\Subdomain;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 final class ChildResource extends Resource
@@ -31,6 +33,16 @@ final class ChildResource extends Resource
     public static function getGloballySearchableAttributes(): array
     {
         return ['first_name', 'middle_name', 'last_name', 'nickname'];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $organization = Subdomain::organization();
+
+        return parent::getEloquentQuery()
+            ->whereHas('gatepasses.activity', function (Builder $query) use ($organization): void {
+                $query->where('organization_id', $organization?->id);
+            });
     }
 
     public static function form(Schema $schema): Schema

@@ -6,7 +6,7 @@ namespace App\Filament\Panels\Keeper\Resources\Guardians\Tables;
 
 use App\Filament\Components\Tables\AppIconColumn;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
-use App\Filament\Components\Tables\AppSpatieTagsColumn;
+use App\Filament\Components\Tables\AppTagsColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -28,7 +28,7 @@ final class GuardiansTable
                 AppIconColumn::gender(),
                 AppTextColumn::email('email', 'Email address'),
                 AppTextColumn::phone(),
-                AppSpatieTagsColumn::tags(),
+                AppTagsColumn::tags(),
             ])
             ->filters([
                 //

@@ -7,6 +7,7 @@ namespace App\Filament\Panels\Keeper\Resources\Activities\Tables;
 use App\Filament\Actions\ViewAttendanceAction;
 use App\Filament\Actions\WalkInAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppTagsColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Activity;
 use Filament\Actions\DeleteAction;
@@ -26,6 +27,8 @@ final class ActivitiesTable
                 self::startsAtColumn(),
                 self::endsAtColumn(),
                 self::creatorColumn(),
+                AppTagsColumn::tags()
+                    ->toggleable(),
             ])
             ->filters([
                 //
