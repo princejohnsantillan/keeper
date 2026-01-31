@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Models\Organization;
+use App\Observers\OrganizationObserver;
 use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
@@ -26,5 +28,7 @@ final class AppServiceProvider extends ServiceProvider
         Model::unguard();
 
         FilamentTimezone::set('Asia/Manila');
+
+        Organization::observe(OrganizationObserver::class);
     }
 }

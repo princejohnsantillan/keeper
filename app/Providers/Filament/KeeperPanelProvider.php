@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Filament\Panels\Keeper\Pages\AcceptInvitation;
 use App\Filament\Panels\Keeper\Pages\Login;
 use App\Http\Middleware\RequireOrganizationSubdomain;
 use App\Subdomain;

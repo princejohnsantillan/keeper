@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Enums\KeeperRole;
 use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -23,6 +24,21 @@ final class KeeperFactory extends Factory
         return [
             'user_id' => User::factory(),
             'organization_id' => Organization::factory(),
+            'role' => KeeperRole::Gatekeeper,
         ];
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'role' => KeeperRole::Admin,
+        ]);
+    }
+
+    public function gatekeeper(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'role' => KeeperRole::Gatekeeper,
+        ]);
     }
 }

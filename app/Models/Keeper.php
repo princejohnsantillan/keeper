@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\KeeperRole;
 use Database\Factories\KeeperFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,6 +25,23 @@ final class Keeper extends Model
     use SoftDeletes;
 
     protected $keyType = 'string';
+
+    protected function casts(): array
+    {
+        return [
+            'role' => KeeperRole::class,
+        ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === KeeperRole::Admin;
+    }
+
+    public function isGatekeeper(): bool
+    {
+        return $this->role === KeeperRole::Gatekeeper;
+    }
 
     /**
      * @return BelongsTo<User, $this>

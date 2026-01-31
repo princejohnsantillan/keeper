@@ -54,4 +54,15 @@ final class UserFactory extends Factory
             'guardian_id' => Guardian::factory(),
         ]);
     }
+
+    /**
+     * Indicate that the user is invited and needs to set up their password.
+     */
+    public function invited(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'password' => null,
+            'email_verified_at' => null,
+        ]);
+    }
 }

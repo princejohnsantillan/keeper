@@ -60,8 +60,17 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
         );
     }
 
+    public function needsPasswordSetup(): bool
+    {
+        return $this->password === null;
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
+        if ($this->needsPasswordSetup()) {
+            return false;
+        }
+
         $organization = Subdomain::organization();
         $panelId = $panel->getId();
 

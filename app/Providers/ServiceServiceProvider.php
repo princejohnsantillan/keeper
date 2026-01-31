@@ -7,8 +7,10 @@ namespace App\Providers;
 use App\Services\AttendanceService;
 use App\Services\Contracts\AttendanceServiceInterface;
 use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\KeeperInvitationServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use App\Services\GatepassService;
+use App\Services\KeeperInvitationService;
 use App\Services\TermAcceptanceService;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,5 +30,6 @@ final class ServiceServiceProvider extends ServiceProvider
         AttendanceServiceInterface::class => AttendanceService::class,
         TermAcceptanceServiceInterface::class => TermAcceptanceService::class,
         GatepassServiceInterface::class => GatepassService::class,
+        KeeperInvitationServiceInterface::class => KeeperInvitationService::class,
     ];
 }

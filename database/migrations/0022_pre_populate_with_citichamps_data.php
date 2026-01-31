@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Gender;
+use App\Enums\KeeperRole;
 use App\Models\Guardian;
 use App\Models\Keeper;
 use App\Models\Organization;
@@ -40,10 +41,7 @@ return new class extends Migration
             'owner_id' => $user->id,
         ]);
 
-        Keeper::create([
-            'user_id' => $user->id,
-            'organization_id' => $organization->id,
-        ]);
+        // Keeper is automatically created by OrganizationObserver
 
         $user2 = User::create([
             'name' => 'Pearl  Anne',
@@ -71,9 +69,12 @@ return new class extends Migration
             'owner_id' => $user->id,
         ]);
 
+        // Owner's keeper is automatically created by OrganizationObserver
+        // Add user2 as an additional keeper
         Keeper::create([
             'user_id' => $user2->id,
             'organization_id' => $organization2->id,
+            'role' => KeeperRole::Gatekeeper,
         ]);
 
     }

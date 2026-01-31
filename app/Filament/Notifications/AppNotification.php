@@ -139,4 +139,48 @@ final class AppNotification
             ->title('Archived')
             ->body('This item has been archived and can no longer be used.');
     }
+
+    public static function error(string $message): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Error')
+            ->body($message);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Keeper Invitation Notifications
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public static function keeperInvited(string $email): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Invitation sent')
+            ->body("An invitation has been sent to {$email}.");
+    }
+
+    public static function keeperAlreadyExists(string $email): Notification
+    {
+        return Notification::make()
+            ->warning()
+            ->title('Already a member')
+            ->body("{$email} is already a keeper for this organization.");
+    }
+
+    public static function invitationAlreadyPending(string $email): Notification
+    {
+        return Notification::make()
+            ->warning()
+            ->title('Invitation already sent')
+            ->body("A pending invitation already exists for {$email}.");
+    }
+
+    public static function invitationAccepted(): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Welcome!')
+            ->body('You have successfully joined the organization.');
+    }
 }
