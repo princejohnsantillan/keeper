@@ -6,6 +6,7 @@ namespace App\Filament\Panels\Keeper\Resources\Activities\Pages;
 
 use App\Filament\Actions\CheckInAttendanceAction;
 use App\Filament\Actions\CheckOutAttendanceAction;
+use App\Filament\Actions\PrintAttendanceStickerAction;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
 use App\Models\Activity;
 use App\Models\Attendance;
@@ -66,7 +67,9 @@ final class ViewAttendance extends ManageRelatedRecords
                 CheckInAttendanceAction::make($activity),
                 CheckOutAttendanceAction::make($activity),
             ])
-            ->recordActions([])
+            ->recordActions([
+                PrintAttendanceStickerAction::make(),
+            ])
             ->toolbarActions([]);
     }
 }

@@ -10,6 +10,7 @@ use App\Models\Gatepass;
 use App\Services\Contracts\AttendanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Component;
 
 final class CheckInGatepassAction
 {
@@ -26,6 +27,7 @@ final class CheckInGatepassAction
                 Gatepass $record,
                 GetCurrentKeeperAction $getCurrentKeeper,
                 AttendanceServiceInterface $attendanceService,
+                Component $livewire,
             ): void {
                 $keeper = $getCurrentKeeper();
                 $result = $attendanceService->checkIn($record->activity, $record, $keeper);
@@ -40,6 +42,9 @@ final class CheckInGatepassAction
                 }
 
                 AppNotification::checkedIn($result['child_name'])->send();
+
+                $printUrl = route('filament.keeper.attendance.print', $result['attendance']);
+                $livewire->dispatch('open-print-sticker', url: $printUrl);
             });
     }
 }
