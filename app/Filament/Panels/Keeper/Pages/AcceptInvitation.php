@@ -10,17 +10,19 @@ use App\Models\KeeperInvitation;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 final class AcceptInvitation extends SimplePage
 {
-    protected string $view = 'filament.panels.keeper.pages.accept-invitation';
-
     protected static bool $shouldRegisterNavigation = false;
 
     protected static string $routePath = '/invitation/accept';
@@ -108,10 +110,10 @@ final class AcceptInvitation extends SimplePage
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 TextInput::make('password')
                     ->label('Password')
                     ->password()
@@ -128,6 +130,30 @@ final class AcceptInvitation extends SimplePage
                     ->revealable(),
             ])
             ->statePath('data');
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('accept')
+            ->footer([
+                Actions::make($this->getFormActions())
+                    ->fullWidth($this->hasFullWidthFormActions()),
+            ]);
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return true;
     }
 
     public function accept(): void
