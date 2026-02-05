@@ -20,7 +20,7 @@ namespace App\Models{
  * @property string|null $location_map_link
  * @property \Carbon\CarbonImmutable $starts_at
  * @property \Carbon\CarbonImmutable $ends_at
- * @property \Carbon\CarbonImmutable|null $published_at
+ * @property \Carbon\CarbonImmutable|null $publish_at
  * @property string|null $notes
  * @property string $organization_id
  * @property string|null $term_id
@@ -57,7 +57,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereOrganizationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity wherePublishAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereStartsAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereTermId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity whereTitle($value)
@@ -71,8 +71,8 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property string $id
- * @property string $attendee_code
  * @property string $activity_id
+ * @property string $organization_id
  * @property string $child_id
  * @property string|null $checkin_keeper_id
  * @property string|null $checkin_gatepass_id
@@ -89,12 +89,12 @@ namespace App\Models{
  * @property-read \App\Models\Gatepass|null $checkoutGatepass
  * @property-read \App\Models\Keeper|null $checkoutKeeper
  * @property-read \App\Models\Child $child
+ * @property-read \App\Models\Organization $organization
  * @method static \Database\Factories\AttendanceFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereActivityId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereAttendeeCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedInAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckedOutAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCheckinGatepassId($value)
@@ -105,6 +105,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Attendance whereUpdatedAt($value)
  * @mixin \Eloquent
  */
@@ -172,6 +173,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property string $id
+ * @property string $organization_id
  * @property string $guardian_id
  * @property string $child_id
  * @property string $activity_id
@@ -182,6 +184,7 @@ namespace App\Models{
  * @property-read \App\Models\Activity $activity
  * @property-read \App\Models\Child $child
  * @property-read \App\Models\Guardian $guardian
+ * @property-read \App\Models\Organization $organization
  * @property-read \App\Models\TermAcceptance|null $termAcceptance
  * @method static \Database\Factories\GatepassFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass newModelQuery()
@@ -193,6 +196,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereGuardianId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereTermAcceptanceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Gatepass whereUpdatedAt($value)
  * @mixin \Eloquent
@@ -225,8 +229,6 @@ namespace App\Models{
  * @property-read int|null $gatepasses_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Organization> $organizations
- * @property-read int|null $organizations_count
  * @property-read \App\Models\User $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
  * @property-read int|null $relationships_count
@@ -343,10 +345,12 @@ namespace App\Models{
  * @property string $name
  * @property string $content
  * @property \Carbon\CarbonImmutable|null $archived_at
+ * @property string $created_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
  * @property-read int|null $activities_count
+ * @property-read \App\Models\User $creator
  * @property-read \App\Models\Organization $organization
  * @method static \Database\Factories\MessageFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message newModelQuery()
@@ -355,6 +359,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Message whereOrganizationId($value)
@@ -376,8 +381,6 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
  * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Guardian> $guardians
- * @property-read int|null $guardians_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Keeper> $keepers
  * @property-read int|null $keepers_count
  * @property-read \App\Models\User $owner
@@ -433,7 +436,7 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * @property int $id
+ * @property string $id
  * @property string $organization_id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -462,6 +465,7 @@ namespace App\Models{
  * @property \Carbon\CarbonImmutable|null $published_at
  * @property \Carbon\CarbonImmutable|null $archived_at
  * @property string $organization_id
+ * @property string $created_by
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TermAcceptance> $acceptances
@@ -470,6 +474,7 @@ namespace App\Models{
  * @property-read int|null $accepted_by_guardians_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Activity> $activities
  * @property-read int|null $activities_count
+ * @property-read \App\Models\User $creator
  * @property-read \App\Models\Organization $organization
  * @method static \Database\Factories\TermFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term newModelQuery()
@@ -478,6 +483,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereArchivedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereContent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Term whereOrganizationId($value)

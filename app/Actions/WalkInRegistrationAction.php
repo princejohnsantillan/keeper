@@ -36,6 +36,7 @@ final class WalkInRegistrationAction
             ]);
 
             return Gatepass::query()->create([
+                'organization_id' => $activity->organization_id,
                 'guardian_id' => $guardian->id,
                 'child_id' => $child->id,
                 'activity_id' => $activity->id,

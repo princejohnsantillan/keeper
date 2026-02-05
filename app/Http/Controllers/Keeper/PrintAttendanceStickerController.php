@@ -17,7 +17,7 @@ final class PrintAttendanceStickerController extends Controller
         return view('keeper.attendance-sticker', [
             'attendance' => $attendance,
             'childName' => $attendance->child->full_name,
-            'gatepassCode' => $attendance->checkinGatepass?->code ?? $attendance->attendee_code, // @phpstan-ignore nullsafe.neverNull
+            'gatepassCode' => $attendance->checkinGatepass?->code, // @phpstan-ignore nullsafe.neverNull
         ]);
     }
 }

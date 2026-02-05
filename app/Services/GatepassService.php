@@ -22,6 +22,7 @@ final class GatepassService implements GatepassServiceInterface
         $code = $this->generateUniqueCode();
 
         $gatepass = Gatepass::query()->create([
+            'organization_id' => $activity->organization_id,
             'child_id' => $child->id,
             'guardian_id' => $guardian->id,
             'activity_id' => $activity->id,

@@ -8,7 +8,7 @@ use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Keeper;
-use App\ReadableCode;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,8 +24,8 @@ final class AttendanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'attendee_code' => ReadableCode::generate(),
             'activity_id' => Activity::factory(),
+            'organization_id' => Organization::factory(),
             'child_id' => Child::factory(),
             'checkin_keeper_id' => Keeper::factory(),
             'checkin_gatepass_id' => Gatepass::factory(),

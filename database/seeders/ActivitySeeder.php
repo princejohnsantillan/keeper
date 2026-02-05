@@ -41,7 +41,7 @@ final class ActivitySeeder extends Seeder
                 ...$activityData,
                 'organization_id' => $organization->id,
                 'created_by' => $createdBy,
-                'published_at' => now(),
+                'publish_at' => now(),
             ]);
         }
     }

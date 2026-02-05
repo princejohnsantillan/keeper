@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('gatepasses', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->foreignUlid('organization_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('guardian_id')->constrained();
             $table->foreignUlid('child_id')->constrained();
             $table->foreignUlid('activity_id')->constrained();

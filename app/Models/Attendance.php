@@ -72,4 +72,10 @@ final class Attendance extends Pivot
     {
         return $this->belongsTo(Gatepass::class, 'checkout_gatepass_id');
     }
+
+    /** @return BelongsTo<Organization, $this> */
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
 }

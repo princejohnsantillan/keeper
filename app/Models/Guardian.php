@@ -92,15 +92,6 @@ final class Guardian extends Model implements HasMedia
     }
 
     /**
-     * @return BelongsToMany<Organization, $this>
-     */
-    public function organizations(): BelongsToMany
-    {
-        return $this->belongsToMany(Organization::class)
-            ->withTimestamps();
-    }
-
-    /**
      * @return HasMany<TermAcceptance, $this>
      */
     public function termAcceptances(): HasMany

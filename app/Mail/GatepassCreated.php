@@ -54,14 +54,12 @@ final class GatepassCreated extends Mailable implements ShouldQueue
 
     private function generateQrCode(): string
     {
+        /** @var \Illuminate\Support\HtmlString|string $qrCode */
         $qrCode = QrCode::format('png')
             ->size(200)
             ->margin(1)
             ->generate($this->gatepass->code);
 
-        /** @var string $qrCodeString */
-        $qrCodeString = $qrCode;
-
-        return 'data:image/png;base64,'.base64_encode($qrCodeString);
+        return 'data:image/png;base64,'.base64_encode($qrCode instanceof \Illuminate\Support\HtmlString ? $qrCode->toHtml() : $qrCode);
     }
 }

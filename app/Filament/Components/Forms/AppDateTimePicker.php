@@ -22,7 +22,7 @@ final class AppDateTimePicker
             ->required();
     }
 
-    public static function publishedAt(string $field = 'published_at', string $label = 'Published at'): DateTimePicker
+    public static function publishAt(string $field = 'publish_at', string $label = 'Publish at'): DateTimePicker
     {
         return DateTimePicker::make($field)->label($label)
             ->displayFormat('d M Y (h:i A)')

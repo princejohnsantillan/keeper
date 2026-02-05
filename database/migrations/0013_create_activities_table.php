@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('location_map_link')->nullable();
             $table->timestamp('starts_at')->index();
             $table->timestamp('ends_at')->index();
-            $table->timestamp('published_at')->nullable();
+            $table->timestamp('publish_at')->nullable();
             $table->text('notes')->nullable();
             $table->foreignUlid('organization_id')->constrained();
             $table->foreignUlid('term_id')->nullable()->constrained();

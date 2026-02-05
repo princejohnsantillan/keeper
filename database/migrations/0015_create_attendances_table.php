@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('attendances', function (Blueprint $table) {
             $table->ulid('id')->primary();
 
-            $table->string('attendee_code')->unique();
             $table->foreignUlid('activity_id')->constrained();
+            $table->foreignUlid('organization_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('child_id')->constrained();
 
             $table->foreignUlid('checkin_keeper_id')->nullable()->constrained('keepers');
@@ -27,8 +27,6 @@ return new class extends Migration
             $table->timestamp('checked_out_at')->nullable();
 
             $table->text('notes')->nullable();
-
-            $table->unique(['activity_id', 'child_id']);
 
             $table->timestamps(); // created_at is when the child is registered for the service
         });

@@ -8,7 +8,6 @@ use App\Models\Activity;
 use App\Models\Attendance;
 use App\Models\Gatepass;
 use App\Models\Keeper;
-use App\ReadableCode;
 use App\Services\Contracts\AttendanceServiceInterface;
 
 final class AttendanceService implements AttendanceServiceInterface
@@ -29,11 +28,9 @@ final class AttendanceService implements AttendanceServiceInterface
             ];
         }
 
-        $attendeeCode = $this->generateUniqueAttendeeCode();
-
         $attendance = Attendance::query()->create([
-            'attendee_code' => $attendeeCode,
             'activity_id' => $activity->id,
+            'organization_id' => $activity->organization_id,
             'child_id' => $gatepass->child_id,
             'checkin_keeper_id' => $keeper->id,
             'checkin_gatepass_id' => $gatepass->id,
@@ -111,14 +108,5 @@ final class AttendanceService implements AttendanceServiceInterface
             ->where('child_id', $childId)
             ->whereNotNull('checked_out_at')
             ->exists();
-    }
-
-    public function generateUniqueAttendeeCode(): string
-    {
-        do {
-            $attendeeCode = ReadableCode::generate();
-        } while (Attendance::query()->where('attendee_code', $attendeeCode)->exists());
-
-        return $attendeeCode;
     }
 }

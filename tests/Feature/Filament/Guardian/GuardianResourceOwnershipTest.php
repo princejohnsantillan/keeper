@@ -16,7 +16,6 @@ beforeEach(function () {
     $organization = Organization::factory()->create(['slug' => 'test-org']);
     $guardian = Guardian::factory()->create();
     $user = User::factory()->create(['guardian_id' => $guardian->id]);
-    $guardian->organizations()->attach($organization);
 
     Config::set('app.domain', 'keeper.test');
 

@@ -36,7 +36,7 @@ final class AppTagsInput
                 }
 
                 $tagIds = collect($state ?? [])
-                    ->map(fn (string $name): int => Tag::findOrCreateFromString($name)->id)
+                    ->map(fn (string $name): string => Tag::findOrCreateFromString($name)->id)
                     ->toArray();
 
                 $record->tags()->sync($tagIds);

@@ -30,7 +30,7 @@ it('can render the print sticker page', function () {
         ->assertSee('ABC123');
 });
 
-it('shows attendee code when gatepass is not available', function () {
+it('handles case when gatepass is not available', function () {
     $child = Child::factory()->create([
         'first_name' => 'Jane',
         'last_name' => 'Smith',
@@ -39,12 +39,10 @@ it('shows attendee code when gatepass is not available', function () {
     $attendance = Attendance::factory()->create([
         'child_id' => $child->id,
         'checkin_gatepass_id' => null,
-        'attendee_code' => 'XYZ789',
     ]);
 
     $response = $this->get(route('filament.keeper.attendance.print', $attendance));
 
     $response->assertSuccessful()
-        ->assertSee('Jane Smith')
-        ->assertSee('XYZ789');
+        ->assertSee('Jane Smith');
 });

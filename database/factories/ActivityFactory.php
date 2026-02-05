@@ -28,7 +28,7 @@ final class ActivityFactory extends Factory
             'location' => $this->faker->address(),
             'starts_at' => $startsAt,
             'ends_at' => (clone $startsAt)->modify('+2 hours'),
-            'published_at' => now(),
+            'publish_at' => now(),
             'notes' => $this->faker->optional()->sentence(),
             'organization_id' => Organization::factory(),
             'created_by' => User::factory(),
@@ -41,7 +41,7 @@ final class ActivityFactory extends Factory
     public function draft(): static
     {
         return $this->state(fn (array $attributes): array => [
-            'published_at' => null,
+            'publish_at' => null,
         ]);
     }
 }

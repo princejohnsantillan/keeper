@@ -8,6 +8,7 @@ use App\Facades\Subdomain;
 use App\Models\Scopes\OrganizationScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,6 +18,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 final class Tag extends Model
 {
+    use HasUlids;
+
+    protected $keyType = 'string';
+
     protected $fillable = [
         'name',
         'organization_id',

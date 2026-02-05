@@ -30,7 +30,7 @@ final class ActivityForm
                     ->columnSpanFull(),
                 AppDateTimePicker::startsAt(),
                 AppDateTimePicker::endsAt(),
-                AppDateTimePicker::publishedAt(),
+                AppDateTimePicker::publishAt(),
                 AppSelect::term()
                     ->columnSpanFull(),
                 self::messageSelect()

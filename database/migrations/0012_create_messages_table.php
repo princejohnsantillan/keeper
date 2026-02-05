@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('content');
             $table->timestamp('archived_at')->nullable();
+            $table->foreignUlid('created_by')->constrained('users');
             $table->timestamps();
         });
     }

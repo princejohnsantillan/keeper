@@ -39,9 +39,4 @@ interface AttendanceServiceInterface
      * Check if a child has already been checked out for an activity.
      */
     public function isAlreadyCheckedOut(string $activityId, string $childId): bool;
-
-    /**
-     * Generate a unique attendee code.
-     */
-    public function generateUniqueAttendeeCode(): string;
 }

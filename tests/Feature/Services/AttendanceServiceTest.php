@@ -213,16 +213,3 @@ it('does not find checked out attendance as active', function () {
 
     expect($service->findActiveAttendance($activity->id, $child->id))->toBeNull();
 });
-
-it('generates unique attendee codes', function () {
-    $service = app(AttendanceServiceInterface::class);
-
-    $codes = [];
-    for ($i = 0; $i < 10; $i++) {
-        $code = $service->generateUniqueAttendeeCode();
-        expect($code)->toBeString()->toHaveLength(5);
-        $codes[] = $code;
-    }
-
-    expect(count(array_unique($codes)))->toBe(10);
-});

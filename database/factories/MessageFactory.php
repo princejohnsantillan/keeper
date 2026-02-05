@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Models\Message;
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -24,6 +25,7 @@ final class MessageFactory extends Factory
             'organization_id' => Organization::factory(),
             'name' => fake()->words(3, true),
             'content' => fake()->paragraphs(2, true),
+            'created_by' => User::factory(),
         ];
     }
 

@@ -22,7 +22,6 @@ beforeEach(function () {
     $organization = Organization::factory()->create(['slug' => 'test-org']);
     $guardian = Guardian::factory()->create();
     $user = User::factory()->create(['guardian_id' => $guardian->id]);
-    $guardian->organizations()->attach($organization);
 
     Config::set('app.domain', 'keeper.test');
 
@@ -37,7 +36,7 @@ beforeEach(function () {
 it('shows description when activity has a description', function () {
     $activity = Activity::factory()->for($this->organization)->create([
         'description' => 'This is a test description for the activity.',
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Livewire::test(RegisterActivity::class, ['record' => $activity->id])
@@ -48,7 +47,7 @@ it('shows description when activity has a description', function () {
 it('does not show description placeholder when activity has no description', function () {
     $activity = Activity::factory()->for($this->organization)->create([
         'description' => null,
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Livewire::test(RegisterActivity::class, ['record' => $activity->id])
@@ -63,7 +62,7 @@ it('shows description before terms and conditions', function () {
     $activity = Activity::factory()->for($this->organization)->create([
         'description' => 'Activity description here.',
         'term_id' => $term->id,
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Livewire::test(RegisterActivity::class, ['record' => $activity->id])
@@ -80,7 +79,7 @@ it('displays child dropdown with guardian children', function () {
     ]);
 
     $activity = Activity::factory()->for($this->organization)->create([
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Livewire::test(RegisterActivity::class, ['record' => $activity->id])
@@ -97,7 +96,7 @@ it('creates a gatepass when registering a child', function () {
     ]);
 
     $activity = Activity::factory()->for($this->organization)->create([
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Livewire::test(RegisterActivity::class, ['record' => $activity->id])
@@ -121,7 +120,7 @@ it('shows warning when registering duplicate child-guardian combination', functi
     ]);
 
     $activity = Activity::factory()->for($this->organization)->create([
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Gatepass::factory()->create([
@@ -152,7 +151,7 @@ it('displays existing gatepasses in the registered children section', function (
     ]);
 
     $activity = Activity::factory()->for($this->organization)->create([
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     $gatepass = Gatepass::factory()->create([
@@ -182,7 +181,7 @@ it('requires terms agreement before registering when activity has terms', functi
 
     $activity = Activity::factory()->for($this->organization)->create([
         'term_id' => $term->id,
-        'published_at' => now(),
+        'publish_at' => now(),
     ]);
 
     Livewire::test(RegisterActivity::class, ['record' => $activity->id])

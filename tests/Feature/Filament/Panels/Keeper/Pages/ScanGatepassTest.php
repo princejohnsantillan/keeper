@@ -12,14 +12,18 @@ use App\Models\Keeper;
 use App\Models\Organization;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Config;
 use Livewire\Livewire;
 
 beforeEach(function () {
     Filament::setCurrentPanel(Filament::getPanel('keeper'));
 
-    $this->organization = Organization::factory()->create();
+    $this->organization = Organization::factory()->create(['slug' => 'test-org']);
     $this->user = User::factory()->create();
     $this->keeper = Keeper::factory()->for($this->organization)->for($this->user)->create();
+
+    Config::set('app.domain', 'keeper.test');
+    $this->withServerVariables(['HTTP_HOST' => 'test-org.keeper.test']);
 
     $this->actingAs($this->user);
 });
@@ -35,6 +39,7 @@ it('shows gatepass details when valid code is entered', function () {
     $guardian = Guardian::factory()->create(['first_name' => 'Jane', 'last_name' => 'Doe']);
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -61,6 +66,7 @@ it('can check in from the scan page', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -89,6 +95,7 @@ it('can check out from the scan page', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -96,6 +103,7 @@ it('can check out from the scan page', function () {
     ]);
 
     Attendance::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'checkin_gatepass_id' => $gatepass->id,
@@ -126,6 +134,7 @@ it('shows correct status badge for not checked in', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -145,6 +154,7 @@ it('shows correct status badge for checked in', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -152,6 +162,7 @@ it('shows correct status badge for checked in', function () {
     ]);
 
     Attendance::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'checkin_gatepass_id' => $gatepass->id,
@@ -173,6 +184,7 @@ it('shows correct status badge for checked out', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -180,6 +192,7 @@ it('shows correct status badge for checked out', function () {
     ]);
 
     Attendance::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'checkin_gatepass_id' => $gatepass->id,
@@ -203,6 +216,7 @@ it('can clear the gatepass display', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -224,6 +238,7 @@ it('prevents double check-in', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
@@ -231,6 +246,7 @@ it('prevents double check-in', function () {
     ]);
 
     Attendance::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'checkin_gatepass_id' => $gatepass->id,
@@ -253,6 +269,7 @@ it('prevents check out without check in', function () {
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $this->organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,

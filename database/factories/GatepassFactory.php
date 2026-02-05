@@ -7,6 +7,7 @@ namespace Database\Factories;
 use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Guardian;
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -23,6 +24,7 @@ final class GatepassFactory extends Factory
     public function definition(): array
     {
         return [
+            'organization_id' => Organization::factory(),
             'guardian_id' => Guardian::factory(),
             'child_id' => Child::factory(),
             'activity_id' => Activity::factory(),

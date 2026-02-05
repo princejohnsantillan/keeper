@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Organization;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,6 +26,7 @@ final class TermFactory extends Factory
             'version' => 1,
             'published_at' => null,
             'organization_id' => Organization::factory(),
+            'created_by' => User::factory(),
         ];
     }
 
