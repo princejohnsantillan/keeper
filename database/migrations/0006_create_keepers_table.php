@@ -15,6 +15,8 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('organization_id')->constrained();
             $table->foreignUlid('user_id')->constrained();
+            $table->string('status')->default('active');
+            $table->string('role')->nullable();
             $table->json('permissions')->nullable();
             $table->timestamps();
             $table->softDeletes();

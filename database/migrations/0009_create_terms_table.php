@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('content');
             $table->unsignedInteger('version')->default(1);
             $table->timestamp('published_at')->nullable();
-            $table->timestamp('deprecated_at')->nullable();
+            $table->timestamp('archived_at')->nullable();
             $table->foreignUlid('organization_id')->constrained();
             $table->timestamps();
         });

@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Models\Scopes\OrganizationScope;
 use App\Subdomain;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -17,6 +18,16 @@ final class Tag extends Model
         'name',
         'organization_id',
     ];
+
+    /**
+     * @return Attribute<string, string>
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value): string => strtolower($value),
+        );
+    }
 
     protected static function booted(): void
     {
@@ -37,11 +48,9 @@ final class Tag extends Model
 
     public static function findFromString(string $name): ?static
     {
-        $organization = Subdomain::organization();
-
         return self::query()
-            ->where('organization_id', $organization?->id)
-            ->whereRaw('LOWER(name) = ?', [strtolower($name)])
+            ->where('organization_id', Subdomain::organization()?->id)
+            ->where('name', strtolower($name))
             ->first();
     }
 

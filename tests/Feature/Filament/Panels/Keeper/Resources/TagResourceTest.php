@@ -44,7 +44,7 @@ it('can create a tag', function () {
         ->callAction('create', ['name' => 'New Tag'])
         ->assertNotified();
 
-    expect(Tag::where('name', 'New Tag')->exists())->toBeTrue();
+    expect(Tag::where('name', 'new tag')->exists())->toBeTrue();
 });
 
 it('cannot create a tag with a duplicate name', function () {
@@ -70,7 +70,7 @@ it('can edit a tag', function () {
         ->callTableAction('edit', $tag, ['name' => 'Updated'])
         ->assertNotified();
 
-    expect($tag->fresh()->name)->toBe('Updated');
+    expect($tag->fresh()->name)->toBe('updated');
 });
 
 it('cannot edit a tag to a duplicate name', function () {

@@ -62,14 +62,14 @@ it('finds tag from string within current organization', function () {
     $found = Tag::findFromString('VIP');
 
     expect($found)->not->toBeNull()
-        ->and($found->name)->toBe('VIP');
+        ->and($found->name)->toBe('vip');
 });
 
 it('creates tag with organization_id via findOrCreateFromString', function () {
     $tag = Tag::findOrCreateFromString('NewTag');
 
     expect($tag->organization_id)->toBe($this->organization->id)
-        ->and($tag->name)->toBe('NewTag');
+        ->and($tag->name)->toBe('newtag');
 });
 
 it('finds tags case-insensitively', function () {
@@ -104,5 +104,5 @@ it('allows same tag name in different organizations', function () {
         'organization_id' => $otherOrg->id,
     ]);
 
-    expect(Tag::withoutGlobalScopes()->where('name', 'VIP')->count())->toBe(2);
+    expect(Tag::withoutGlobalScopes()->where('name', 'vip')->count())->toBe(2);
 });

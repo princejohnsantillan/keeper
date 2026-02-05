@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
-
-            $table->json('name');
-            $table->json('slug');
-            $table->string('type')->nullable();
-            $table->integer('order_column')->nullable();
-
+            $table->foreignUlid('organization_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->string('name');
             $table->timestamps();
+
+            $table->unique(['organization_id', 'name']);
         });
 
         Schema::create('taggables', function (Blueprint $table) {
