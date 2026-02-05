@@ -12,11 +12,15 @@ use App\Filament\Panels\Keeper\Resources\Children\Pages\ListChildren;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\GatepassResource;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Pages\ListGatepasses;
 use App\Filament\Panels\Keeper\Resources\Guardians\GuardianResource;
+use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
 use App\Filament\Panels\Keeper\Resources\Keepers\KeeperResource;
 use App\Filament\Panels\Keeper\Resources\Messages\MessageResource;
 use App\Filament\Panels\Keeper\Resources\Tags\TagResource;
 use App\Filament\Panels\Keeper\Resources\Terms\TermResource;
 use App\Models\Activity;
+use App\Models\Child;
+use App\Models\Gatepass;
+use App\Models\Guardian;
 use App\Models\Keeper;
 use App\Models\Organization;
 use App\Models\User;
@@ -242,5 +246,59 @@ describe('Activity table actions visibility', function () {
 
         Livewire::test(ListActivities::class)
             ->assertTableActionVisible('attendance', $activity);
+    });
+});
+
+describe('Children and Guardians - read only in Keeper panel', function () {
+    beforeEach(function () {
+        $this->actingAs($this->adminUser);
+    });
+
+    it('does not have edit action for children', function () {
+        $activity = Activity::factory()->for($this->organization)->create();
+        $child = Child::factory()->create();
+        $guardian = Guardian::factory()->create();
+
+        Gatepass::factory()->create([
+            'organization_id' => $this->organization->id,
+            'activity_id' => $activity->id,
+            'child_id' => $child->id,
+            'guardian_id' => $guardian->id,
+        ]);
+
+        Livewire::test(ListChildren::class)
+            ->assertTableActionDoesNotExist('edit');
+    });
+
+    it('has view action for children', function () {
+        $activity = Activity::factory()->for($this->organization)->create();
+        $child = Child::factory()->create();
+        $guardian = Guardian::factory()->create();
+
+        Gatepass::factory()->create([
+            'organization_id' => $this->organization->id,
+            'activity_id' => $activity->id,
+            'child_id' => $child->id,
+            'guardian_id' => $guardian->id,
+        ]);
+
+        Livewire::test(ListChildren::class)
+            ->assertTableActionExists('view');
+    });
+
+    it('does not have edit action for guardians', function () {
+        $activity = Activity::factory()->for($this->organization)->create();
+        $child = Child::factory()->create();
+        $guardian = Guardian::factory()->create();
+
+        Gatepass::factory()->create([
+            'organization_id' => $this->organization->id,
+            'activity_id' => $activity->id,
+            'child_id' => $child->id,
+            'guardian_id' => $guardian->id,
+        ]);
+
+        Livewire::test(ListGuardians::class)
+            ->assertTableActionDoesNotExist('edit');
     });
 });
