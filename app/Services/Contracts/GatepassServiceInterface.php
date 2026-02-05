@@ -8,6 +8,7 @@ use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
+use App\Models\Organization;
 use App\Models\TermAcceptance;
 
 interface GatepassServiceInterface
@@ -23,14 +24,19 @@ interface GatepassServiceInterface
     public function sendCreatedEmail(Gatepass $gatepass): void;
 
     /**
-     * Generate a globally unique code.
+     * Generate a unique code within an organization.
      */
-    public function generateUniqueCode(): string;
+    public function generateUniqueCode(Organization $organization): string;
 
     /**
-     * Find a gatepass by code (globally unique).
+     * Find a gatepass by code within an organization.
      */
-    public function findByCode(string $code): ?Gatepass;
+    public function findByCode(string $code, Organization $organization): ?Gatepass;
+
+    /**
+     * Find a gatepass by its ULID (for QR code scanning).
+     */
+    public function findByUlid(string $ulid): ?Gatepass;
 
     /**
      * Find a gatepass by code and activity.

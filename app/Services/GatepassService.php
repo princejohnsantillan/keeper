@@ -9,6 +9,7 @@ use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
+use App\Models\Organization;
 use App\Models\Scopes\OrganizationScope;
 use App\Models\TermAcceptance;
 use App\ReadableCode;
@@ -19,10 +20,12 @@ final class GatepassService implements GatepassServiceInterface
 {
     public function create(Activity $activity, Child $child, Guardian $guardian, ?TermAcceptance $termAcceptance = null): Gatepass
     {
-        $code = $this->generateUniqueCode();
+        /** @var Organization $organization */
+        $organization = Organization::query()->findOrFail($activity->organization_id);
+        $code = $this->generateUniqueCode($organization);
 
         $gatepass = Gatepass::query()->create([
-            'organization_id' => $activity->organization_id,
+            'organization_id' => $organization->id,
             'child_id' => $child->id,
             'guardian_id' => $guardian->id,
             'activity_id' => $activity->id,
@@ -46,16 +49,19 @@ final class GatepassService implements GatepassServiceInterface
         Mail::to($email)->queue(new GatepassCreated($gatepass));
     }
 
-    public function generateUniqueCode(): string
+    public function generateUniqueCode(Organization $organization): string
     {
         do {
             $code = ReadableCode::generate();
-        } while (Gatepass::query()->where('code', $code)->exists());
+        } while (Gatepass::query()
+            ->where('organization_id', $organization->id)
+            ->where('code', $code)
+            ->exists());
 
         return $code;
     }
 
-    public function findByCode(string $code): ?Gatepass
+    public function findByCode(string $code, Organization $organization): ?Gatepass
     {
         return Gatepass::query()
             ->with([
@@ -64,7 +70,19 @@ final class GatepassService implements GatepassServiceInterface
                 'activity' => fn ($query) => $query->withoutGlobalScope(OrganizationScope::class),
             ])
             ->where('code', $code)
+            ->where('organization_id', $organization->id)
             ->first();
+    }
+
+    public function findByUlid(string $ulid): ?Gatepass
+    {
+        return Gatepass::query()
+            ->with([
+                'child',
+                'guardian',
+                'activity' => fn ($query) => $query->withoutGlobalScope(OrganizationScope::class),
+            ])
+            ->find($ulid);
     }
 
     public function findByCodeAndActivity(string $code, string $activityId): ?Gatepass

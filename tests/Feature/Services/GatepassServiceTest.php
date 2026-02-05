@@ -7,6 +7,7 @@ use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
+use App\Models\Organization;
 use App\Models\TermAcceptance;
 use App\Models\User;
 use App\Services\Contracts\GatepassServiceInterface;
@@ -57,12 +58,13 @@ it('creates a gatepass with term acceptance', function () {
         ->term_acceptance_id->toBe($termAcceptance->id);
 });
 
-it('generates globally unique codes', function () {
+it('generates unique codes within an organization', function () {
     $service = app(GatepassServiceInterface::class);
+    $organization = Organization::factory()->create();
 
     $codes = [];
     for ($i = 0; $i < 10; $i++) {
-        $code = $service->generateUniqueCode();
+        $code = $service->generateUniqueCode($organization);
         expect($code)->toBeString()->toHaveLength(5);
         $codes[] = $code;
     }
@@ -70,12 +72,13 @@ it('generates globally unique codes', function () {
     expect(count(array_unique($codes)))->toBe(10);
 });
 
-it('generates globally unique codes across activities', function () {
+it('generates unique codes across activities within same organization', function () {
     Mail::fake();
 
     $service = app(GatepassServiceInterface::class);
-    $activity1 = Activity::factory()->create();
-    $activity2 = Activity::factory()->create();
+    $organization = Organization::factory()->create();
+    $activity1 = Activity::factory()->create(['organization_id' => $organization->id]);
+    $activity2 = Activity::factory()->create(['organization_id' => $organization->id]);
     $guardian = Guardian::factory()->create();
 
     $gatepass1 = $service->create($activity1, Child::factory()->create(), $guardian);
@@ -84,11 +87,35 @@ it('generates globally unique codes across activities', function () {
     expect($gatepass1->code)->not->toBe($gatepass2->code);
 });
 
-it('enforces unique code constraint globally', function () {
-    $gatepass1 = Gatepass::factory()->create(['code' => 'TEST1']);
+it('enforces unique code constraint within organization', function () {
+    $organization = Organization::factory()->create();
+    Gatepass::factory()->create([
+        'organization_id' => $organization->id,
+        'code' => 'TEST1',
+    ]);
 
-    expect(fn () => Gatepass::factory()->create(['code' => 'TEST1']))
-        ->toThrow(QueryException::class);
+    expect(fn () => Gatepass::factory()->create([
+        'organization_id' => $organization->id,
+        'code' => 'TEST1',
+    ]))->toThrow(QueryException::class);
+});
+
+it('allows same code in different organizations', function () {
+    $organization1 = Organization::factory()->create();
+    $organization2 = Organization::factory()->create();
+
+    $gatepass1 = Gatepass::factory()->create([
+        'organization_id' => $organization1->id,
+        'code' => 'TEST1',
+    ]);
+
+    $gatepass2 = Gatepass::factory()->create([
+        'organization_id' => $organization2->id,
+        'code' => 'TEST1',
+    ]);
+
+    expect($gatepass1->code)->toBe($gatepass2->code)
+        ->and($gatepass1->organization_id)->not->toBe($gatepass2->organization_id);
 });
 
 it('sends email to guardian when gatepass is created', function () {
@@ -151,20 +178,22 @@ it('returns null when gatepass code does not exist', function () {
     expect($found)->toBeNull();
 });
 
-it('finds a gatepass by code only', function () {
+it('finds a gatepass by code within organization', function () {
     $service = app(GatepassServiceInterface::class);
-    $activity = Activity::factory()->create();
+    $organization = Organization::factory()->create();
+    $activity = Activity::factory()->create(['organization_id' => $organization->id]);
     $child = Child::factory()->create();
     $guardian = Guardian::factory()->create();
 
     $gatepass = Gatepass::factory()->create([
+        'organization_id' => $organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
         'code' => 'FGHIJ',
     ]);
 
-    $found = $service->findByCode('FGHIJ');
+    $found = $service->findByCode('FGHIJ', $organization);
 
     expect($found)
         ->not->toBeNull()
@@ -172,28 +201,92 @@ it('finds a gatepass by code only', function () {
         ->code->toBe('FGHIJ');
 });
 
-it('returns null when code does not exist for findByCode', function () {
+it('returns null when code does not exist in organization for findByCode', function () {
     $service = app(GatepassServiceInterface::class);
+    $organization = Organization::factory()->create();
 
-    $found = $service->findByCode('NOTEX');
+    $found = $service->findByCode('NOTEX', $organization);
+
+    expect($found)->toBeNull();
+});
+
+it('does not find code from different organization', function () {
+    $service = app(GatepassServiceInterface::class);
+    $organization1 = Organization::factory()->create();
+    $organization2 = Organization::factory()->create();
+
+    Gatepass::factory()->create([
+        'organization_id' => $organization1->id,
+        'code' => 'FGHIJ',
+    ]);
+
+    $found = $service->findByCode('FGHIJ', $organization2);
 
     expect($found)->toBeNull();
 });
 
 it('loads relationships when finding by code', function () {
     $service = app(GatepassServiceInterface::class);
-    $activity = Activity::factory()->create(['title' => 'Test Activity']);
+    $organization = Organization::factory()->create();
+    $activity = Activity::factory()->create([
+        'organization_id' => $organization->id,
+        'title' => 'Test Activity',
+    ]);
     $child = Child::factory()->create(['first_name' => 'TestChild']);
     $guardian = Guardian::factory()->create(['first_name' => 'TestGuardian']);
 
     Gatepass::factory()->create([
+        'organization_id' => $organization->id,
         'activity_id' => $activity->id,
         'child_id' => $child->id,
         'guardian_id' => $guardian->id,
         'code' => 'KLMNO',
     ]);
 
-    $found = $service->findByCode('KLMNO');
+    $found = $service->findByCode('KLMNO', $organization);
+
+    expect($found)
+        ->not->toBeNull()
+        ->child->not->toBeNull()
+        ->child->first_name->toBe('TestChild')
+        ->guardian->not->toBeNull()
+        ->guardian->first_name->toBe('TestGuardian')
+        ->activity->not->toBeNull()
+        ->activity->title->toBe('Test Activity');
+});
+
+it('finds a gatepass by ulid', function () {
+    $service = app(GatepassServiceInterface::class);
+    $gatepass = Gatepass::factory()->create();
+
+    $found = $service->findByUlid($gatepass->id);
+
+    expect($found)
+        ->not->toBeNull()
+        ->id->toBe($gatepass->id);
+});
+
+it('returns null when ulid does not exist', function () {
+    $service = app(GatepassServiceInterface::class);
+
+    $found = $service->findByUlid('01HZFAKEULID123456789ABC');
+
+    expect($found)->toBeNull();
+});
+
+it('loads relationships when finding by ulid', function () {
+    $service = app(GatepassServiceInterface::class);
+    $activity = Activity::factory()->create(['title' => 'Test Activity']);
+    $child = Child::factory()->create(['first_name' => 'TestChild']);
+    $guardian = Guardian::factory()->create(['first_name' => 'TestGuardian']);
+
+    $gatepass = Gatepass::factory()->create([
+        'activity_id' => $activity->id,
+        'child_id' => $child->id,
+        'guardian_id' => $guardian->id,
+    ]);
+
+    $found = $service->findByUlid($gatepass->id);
 
     expect($found)
         ->not->toBeNull()

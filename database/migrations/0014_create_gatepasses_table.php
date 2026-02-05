@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('code');
             $table->timestamps();
 
-            $table->unique('code');
+            $table->unique(['organization_id', 'code']);
         });
     }
 

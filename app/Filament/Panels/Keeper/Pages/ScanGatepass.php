@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Pages;
 
 use App\Actions\GetCurrentKeeperAction;
+use App\Facades\Subdomain;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Gatepass;
 use App\Models\Scopes\OrganizationScope;
@@ -58,9 +59,26 @@ final class ScanGatepass extends Page
     public function lookup(GatepassServiceInterface $gatepassService, AttendanceServiceInterface $attendanceService): void
     {
         $data = $this->form->getState();
-        $code = $data['code'] ?? '';
+        $input = trim($data['code'] ?? '');
 
-        $gatepass = $gatepassService->findByCode($code);
+        if ($input === '') {
+            return;
+        }
+
+        // ULID is 26 characters, code is 5 characters
+        if (strlen($input) === 26) {
+            // QR scan - search by ULID
+            $gatepass = $gatepassService->findByUlid($input);
+        } else {
+            // Manual entry - search by code within organization
+            $organization = Subdomain::organization();
+
+            if ($organization === null) {
+                $gatepass = null;
+            } else {
+                $gatepass = $gatepassService->findByCode($input, $organization);
+            }
+        }
 
         if ($gatepass === null) {
             AppNotification::gatepassNotFound()->send();
