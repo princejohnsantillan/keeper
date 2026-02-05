@@ -74,7 +74,7 @@ return new class extends Migration
         Keeper::create([
             'user_id' => $user2->id,
             'organization_id' => $organization2->id,
-            'role' => KeeperRole::Gatekeeper,
+            'role' => KeeperRole::Admin,
         ]);
 
     }
