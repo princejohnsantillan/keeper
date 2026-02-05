@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Guardians;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
 use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianForm;
@@ -27,6 +28,13 @@ final class GuardianResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'full_name';
+
+    public static function canAccess(): bool
+    {
+        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+
+        return $currentKeeper->isAdmin();
+    }
 
     public static function getGloballySearchableAttributes(): array
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Messages;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Panels\Keeper\Resources\Messages\Pages\ListMessages;
 use App\Filament\Panels\Keeper\Resources\Messages\Schemas\MessageForm;
 use App\Filament\Panels\Keeper\Resources\Messages\Tables\MessagesTable;
@@ -24,6 +25,13 @@ final class MessageResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = 'Activity';
 
     protected static ?int $navigationSort = 3;
+
+    public static function canAccess(): bool
+    {
+        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+
+        return $currentKeeper->isAdmin();
+    }
 
     public static function form(Schema $schema): Schema
     {

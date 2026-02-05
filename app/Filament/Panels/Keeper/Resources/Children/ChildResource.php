@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Children;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Children\Pages\ListChildren;
 use App\Filament\Panels\Keeper\Resources\Children\Pages\ViewChild;
@@ -29,6 +30,13 @@ final class ChildResource extends Resource
     protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'full_name';
+
+    public static function canAccess(): bool
+    {
+        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+
+        return $currentKeeper->isAdmin();
+    }
 
     public static function getGloballySearchableAttributes(): array
     {

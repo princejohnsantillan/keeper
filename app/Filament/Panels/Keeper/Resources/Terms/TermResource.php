@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Terms;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Panels\Keeper\Resources\Terms\Pages\ListTerms;
 use App\Filament\Panels\Keeper\Resources\Terms\Schemas\TermForm;
 use App\Filament\Panels\Keeper\Resources\Terms\Schemas\TermInfolist;
@@ -31,6 +32,13 @@ final class TermResource extends Resource
     protected static ?string $modelLabel = 'Terms & Conditions';
 
     protected static ?string $pluralModelLabel = 'Terms & Conditions';
+
+    public static function canAccess(): bool
+    {
+        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+
+        return $currentKeeper->isAdmin();
+    }
 
     public static function form(Schema $schema): Schema
     {

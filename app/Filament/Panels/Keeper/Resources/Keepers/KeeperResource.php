@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Keepers;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Keepers\Pages\EditKeeper;
 use App\Filament\Panels\Keeper\Resources\Keepers\Pages\ListKeepers;
@@ -30,6 +31,13 @@ final class KeeperResource extends Resource
     protected static UnitEnum|string|null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 99;
+
+    public static function canAccess(): bool
+    {
+        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+
+        return $currentKeeper->isAdmin();
+    }
 
     /** @return Builder<Keeper> */
     public static function getEloquentQuery(): Builder

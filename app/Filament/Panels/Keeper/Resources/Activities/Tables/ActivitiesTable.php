@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Activities\Tables;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Actions\ViewAttendanceAction;
 use App\Filament\Actions\WalkInAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
@@ -34,11 +35,14 @@ final class ActivitiesTable
                 //
             ])
             ->recordActions([
-                WalkInAction::make(),
+                WalkInAction::make()
+                    ->hidden(),
                 ViewAttendanceAction::make(),
                 EditAction::make()->slideOver()
-                    ->hiddenLabel(),
-                DeleteAction::make()->hiddenLabel(),
+                    ->hiddenLabel()
+                    ->visible(fn (): bool => app(GetCurrentKeeperAction::class)->__invoke()->isAdmin()),
+                DeleteAction::make()->hiddenLabel()
+                    ->visible(fn (): bool => app(GetCurrentKeeperAction::class)->__invoke()->isAdmin()),
             ]);
     }
 

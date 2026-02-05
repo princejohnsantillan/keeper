@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Tags;
 
+use App\Actions\GetCurrentKeeperAction;
 use App\Filament\Panels\Keeper\Resources\Tags\Pages\ListTags;
 use App\Filament\Panels\Keeper\Resources\Tags\Schemas\TagForm;
 use App\Filament\Panels\Keeper\Resources\Tags\Tables\TagsTable;
@@ -24,6 +25,13 @@ final class TagResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 1;
+
+    public static function canAccess(): bool
+    {
+        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+
+        return $currentKeeper->isAdmin();
+    }
 
     public static function form(Schema $schema): Schema
     {
