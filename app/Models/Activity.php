@@ -111,6 +111,7 @@ final class Activity extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('thumbnail')
+            ->useDisk('public')
             ->singleFile();
     }
 }

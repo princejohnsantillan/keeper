@@ -88,20 +88,11 @@
                     <div class="space-y-2">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Child</h3>
                         <div class="flex items-center gap-3">
-                            @if ($gatepass->child->getFirstMediaUrl('avatar'))
-                                <img
-                                    src="{{ $gatepass->child->getFirstMediaUrl('avatar') }}"
-                                    alt="{{ $gatepass->child->full_name }}"
-                                    class="h-12 w-12 rounded-full object-cover"
-                                />
-                            @else
-                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-                                    <x-filament::icon
-                                        icon="heroicon-o-user"
-                                        class="h-6 w-6 text-gray-500 dark:text-gray-400"
-                                    />
-                                </div>
-                            @endif
+                            <img
+                                src="{{ $gatepass->child->getFirstMediaUrl('avatar') ?: \App\Avatar::generateUrl($gatepass->child->full_name) }}"
+                                alt="{{ $gatepass->child->full_name }}"
+                                class="h-12 w-12 rounded-full object-cover"
+                            />
                             <div>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                     {{ $gatepass->child->full_name }}
@@ -119,20 +110,11 @@
                     <div class="space-y-2">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Guardian</h3>
                         <div class="flex items-center gap-3">
-                            @if ($gatepass->guardian->getFirstMediaUrl('avatar'))
-                                <img
-                                    src="{{ $gatepass->guardian->getFirstMediaUrl('avatar') }}"
-                                    alt="{{ $gatepass->guardian->full_name }}"
-                                    class="h-12 w-12 rounded-full object-cover"
-                                />
-                            @else
-                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-                                    <x-filament::icon
-                                        icon="heroicon-o-user"
-                                        class="h-6 w-6 text-gray-500 dark:text-gray-400"
-                                    />
-                                </div>
-                            @endif
+                            <img
+                                src="{{ $gatepass->guardian->getFirstMediaUrl('avatar') ?: \App\Avatar::generateUrl($gatepass->guardian->full_name) }}"
+                                alt="{{ $gatepass->guardian->full_name }}"
+                                class="h-12 w-12 rounded-full object-cover"
+                            />
                             <div>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                     {{ $gatepass->guardian->full_name }}

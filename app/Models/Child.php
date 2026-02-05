@@ -119,6 +119,7 @@ final class Child extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
+            ->useDisk('public')
             ->singleFile();
     }
 }
