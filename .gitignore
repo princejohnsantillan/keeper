@@ -7,6 +7,7 @@
 .phpunit.result.cache
 .mcp.json
 /.claude
+/.codex
 /.cursor
 /.gemini
 /.fleet

@@ -13,7 +13,6 @@ use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
@@ -30,7 +29,6 @@ final class GatepassInfolist
                     ->extraAttributes(['class' => 'max-w-md mx-auto'])
                     ->schema([
                         self::qrCodeEntry(),
-                        self::codeEntry(),
                         self::activitySection(),
                         self::childSection(),
                         self::guardianSection(),
@@ -45,17 +43,6 @@ final class GatepassInfolist
             ->view('filament.infolists.components.qr-code-entry');
     }
 
-    private static function codeEntry(): TextEntry
-    {
-        return TextEntry::make('code')
-            ->hiddenLabel()
-            ->weight(FontWeight::Bold)
-            ->size(TextSize::Large)
-            ->fontFamily(FontFamily::Mono)
-            ->color('primary')
-            ->copyable();
-    }
-
     private static function activitySection(): Grid
     {
         return Grid::make(1)
@@ -63,6 +50,7 @@ final class GatepassInfolist
                 TextEntry::make('activity.title')
                     ->hiddenLabel()
                     ->weight(FontWeight::SemiBold)
+                    ->size(TextSize::Large)
                     ->icon(Heroicon::Play)
                     ->iconColor('primary'),
                 TextEntry::make('activity.starts_at')
@@ -89,7 +77,7 @@ final class GatepassInfolist
                 ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->child->full_name)),
             TextEntry::make('child.full_name')
                 ->hiddenLabel(),
-        ]);
+        ])->verticallyAlignCenter();
     }
 
     private static function guardianSection(): Flex
@@ -107,7 +95,6 @@ final class GatepassInfolist
             TextEntry::make('relationship')
                 ->hiddenLabel()
                 ->badge()
-                ->grow(false)
                 ->getStateUsing(function (Gatepass $record): ?string {
                     $relationship = \App\Models\Relationship::query()
                         ->where('guardian_id', $record->guardian_id)
@@ -116,6 +103,6 @@ final class GatepassInfolist
 
                     return $relationship?->relationship?->getLabel();
                 }),
-        ]);
+        ])->verticallyAlignCenter();
     }
 }

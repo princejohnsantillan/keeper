@@ -6,9 +6,8 @@
 @endphp
 
 <div class="flex flex-col items-center gap-2">
-    <img
-        src="{{ $qrCodeData }}"
-        alt="QR Code for {{ $code }}"
-        class="rounded-lg"
-    />
+    <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-700">
+        <img src="{{ $qrCodeData }}" alt="QR Code for {{ $code }}" />
+    </div>
+    <span class="font-mono text-lg font-bold text-gray-900 dark:text-white">{{ $code }}</span>
 </div>
