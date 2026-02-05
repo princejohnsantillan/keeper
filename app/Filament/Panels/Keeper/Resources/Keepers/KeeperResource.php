@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Keepers;
 
+use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Keepers\Pages\EditKeeper;
 use App\Filament\Panels\Keeper\Resources\Keepers\Pages\ListKeepers;
 use App\Filament\Panels\Keeper\Resources\Keepers\Schemas\KeeperForm;
 use App\Filament\Panels\Keeper\Resources\Keepers\Tables\KeepersTable;
 use App\Models\Keeper;
-use App\Subdomain;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

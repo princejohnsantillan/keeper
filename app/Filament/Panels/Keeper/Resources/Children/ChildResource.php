@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Children;
 
+use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Children\Pages\ListChildren;
 use App\Filament\Panels\Keeper\Resources\Children\Pages\ViewChild;
 use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildForm;
 use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildInfolist;
 use App\Filament\Panels\Keeper\Resources\Children\Tables\ChildrenTable;
 use App\Models\Child;
-use App\Subdomain;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;

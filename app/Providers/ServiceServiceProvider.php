@@ -8,9 +8,11 @@ use App\Services\AttendanceService;
 use App\Services\Contracts\AttendanceServiceInterface;
 use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\KeeperInvitationServiceInterface;
+use App\Services\Contracts\SubdomainInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use App\Services\GatepassService;
 use App\Services\KeeperInvitationService;
+use App\Services\SubdomainService;
 use App\Services\TermAcceptanceService;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,5 +33,14 @@ final class ServiceServiceProvider extends ServiceProvider
         TermAcceptanceServiceInterface::class => TermAcceptanceService::class,
         GatepassServiceInterface::class => GatepassService::class,
         KeeperInvitationServiceInterface::class => KeeperInvitationService::class,
+    ];
+
+    /**
+     * All of the container singletons that should be registered.
+     *
+     * @var array<class-string, class-string>
+     */
+    public array $singletons = [
+        SubdomainInterface::class => SubdomainService::class,
     ];
 }

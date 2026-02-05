@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Facades\Subdomain;
 use App\Models\Keeper;
-use App\Subdomain;
 use Illuminate\Support\Facades\Auth;
 
 final class GetCurrentKeeperAction

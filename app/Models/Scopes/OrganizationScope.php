@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Scopes;
 
-use App\Subdomain;
+use App\Facades\Subdomain;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;

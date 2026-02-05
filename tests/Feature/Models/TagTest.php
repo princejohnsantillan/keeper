@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Facades\Subdomain;
 use App\Models\Organization;
 use App\Models\Tag;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Once;
 
 beforeEach(function () {
-    Once::flush();
-
-    $this->organization = Organization::factory()->create(['slug' => 'testorg']);
-
-    $host = $this->organization->slug.'.'.Config::string('app.domain');
-    request()->headers->set('Host', $host);
+    $this->organization = Organization::factory()->create();
+    Subdomain::fake($this->organization);
 });
 
 it('automatically sets organization_id when creating a tag', function () {

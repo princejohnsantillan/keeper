@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Services;
 
 use App\Models\Organization;
+use App\Services\Contracts\SubdomainInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
-final class Subdomain
+final class SubdomainService implements SubdomainInterface
 {
-    public static function organization(): ?Organization
+    public function organization(): ?Organization
     {
         return once(function (): ?Organization {
             $slug = Str::beforeLast(request()->host(), '.'.Config::string('app.domain'));
@@ -19,7 +20,7 @@ final class Subdomain
         });
     }
 
-    public static function defined(): bool
+    public function defined(): bool
     {
         $domains = [
             'www.'.Config::string('app.domain'),

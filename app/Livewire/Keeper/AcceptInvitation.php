@@ -6,8 +6,8 @@ namespace App\Livewire\Keeper;
 
 use App\Actions\AcceptKeeperInvitationAction;
 use App\Exceptions\InvalidInvitationException;
+use App\Facades\Subdomain;
 use App\Models\KeeperInvitation;
-use App\Subdomain;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;

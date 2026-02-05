@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Activities\Pages;
 
+use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
-use App\Subdomain;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
