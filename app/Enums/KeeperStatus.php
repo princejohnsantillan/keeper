@@ -12,7 +12,7 @@ enum KeeperStatus: string implements HasLabel
     case Inactive = 'inactive';
     case Pending = 'pending';
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             self::Active => 'Active',

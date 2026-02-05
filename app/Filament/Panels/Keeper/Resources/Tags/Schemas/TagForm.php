@@ -24,7 +24,7 @@ final class TagForm
                         fn (?Model $record): Closure => function (string $attribute, mixed $value, Closure $fail) use ($record): void {
                             $exists = Tag::query()
                                 ->whereRaw('LOWER(name) = LOWER(?)', [$value])
-                                ->when($record, fn ($query) => $query->whereNot('id', $record->id))
+                                ->when($record !== null, fn ($query) => $query->whereNot('id', $record?->getKey()))
                                 ->exists();
 
                             if ($exists) {

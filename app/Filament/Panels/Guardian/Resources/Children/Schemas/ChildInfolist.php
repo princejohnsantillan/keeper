@@ -7,6 +7,7 @@ namespace App\Filament\Panels\Guardian\Resources\Children\Schemas;
 use App\Filament\Components\Infolists\AppIconEntry;
 use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
 use App\Filament\Components\Infolists\AppTextEntry;
+use App\Models\Guardian;
 use Carbon\CarbonImmutable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -102,8 +103,8 @@ final class ChildInfolist
         return TextEntry::make('full_name')
             ->hiddenLabel()
             ->weight(FontWeight::Medium)
-            ->icon(fn ($record) => $record->gender->getIcon())
-            ->iconColor(fn ($record) => $record->gender->getColor())
+            ->icon(fn (Guardian $record): string => $record->gender->getIcon())
+            ->iconColor(fn (Guardian $record): array => $record->gender->getColor())
             ->grow(false);
     }
 

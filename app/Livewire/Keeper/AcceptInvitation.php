@@ -24,7 +24,7 @@ final class AcceptInvitation extends Component
 
     public string $error = '';
 
-    public function mount()
+    public function mount(): void
     {
         $token = request()->query('token');
 
@@ -61,7 +61,9 @@ final class AcceptInvitation extends Component
 
                 session()->flash('message', 'Invitation accepted! Please log in to access '.$this->invitation->organization->name.'.');
 
-                return $this->redirect(route('filament.keeper.auth.login'));
+                $this->redirect(route('filament.keeper.auth.login'));
+
+                return;
             } catch (InvalidInvitationException) {
                 $this->error = 'An error occurred while accepting your invitation.';
 
@@ -72,7 +74,7 @@ final class AcceptInvitation extends Component
         $this->showForm = true;
     }
 
-    public function accept()
+    public function accept(): void
     {
         $this->validate([
             'password' => ['required', 'string', 'min:8', 'same:password_confirmation'],
@@ -98,7 +100,7 @@ final class AcceptInvitation extends Component
 
             session()->flash('message', 'Welcome! You have successfully joined '.$this->invitation->organization->name.'.');
 
-            return $this->redirect('/admin');
+            $this->redirect('/admin');
         } catch (InvalidInvitationException $e) {
             $this->error = $e->getMessage();
         }

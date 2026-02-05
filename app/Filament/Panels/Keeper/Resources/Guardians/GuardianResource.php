@@ -33,6 +33,7 @@ final class GuardianResource extends Resource
         return ['first_name', 'last_name', 'email', 'phone'];
     }
 
+    /** @return Builder<Guardian> */
     public static function getEloquentQuery(): Builder
     {
         $organization = Subdomain::organization();

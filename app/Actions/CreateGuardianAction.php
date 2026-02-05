@@ -13,7 +13,7 @@ final class CreateGuardianAction
      * Create a guardian and sync their children relationships.
      *
      * @param  array<string, mixed>  $guardianData
-     * @param  array<int, array{relationship: string}>  $syncData
+     * @param  array<int|string, array{relationship: string}>  $syncData
      */
     public function __invoke(array $guardianData, array $syncData): Guardian
     {

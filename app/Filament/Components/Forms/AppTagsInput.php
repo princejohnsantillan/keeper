@@ -19,11 +19,19 @@ final class AppTagsInput
                     return;
                 }
 
-                $component->state($record->tags->pluck('name')->toArray());
+                if (! method_exists($record, 'tags')) {
+                    return;
+                }
+
+                $component->state($record->tags()->pluck('name')->toArray());
             })
             ->dehydrated(false)
             ->saveRelationshipsUsing(function (?Model $record, ?array $state): void {
                 if (! $record) {
+                    return;
+                }
+
+                if (! method_exists($record, 'tags')) {
                     return;
                 }
 

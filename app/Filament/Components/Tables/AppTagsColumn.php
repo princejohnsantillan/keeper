@@ -13,7 +13,13 @@ final class AppTagsColumn
     {
         return TextColumn::make($field)->label($label)
             ->badge()
-            ->getStateUsing(fn (Model $record): array => $record->tags->pluck('name')->toArray())
+            ->getStateUsing(function (Model $record): array {
+                if (! method_exists($record, 'tags')) {
+                    return [];
+                }
+
+                return $record->tags()->pluck('name')->toArray();
+            })
             ->searchable(query: fn ($query, string $search) => $query->whereHas(
                 'tags',
                 fn ($q) => $q->whereRaw('LOWER(name) LIKE ?', ['%'.strtolower($search).'%'])

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Facades\Subdomain;
 use App\Models\Organization;
 use App\Models\Tag;
+use Illuminate\Database\QueryException;
 
 beforeEach(function () {
     $this->organization = Organization::factory()->create();
@@ -100,4 +101,12 @@ it('allows same tag name in different organizations', function () {
     ]);
 
     expect(Tag::withoutGlobalScopes()->where('name', 'vip')->count())->toBe(2);
+});
+
+it('requires an organization when no subdomain is defined', function () {
+    Subdomain::fake();
+
+    expect(fn () => Tag::create([
+        'name' => 'VIP',
+    ]))->toThrow(QueryException::class);
 });

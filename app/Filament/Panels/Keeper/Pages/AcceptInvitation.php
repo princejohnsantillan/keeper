@@ -17,10 +17,12 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Schema;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * @property-read Schema $form
+ */
 final class AcceptInvitation extends SimplePage
 {
     protected static bool $shouldRegisterNavigation = false;
@@ -29,6 +31,7 @@ final class AcceptInvitation extends SimplePage
 
     public ?KeeperInvitation $invitation = null;
 
+    /** @var array<string, mixed>|null */
     public ?array $data = [];
 
     public function mount(): void
@@ -193,12 +196,12 @@ final class AcceptInvitation extends SimplePage
         }
     }
 
-    public function getHeading(): string|Htmlable
+    public function getHeading(): string
     {
         return 'Accept Invitation';
     }
 
-    public function getSubheading(): string|Htmlable|null
+    public function getSubheading(): ?string
     {
         if (! $this->invitation) {
             return null;

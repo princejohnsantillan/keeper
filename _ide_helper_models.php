@@ -40,6 +40,8 @@ namespace App\Models{
  * @property-read int|null $media_count
  * @property-read \App\Models\Message|null $message
  * @property-read \App\Models\Organization $organization
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
+ * @property-read int|null $tags_count
  * @property-read \App\Models\Term|null $term
  * @method static \Database\Factories\ActivityFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Activity newModelQuery()
@@ -140,7 +142,7 @@ namespace App\Models{
  * @property-read \App\Models\User $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
  * @property-read int|null $relationships_count
- * @property \Illuminate\Database\Eloquent\Collection<int, \Spatie\Tags\Tag> $tags
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
  * @property-read int|null $tags_count
  * @method static \Database\Factories\ChildFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child newModelQuery()
@@ -159,13 +161,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAllTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAllTagsOfAnyType($tags)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAnyTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAnyTagsOfAnyType($tags)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withAnyTagsOfType(array|string $type)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withTrashed(bool $withTrashed = true)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withoutTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Child withoutTrashed()
  * @mixin \Eloquent
  */
@@ -234,7 +230,7 @@ namespace App\Models{
  * @property-read \App\Models\User $owner
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Relationship> $relationships
  * @property-read int|null $relationships_count
- * @property \Illuminate\Database\Eloquent\Collection<int, \Spatie\Tags\Tag> $tags
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tag> $tags
  * @property-read int|null $tags_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TermAcceptance> $termAcceptances
  * @property-read int|null $term_acceptances_count
@@ -256,13 +252,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAllTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAllTagsOfAnyType($tags)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAnyTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAnyTagsOfAnyType($tags)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withAnyTagsOfType(array|string $type)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withTrashed(bool $withTrashed = true)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withoutTags(\ArrayAccess|\Spatie\Tags\Tag|array|string $tags, ?string $type = null)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Guardian withoutTrashed()
  * @mixin \Eloquent
  */
@@ -275,6 +265,8 @@ namespace App\Models{
  * @property string $id
  * @property string $organization_id
  * @property string $user_id
+ * @property \App\Enums\KeeperStatus $status
+ * @property \App\Enums\KeeperRole|null $role
  * @property string|null $permissions
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -295,6 +287,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper wherePermissions($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Keeper withTrashed(bool $withTrashed = true)
@@ -303,6 +297,43 @@ namespace App\Models{
  */
 	#[\AllowDynamicProperties]
 	final class IdeHelperKeeper {}
+}
+
+namespace App\Models{
+/**
+ * @property string $id
+ * @property string $organization_id
+ * @property string $user_id
+ * @property string $invited_by
+ * @property \App\Enums\KeeperRole $role
+ * @property string $token
+ * @property \Illuminate\Support\Carbon|null $accepted_at
+ * @property \Illuminate\Support\Carbon $expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $invitedBy
+ * @property-read \App\Models\Organization $organization
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation expired()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation pending()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation valid()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereAcceptedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereExpiresAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereInvitedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereRole($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|KeeperInvitation whereUserId($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	final class IdeHelperKeeperInvitation {}
 }
 
 namespace App\Models{
@@ -402,6 +433,28 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property int $id
+ * @property string $organization_id
+ * @property string $name
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\Organization $organization
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereOrganizationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Tag whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
+	#[\AllowDynamicProperties]
+	final class IdeHelperTag {}
+}
+
+namespace App\Models{
+/**
  * @property string $id
  * @property string $name
  * @property string $content
@@ -473,7 +526,7 @@ namespace App\Models{
  * @property string $name
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string $password
+ * @property string|null $password
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

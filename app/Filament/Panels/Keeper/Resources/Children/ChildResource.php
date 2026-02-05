@@ -35,6 +35,7 @@ final class ChildResource extends Resource
         return ['first_name', 'middle_name', 'last_name', 'nickname'];
     }
 
+    /** @return Builder<Child> */
     public static function getEloquentQuery(): Builder
     {
         $organization = Subdomain::organization();

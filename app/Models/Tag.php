@@ -12,6 +12,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[ScopedBy(OrganizationScope::class)]
+/**
+ * @mixin IdeHelperTag
+ */
 final class Tag extends Model
 {
     protected $fillable = [
@@ -32,9 +35,17 @@ final class Tag extends Model
     protected static function booted(): void
     {
         self::creating(function (Tag $tag): void {
-            if ($tag->organization_id === null) {
-                $tag->organization_id = Subdomain::organization()?->id;
+            if (isset($tag->organization_id)) {
+                return;
             }
+
+            $organizationId = Subdomain::organization()?->id;
+
+            if ($organizationId === null) {
+                return;
+            }
+
+            $tag->organization_id = $organizationId;
         });
     }
 

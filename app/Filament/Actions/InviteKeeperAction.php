@@ -48,12 +48,20 @@ final class InviteKeeperAction
                     return;
                 }
 
+                $user = Auth::user();
+
+                if (! $user) {
+                    AppNotification::error('You must be logged in.')->send();
+
+                    return;
+                }
+
                 try {
                     $inviteKeeper(
                         email: $data['email'],
                         name: $data['name'],
                         organization: $organization,
-                        invitedBy: Auth::user(),
+                        invitedBy: $user,
                         role: $data['role'],
                     );
 

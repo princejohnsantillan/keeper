@@ -19,7 +19,7 @@ final class EditKeeper extends EditRecord
 
         $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
 
-        if (! $currentKeeper?->isAdmin()) {
+        if (! $currentKeeper->isAdmin()) {
             abort(403);
         }
     }

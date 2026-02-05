@@ -165,7 +165,7 @@ final class ScanGatepass extends Page
         }
     }
 
-    public static function getNavigationIcon(): string|Heroicon|null
+    public static function getNavigationIcon(): Heroicon
     {
         return Heroicon::QrCode;
     }

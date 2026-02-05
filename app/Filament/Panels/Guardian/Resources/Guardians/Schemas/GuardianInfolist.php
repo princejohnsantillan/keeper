@@ -8,6 +8,7 @@ use App\Enums\Relationship as RelationshipEnum;
 use App\Filament\Components\Infolists\AppIconEntry;
 use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
 use App\Filament\Components\Infolists\AppTextEntry;
+use App\Models\Child;
 use Carbon\CarbonImmutable;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -104,8 +105,8 @@ final class GuardianInfolist
         return TextEntry::make('full_name')
             ->hiddenLabel()
             ->weight(FontWeight::Medium)
-            ->icon(fn ($record) => $record->gender->getIcon())
-            ->iconColor(fn ($record) => $record->gender->getColor())
+            ->icon(fn (Child $record): string => $record->gender->getIcon())
+            ->iconColor(fn (Child $record): array => $record->gender->getColor())
             ->grow(false);
     }
 
@@ -113,7 +114,7 @@ final class GuardianInfolist
     {
         return TextEntry::make('pivot.relationship')
             ->hiddenLabel()
-            ->formatStateUsing(fn (RelationshipEnum $state, $record): string => $state->inverse($record->gender)->getLabel())
+            ->formatStateUsing(fn (RelationshipEnum $state, Child $record): string => $state->inverse($record->gender)->getLabel())
             ->badge()
             ->grow(false);
     }

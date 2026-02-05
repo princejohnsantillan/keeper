@@ -31,6 +31,7 @@ final class KeeperResource extends Resource
 
     protected static ?int $navigationSort = 99;
 
+    /** @return Builder<Keeper> */
     public static function getEloquentQuery(): Builder
     {
         $organization = Subdomain::organization();
@@ -63,6 +64,7 @@ final class KeeperResource extends Resource
         ];
     }
 
+    /** @return Builder<Keeper> */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

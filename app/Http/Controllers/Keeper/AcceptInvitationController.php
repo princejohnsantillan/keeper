@@ -38,7 +38,7 @@ final class AcceptInvitationController extends Controller
                     app(AcceptKeeperInvitationAction::class)->__invoke($invitation->token);
                     session()->flash('status', 'Invitation accepted! Please log in.');
 
-                    return view('keeper.accept-invitation-redirect', [
+                    return view('keeper.accept-invitation-redirect', [ // @phpstan-ignore argument.type
                         'redirectUrl' => route('filament.keeper.auth.login'),
                     ]);
                 } catch (InvalidInvitationException) {
@@ -57,7 +57,7 @@ final class AcceptInvitationController extends Controller
         ]);
     }
 
-    public function accept(Request $request, AcceptKeeperInvitationAction $acceptInvitation)
+    public function accept(Request $request, AcceptKeeperInvitationAction $acceptInvitation): \Illuminate\Http\RedirectResponse
     {
         $request->validate([
             'password' => ['required', 'string', 'min:8', 'confirmed'],

@@ -210,6 +210,7 @@ final class RegisterActivity extends Page
                     return [];
                 }
 
+                /** @var Child|null $child */
                 $child = Child::query()->with('guardians')->find($childId);
 
                 if ($child === null) {
