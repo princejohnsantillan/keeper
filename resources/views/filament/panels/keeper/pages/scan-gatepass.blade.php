@@ -161,6 +161,13 @@
                 <div class="mt-6 flex flex-wrap gap-3">
                     @if ($this->attendanceStatus === 'not_checked_in')
                         <x-filament::button
+                            wire:click="checkInAndPrint"
+                            icon="heroicon-o-printer"
+                        >
+                            Check In & Print
+                        </x-filament::button>
+
+                        <x-filament::button
                             wire:click="checkIn"
                             color="success"
                             icon="heroicon-o-arrow-right-end-on-rectangle"
@@ -174,6 +181,16 @@
                             icon="heroicon-o-arrow-left-start-on-rectangle"
                         >
                             Check Out
+                        </x-filament::button>
+                    @endif
+
+                    @if (in_array($this->attendanceStatus, ['checked_in', 'checked_out'], true))
+                        <x-filament::button
+                            wire:click="print"
+                            color="gray"
+                            icon="heroicon-o-printer"
+                        >
+                            Print
                         </x-filament::button>
                     @endif
 

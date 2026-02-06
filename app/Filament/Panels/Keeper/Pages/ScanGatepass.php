@@ -7,6 +7,7 @@ namespace App\Filament\Panels\Keeper\Pages;
 use App\Actions\GetCurrentKeeperAction;
 use App\Facades\Subdomain;
 use App\Filament\Notifications\AppNotification;
+use App\Models\Attendance;
 use App\Models\Gatepass;
 use App\Models\Scopes\OrganizationScope;
 use App\Services\Contracts\AttendanceServiceInterface;
@@ -113,26 +114,44 @@ final class ScanGatepass extends Page
         AttendanceServiceInterface $attendanceService,
         GetCurrentKeeperAction $getCurrentKeeper,
     ): void {
+        $this->performCheckIn($attendanceService, $getCurrentKeeper);
+    }
+
+    public function checkInAndPrint(
+        AttendanceServiceInterface $attendanceService,
+        GetCurrentKeeperAction $getCurrentKeeper,
+    ): void {
+        $attendance = $this->performCheckIn($attendanceService, $getCurrentKeeper);
+
+        if ($attendance === null) {
+            return;
+        }
+
+        $this->openPrintSticker($attendance);
+    }
+
+    public function print(AttendanceServiceInterface $attendanceService): void
+    {
         $gatepass = $this->getGatepass();
 
         if ($gatepass === null) {
             return;
         }
 
-        $keeper = $getCurrentKeeper();
-        $result = $attendanceService->checkIn($gatepass->activity, $gatepass, $keeper);
+        $attendance = $attendanceService->findActiveAttendance($gatepass->activity_id, $gatepass->child_id)
+            ?? Attendance::query()
+                ->where('activity_id', $gatepass->activity_id)
+                ->where('child_id', $gatepass->child_id)
+                ->latest('checked_in_at')
+                ->first();
 
-        if (! $result['success']) {
-            match ($result['message']) {
-                'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
-                default => AppNotification::error('Check-in failed.')->send(),
-            };
+        if ($attendance === null) {
+            AppNotification::error('No check-in record found to print.')->send();
 
             return;
         }
 
-        AppNotification::checkedIn($result['child_name'])->send();
-        $this->determineAttendanceStatus($attendanceService, $gatepass);
+        $this->openPrintSticker($attendance);
     }
 
     public function checkOut(
@@ -181,6 +200,41 @@ final class ScanGatepass extends Page
         } else {
             $this->attendanceStatus = 'not_checked_in';
         }
+    }
+
+    private function performCheckIn(
+        AttendanceServiceInterface $attendanceService,
+        GetCurrentKeeperAction $getCurrentKeeper,
+    ): ?Attendance {
+        $gatepass = $this->getGatepass();
+
+        if ($gatepass === null) {
+            return null;
+        }
+
+        $keeper = $getCurrentKeeper();
+        $result = $attendanceService->checkIn($gatepass->activity, $gatepass, $keeper);
+
+        if (! $result['success']) {
+            match ($result['message']) {
+                'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
+                default => AppNotification::error('Check-in failed.')->send(),
+            };
+
+            return null;
+        }
+
+        AppNotification::checkedIn($result['child_name'])->send();
+        $this->determineAttendanceStatus($attendanceService, $gatepass);
+
+        return $result['attendance'];
+    }
+
+    private function openPrintSticker(Attendance $attendance): void
+    {
+        $printUrl = route('filament.keeper.attendance.print', $attendance);
+
+        $this->dispatch('open-print-sticker', url: $printUrl);
     }
 
     public static function getNavigationIcon(): Heroicon
