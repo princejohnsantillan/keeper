@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Keepers\Tables;
 
+use App\Actions\CancelKeeperInvitationAction;
 use App\Enums\KeeperStatus;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Keeper;
-use App\Models\KeeperInvitation;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -40,8 +39,6 @@ final class KeepersTable
             ])
             ->filters([])
             ->recordActions([
-                EditAction::make()
-                    ->visible(fn (Keeper $record): bool => $record->status !== KeeperStatus::Pending),
                 self::deactivateAction(),
                 self::activateAction(),
                 self::cancelInvitationAction(),
@@ -89,14 +86,8 @@ final class KeepersTable
             ->color('danger')
             ->requiresConfirmation()
             ->visible(fn (Keeper $record): bool => $record->status === KeeperStatus::Pending)
-            ->action(function (Keeper $record): void {
-                // Delete the associated invitation if it exists
-                KeeperInvitation::query()
-                    ->where('user_id', $record->user_id)
-                    ->where('organization_id', $record->organization_id)
-                    ->delete();
-
-                $record->delete();
+            ->action(function (Keeper $record, CancelKeeperInvitationAction $cancelKeeperInvitation): void {
+                $cancelKeeperInvitation($record);
             });
     }
 }
