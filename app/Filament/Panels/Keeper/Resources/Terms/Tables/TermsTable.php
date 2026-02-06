@@ -11,6 +11,7 @@ use App\Models\Term;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -34,7 +35,7 @@ final class TermsTable
                     ->extraAttributes(['class' => 'hidden'])
                     ->slideOver(false)
                     ->modalHeading('Terms & Conditions')
-                    ->infolist(fn ($infolist) => TermInfolist::configure($infolist))
+                    ->schema(fn (Schema $schema): Schema => TermInfolist::configure($schema))
                     ->modalFooterActions(fn (ViewAction $action): array => [
                         EditAction::make()
                             ->slideOver()

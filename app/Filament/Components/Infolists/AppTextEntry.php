@@ -91,6 +91,14 @@ final class AppTextEntry
             ->markdown();
     }
 
+    public static function tags(string $field = 'tags.name', string $label = 'Tags'): TextEntry
+    {
+        return TextEntry::make($field)->label($label)
+            ->badge()
+            ->listWithLineBreaks()
+            ->placeholder('No tags recorded.');
+    }
+
     public static function title(string $field = 'title', ?string $label = null): TextEntry
     {
         return TextEntry::make($field)->label($label)

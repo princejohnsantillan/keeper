@@ -7,7 +7,9 @@ namespace App\Filament\Panels\Keeper\Resources\Guardians;
 use App\Actions\GetCurrentKeeperAction;
 use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
+use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ViewGuardian;
 use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianForm;
+use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianInfolist;
 use App\Filament\Panels\Keeper\Resources\Guardians\Tables\GuardiansTable;
 use App\Models\Guardian;
 use BackedEnum;
@@ -62,6 +64,11 @@ final class GuardianResource extends Resource
         return GuardiansTable::configure($table);
     }
 
+    public static function infolist(Schema $schema): Schema
+    {
+        return GuardianInfolist::configure($schema);
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -73,6 +80,7 @@ final class GuardianResource extends Resource
     {
         return [
             'index' => ListGuardians::route('/'),
+            'view' => ViewGuardian::route('/{record}'),
         ];
     }
 }

@@ -97,11 +97,19 @@
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                     {{ $gatepass->child->full_name }}
                                 </p>
-                                @if ($gatepass->child->birth_date)
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $gatepass->child->age }} years old
-                                    </p>
-                                @endif
+                                <p class="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <x-filament::icon :icon="$gatepass->child->gender->getIcon()" class="h-4 w-4" />
+                                    <span>{{ $gatepass->child->gender->getLabel() }}</span>
+                                </p>
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    @forelse ($gatepass->child->tags as $tag)
+                                        <x-filament::badge color="gray">
+                                            {{ $tag->name }}
+                                        </x-filament::badge>
+                                    @empty
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">No tags</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -119,11 +127,19 @@
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
                                     {{ $gatepass->guardian->full_name }}
                                 </p>
-                                @if ($gatepass->guardian->user?->email)
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $gatepass->guardian->user->email }}
-                                    </p>
-                                @endif
+                                <p class="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <x-filament::icon :icon="$gatepass->guardian->gender->getIcon()" class="h-4 w-4" />
+                                    <span>{{ $gatepass->guardian->gender->getLabel() }}</span>
+                                </p>
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    @forelse ($gatepass->guardian->tags as $tag)
+                                        <x-filament::badge color="gray">
+                                            {{ $tag->name }}
+                                        </x-filament::badge>
+                                    @empty
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">No tags</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
                     </div>

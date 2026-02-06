@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Activities\Pages;
 
-use App\Filament\Actions\CheckInAttendanceAction;
-use App\Filament\Actions\CheckOutAttendanceAction;
 use App\Filament\Actions\PrintAttendanceStickerAction;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
 use App\Models\Activity;
@@ -63,10 +61,7 @@ final class ViewAttendance extends ManageRelatedRecords
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([])
-            ->headerActions([
-                CheckInAttendanceAction::make($activity),
-                CheckOutAttendanceAction::make($activity),
-            ])
+            ->headerActions([])
             ->recordActions([
                 PrintAttendanceStickerAction::make(),
             ])

@@ -1,5 +1,8 @@
 # Filament Guidelines
 
+## Required for Planning
+When in plan mode ALWAYS create a plan with Filament Blueprint.
+
 ## Core Principle
 Separate configuration from layout. All component/column/entry attributes go in reusable App Components or private methods. Only layout concerns are chained in schema/columns arrays.
 

@@ -25,7 +25,7 @@ final class AppSpatieMediaLibraryFileUpload
             ->collection('thumbnail')
             ->image()
             ->imageEditor()
-            ->imageEditorAspectRatios([
+            ->imageEditorAspectRatioOptions([
                 '16:9',
             ])
             ->required();

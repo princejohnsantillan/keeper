@@ -6,14 +6,11 @@ namespace App\Filament\Panels\Keeper\Resources\Keepers;
 
 use App\Actions\GetCurrentKeeperAction;
 use App\Facades\Subdomain;
-use App\Filament\Panels\Keeper\Resources\Keepers\Pages\EditKeeper;
 use App\Filament\Panels\Keeper\Resources\Keepers\Pages\ListKeepers;
-use App\Filament\Panels\Keeper\Resources\Keepers\Schemas\KeeperForm;
 use App\Filament\Panels\Keeper\Resources\Keepers\Tables\KeepersTable;
 use App\Models\Keeper;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,11 +46,6 @@ final class KeeperResource extends Resource
             ->with(['user']);
     }
 
-    public static function form(Schema $schema): Schema
-    {
-        return KeeperForm::configure($schema);
-    }
-
     public static function table(Table $table): Table
     {
         return KeepersTable::configure($table);
@@ -68,7 +60,6 @@ final class KeeperResource extends Resource
     {
         return [
             'index' => ListKeepers::route('/'),
-            'edit' => EditKeeper::route('/{record}/edit'),
         ];
     }
 
