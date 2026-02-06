@@ -91,7 +91,7 @@ final class AppTextEntry
             ->markdown();
     }
 
-    public static function tags(string $field = 'tags.name', string $label = 'Tags'): TextEntry
+    public static function tags(string $field = 'organizationTags.name', string $label = 'Tags'): TextEntry
     {
         return TextEntry::make($field)->label($label)
             ->badge()

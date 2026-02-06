@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Concerns\HasTags;
 use App\Models\Scopes\OrganizationScope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -26,7 +25,6 @@ final class Activity extends Model implements HasMedia
     /** @use HasFactory<\Database\Factories\ActivityFactory> */
     use HasFactory;
 
-    use HasTags;
     use HasUlids;
     use InteractsWithMedia;
 

@@ -8,7 +8,7 @@ use App\Actions\SyncOrganizationTagsAction;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Child;
 use App\Models\Guardian;
-use App\Models\Tag;
+use App\Models\OrganizationTag;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TagsInput;
 
@@ -23,7 +23,7 @@ final class EditOrganizationTagsAction
             ->modalHeading(fn (Child|Guardian $record): string => 'Tags for '.$record->full_name)
             ->modalSubmitActionLabel('Save')
             ->fillForm(fn (Child|Guardian $record): array => [
-                'tags' => $record->tags()->pluck('name')->toArray(),
+                'tags' => $record->organizationTags()->pluck('name')->toArray(),
             ])
             ->schema([
                 self::tagsField()
@@ -47,7 +47,11 @@ final class EditOrganizationTagsAction
     {
         return TagsInput::make('tags')
             ->label('Tags')
-            ->suggestions(fn (): array => Tag::query()->pluck('name')->toArray())
+            ->suggestions(fn (): array => OrganizationTag::query()
+                ->distinct()
+                ->orderBy('name')
+                ->pluck('name')
+                ->all())
             ->nestedRecursiveRules([
                 'string',
                 'max:255',

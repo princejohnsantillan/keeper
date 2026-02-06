@@ -102,7 +102,7 @@
                                     <span>{{ $gatepass->child->gender->getLabel() }}</span>
                                 </p>
                                 <div class="mt-2 flex flex-wrap gap-2">
-                                    @forelse ($gatepass->child->tags as $tag)
+                                    @forelse ($gatepass->child->organizationTags as $tag)
                                         <x-filament::badge color="gray">
                                             {{ $tag->name }}
                                         </x-filament::badge>
@@ -132,7 +132,7 @@
                                     <span>{{ $gatepass->guardian->gender->getLabel() }}</span>
                                 </p>
                                 <div class="mt-2 flex flex-wrap gap-2">
-                                    @forelse ($gatepass->guardian->tags as $tag)
+                                    @forelse ($gatepass->guardian->organizationTags as $tag)
                                         <x-filament::badge color="gray">
                                             {{ $tag->name }}
                                         </x-filament::badge>

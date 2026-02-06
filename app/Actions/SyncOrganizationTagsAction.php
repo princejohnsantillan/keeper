@@ -6,7 +6,6 @@ namespace App\Actions;
 
 use App\Models\Child;
 use App\Models\Guardian;
-use App\Models\Tag;
 
 final class SyncOrganizationTagsAction
 {
@@ -18,31 +17,26 @@ final class SyncOrganizationTagsAction
         /** @var list<string> $normalizedTagNames */
         $normalizedTagNames = collect($tagNames)
             ->filter(fn (mixed $tagName): bool => is_string($tagName))
-            ->map(fn (string $tagName): string => trim($tagName))
+            ->map(fn (string $tagName): string => strtolower(trim($tagName)))
             ->filter(fn (string $tagName): bool => $tagName !== '')
-            ->unique(fn (string $tagName): string => strtolower($tagName))
+            ->unique()
             ->values()
             ->all();
 
-        /** @var list<string> $tagIds */
-        $tagIds = collect($normalizedTagNames)
-            ->map(fn (string $tagName): string => Tag::findOrCreateFromString($tagName)->id)
-            ->all();
+        if ($normalizedTagNames === []) {
+            $record->organizationTags()->delete();
 
-        /** @var list<string> $currentOrganizationTagIds */
-        $currentOrganizationTagIds = $record->tags()
-            ->pluck('tags.id')
-            ->all();
-
-        /** @var list<string> $tagIdsToDetach */
-        $tagIdsToDetach = array_values(array_diff($currentOrganizationTagIds, $tagIds));
-
-        if ($tagIdsToDetach !== []) {
-            $record->tags()->detach($tagIdsToDetach);
+            return;
         }
 
-        if ($tagIds !== []) {
-            $record->tags()->syncWithoutDetaching($tagIds);
+        $record->organizationTags()
+            ->whereNotIn('name', $normalizedTagNames)
+            ->delete();
+
+        foreach ($normalizedTagNames as $normalizedTagName) {
+            $record->organizationTags()->firstOrCreate([
+                'name' => $normalizedTagName,
+            ]);
         }
     }
 }

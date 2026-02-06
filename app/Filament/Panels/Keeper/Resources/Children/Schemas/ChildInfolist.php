@@ -40,7 +40,7 @@ final class ChildInfolist
 
     private static function tagsEntry(): TextEntry
     {
-        return AppTextEntry::tags('tags.name', 'Tags')
+        return AppTextEntry::tags('organizationTags.name', 'Tags')
             ->afterLabel(Schema::start([
                 self::editTagsInlineAction(),
             ]));

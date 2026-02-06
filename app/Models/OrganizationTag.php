@@ -6,25 +6,30 @@ namespace App\Models;
 
 use App\Facades\Subdomain;
 use App\Models\Scopes\OrganizationScope;
+use Database\Factories\OrganizationTagFactory;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 #[ScopedBy(OrganizationScope::class)]
 /**
- * @mixin IdeHelperTag
+ * @mixin IdeHelperOrganizationTag
  */
-final class Tag extends Model
+final class OrganizationTag extends Model
 {
+    /** @use HasFactory<OrganizationTagFactory> */
+    use HasFactory;
     use HasUlids;
 
     protected $keyType = 'string';
 
     protected $fillable = [
-        'name',
         'organization_id',
+        'name',
     ];
 
     /**
@@ -39,8 +44,8 @@ final class Tag extends Model
 
     protected static function booted(): void
     {
-        self::creating(function (Tag $tag): void {
-            if (isset($tag->organization_id)) {
+        self::creating(function (OrganizationTag $organizationTag): void {
+            if (isset($organizationTag->organization_id)) {
                 return;
             }
 
@@ -50,7 +55,7 @@ final class Tag extends Model
                 return;
             }
 
-            $tag->organization_id = $organizationId;
+            $organizationTag->organization_id = $organizationId;
         });
     }
 
@@ -62,24 +67,11 @@ final class Tag extends Model
         return $this->belongsTo(Organization::class);
     }
 
-    public static function findFromString(string $name): ?static
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function taggable(): MorphTo
     {
-        return self::query()
-            ->where('organization_id', Subdomain::organization()?->id)
-            ->where('name', strtolower($name))
-            ->first();
-    }
-
-    public static function findOrCreateFromString(string $name): static
-    {
-        $tag = static::findFromString($name);
-
-        if (! $tag) {
-            $tag = static::create([
-                'name' => $name,
-            ]);
-        }
-
-        return $tag;
+        return $this->morphTo();
     }
 }

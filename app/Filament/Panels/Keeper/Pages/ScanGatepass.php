@@ -102,8 +102,8 @@ final class ScanGatepass extends Page
 
         return Gatepass::query()
             ->with([
-                'child.tags',
-                'guardian.tags',
+                'child.organizationTags',
+                'guardian.organizationTags',
                 'activity' => fn ($query) => $query->withoutGlobalScope(OrganizationScope::class),
             ])
             ->find($this->gatepassId);
