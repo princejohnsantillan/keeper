@@ -11,6 +11,7 @@ use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
 use App\Filament\Components\Infolists\AppTextEntry;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 final class GuardianInfolist
@@ -28,18 +29,27 @@ final class GuardianInfolist
                 AppIconEntry::gender(),
                 AppTextEntry::email(),
                 AppTextEntry::phone(),
+                AppTextEntry::createdAt(),
+                AppTextEntry::updatedAt(),
+                self::organizationSection(),
+            ]);
+    }
+
+    private static function organizationSection(): Section
+    {
+        return Section::make()
+            ->columnSpanFull()
+            ->schema([
                 self::tagsEntry()
                     ->columnSpanFull(),
                 self::organizationNoteEntry()
                     ->columnSpanFull(),
-                AppTextEntry::createdAt(),
-                AppTextEntry::updatedAt(),
             ]);
     }
 
     private static function tagsEntry(): TextEntry
     {
-        return AppTextEntry::tags('organizationTags.name', 'Tags')
+        return AppTextEntry::tags('organizationTags.name', 'Organization tags')
             ->afterLabel(Schema::start([
                 self::editTagsInlineAction(),
             ]));

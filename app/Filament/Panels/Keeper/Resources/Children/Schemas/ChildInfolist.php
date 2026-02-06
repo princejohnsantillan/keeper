@@ -11,6 +11,7 @@ use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
 use App\Filament\Components\Infolists\AppTextEntry;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 final class ChildInfolist
@@ -27,20 +28,29 @@ final class ChildInfolist
                 AppTextEntry::nickname(),
                 AppTextEntry::birthDate(),
                 AppIconEntry::gender(),
-                self::tagsEntry()
-                    ->columnSpanFull(),
-                self::organizationNoteEntry()
-                    ->columnSpanFull(),
                 AppTextEntry::notes('notes', "Guardian's notes")
                     ->columnSpanFull(),
                 AppTextEntry::createdAt(),
                 AppTextEntry::updatedAt(),
+                self::organizationSection(),
+            ]);
+    }
+
+    private static function organizationSection(): Section
+    {
+        return Section::make()
+            ->columnSpanFull()
+            ->schema([
+                self::tagsEntry()
+                    ->columnSpanFull(),
+                self::organizationNoteEntry()
+                    ->columnSpanFull(),
             ]);
     }
 
     private static function tagsEntry(): TextEntry
     {
-        return AppTextEntry::tags('organizationTags.name', 'Tags')
+        return AppTextEntry::tags('organizationTags.name', 'Organization tags')
             ->afterLabel(Schema::start([
                 self::editTagsInlineAction(),
             ]));
