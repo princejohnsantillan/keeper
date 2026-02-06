@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Notifications;
 
+use App\Enums\KeeperRole;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
@@ -62,6 +63,14 @@ final class AppNotification
         return Notification::make()
             ->success()
             ->title('Walk-in registered successfully');
+    }
+
+    public static function keeperRoleUpdated(string $keeperName, KeeperRole $role): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Role updated')
+            ->body("{$keeperName} is now {$role->getLabel()}.");
     }
 
     // ─────────────────────────────────────────────────────────────────────────

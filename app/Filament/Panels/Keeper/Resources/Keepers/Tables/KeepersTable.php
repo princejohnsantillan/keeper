@@ -6,6 +6,7 @@ namespace App\Filament\Panels\Keeper\Resources\Keepers\Tables;
 
 use App\Actions\CancelKeeperInvitationAction;
 use App\Enums\KeeperStatus;
+use App\Filament\Actions\ChangeKeeperRoleAction as ChangeKeeperRoleFilamentAction;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Keeper;
 use Filament\Actions\Action;
@@ -39,6 +40,7 @@ final class KeepersTable
             ])
             ->filters([])
             ->recordActions([
+                ChangeKeeperRoleFilamentAction::make(),
                 self::deactivateAction(),
                 self::activateAction(),
                 self::cancelInvitationAction(),
