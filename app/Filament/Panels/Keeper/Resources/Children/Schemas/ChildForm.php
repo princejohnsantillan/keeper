@@ -28,7 +28,7 @@ final class ChildForm
                 AppSelect::gender(),
                 AppTagsInput::tags()
                     ->columnSpanFull(),
-                AppTextarea::notes()
+                AppTextarea::notes('notes', "Guardian's notes")
                     ->columnSpanFull(),
             ]);
     }

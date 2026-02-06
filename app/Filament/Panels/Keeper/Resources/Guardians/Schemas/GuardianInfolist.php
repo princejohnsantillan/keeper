@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Panels\Keeper\Resources\Children\Schemas;
+namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
 
 use App\Filament\Actions\EditOrganizationNoteAction;
 use App\Filament\Actions\EditOrganizationTagsAction;
@@ -13,7 +13,7 @@ use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
-final class ChildInfolist
+final class GuardianInfolist
 {
     public static function configure(Schema $schema): Schema
     {
@@ -24,14 +24,13 @@ final class ChildInfolist
                 AppTextEntry::firstName(),
                 AppTextEntry::middleName(),
                 AppTextEntry::lastName(),
-                AppTextEntry::nickname(),
                 AppTextEntry::birthDate(),
                 AppIconEntry::gender(),
+                AppTextEntry::email(),
+                AppTextEntry::phone(),
                 self::tagsEntry()
                     ->columnSpanFull(),
                 self::organizationNoteEntry()
-                    ->columnSpanFull(),
-                AppTextEntry::notes('notes', "Guardian's notes")
                     ->columnSpanFull(),
                 AppTextEntry::createdAt(),
                 AppTextEntry::updatedAt(),

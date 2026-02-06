@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Components\Forms;
 
+use App\Actions\SyncOrganizationTagsAction;
+use App\Models\Child;
+use App\Models\Guardian;
 use App\Models\Tag;
 use Filament\Forms\Components\TagsInput;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +35,13 @@ final class AppTagsInput
                 }
 
                 if (! method_exists($record, 'tags')) {
+                    return;
+                }
+
+                if ($record instanceof Child || $record instanceof Guardian) {
+                    $syncOrganizationTags = app(SyncOrganizationTagsAction::class);
+                    $syncOrganizationTags($record, $state ?? []);
+
                     return;
                 }
 

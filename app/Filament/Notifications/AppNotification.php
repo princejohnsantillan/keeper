@@ -27,6 +27,20 @@ final class AppNotification
             ->title('Guardians updated');
     }
 
+    public static function tagsUpdated(): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Tags updated');
+    }
+
+    public static function noteUpdated(): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Note updated');
+    }
+
     public static function checkedIn(string $childName): Notification
     {
         return Notification::make()
