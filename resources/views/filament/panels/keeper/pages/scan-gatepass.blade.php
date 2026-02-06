@@ -70,20 +70,7 @@
                     </div>
                 </x-slot>
 
-                <div class="grid gap-6 md:grid-cols-3">
-                    {{-- Activity Info --}}
-                    <div class="space-y-2">
-                        <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Activity</h3>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                            {{ $gatepass->activity->title }}
-                        </p>
-                        @if ($gatepass->activity->starts_at)
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $gatepass->activity->starts_at->format('M d, Y') }}
-                            </p>
-                        @endif
-                    </div>
-
+                <div class="grid gap-6 md:grid-cols-2">
                     {{-- Child Info --}}
                     <div class="space-y-2">
                         <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">Child</h3>
@@ -91,7 +78,7 @@
                             <img
                                 src="{{ $gatepass->child->getFirstMediaUrl('avatar') ?: \App\Avatar::generateUrl($gatepass->child->full_name) }}"
                                 alt="{{ $gatepass->child->full_name }}"
-                                class="h-12 w-12 rounded-full object-cover"
+                                class="h-24 w-24 rounded-full object-cover"
                             />
                             <div>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -121,7 +108,7 @@
                             <img
                                 src="{{ $gatepass->guardian->getFirstMediaUrl('avatar') ?: \App\Avatar::generateUrl($gatepass->guardian->full_name) }}"
                                 alt="{{ $gatepass->guardian->full_name }}"
-                                class="h-12 w-12 rounded-full object-cover"
+                                class="h-24 w-24 rounded-full object-cover"
                             />
                             <div>
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -147,12 +134,24 @@
 
                 {{-- Code Display --}}
                 <div class="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-                    <div class="flex items-center justify-between">
-                        <div>
+                    <div class="grid gap-6 md:grid-cols-2 md:items-center">
+                        <div class="space-y-1">
                             <p class="text-sm text-gray-500 dark:text-gray-400">Gatepass Code</p>
                             <p class="font-mono text-2xl font-bold tracking-wider text-gray-900 dark:text-white">
                                 {{ $gatepass->code }}
                             </p>
+                        </div>
+
+                        <div class="space-y-1 md:border-l md:border-gray-200 md:pl-6 dark:md:border-gray-700">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Activity</p>
+                            <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ $gatepass->activity->title }}
+                            </p>
+                            @if ($gatepass->activity->starts_at)
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $gatepass->activity->starts_at->format('M d, Y h:i A') }}
+                                </p>
+                            @endif
                         </div>
                     </div>
                 </div>
