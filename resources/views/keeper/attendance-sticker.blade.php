@@ -69,12 +69,13 @@
         }
 
         .child-name {
-            font-size: 25px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 600;
             display: flex;
-            align-items: baseline;
+            align-items: center;
             justify-content: center;
-            gap: 1.5mm;
+            gap: 1.4mm;
+            line-height: 1;
             min-width: 0;
         }
 
@@ -89,17 +90,22 @@
 
         .child-last-name {
             flex-shrink: 0;
-            font-weight: 500;
+            font-weight: 400;
+            line-height: 1;
             white-space: nowrap;
         }
 
         .child-checkin-code {
-            border: 0.5px solid #111827;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 0.4px solid #111827;
             color: #ffffff;
             background-color: #111827;
             font-weight: 100;
             font-size: 18px;
-            padding: 0.3mm 0.9mm;
+            line-height: 1;
+            padding: 0.2mm 0.8mm;
         }
 
         .child-tags,
