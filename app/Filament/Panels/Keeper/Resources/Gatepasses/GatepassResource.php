@@ -24,6 +24,12 @@ final class GatepassResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
+    protected static ?string $navigationLabel = 'Gate Passes';
+
+    protected static ?string $modelLabel = 'Gate Passes';
+
+    protected static ?string $pluralModelLabel = 'Gate Passes';
+
     protected static ?string $recordTitleAttribute = 'code';
 
     public static function form(Schema $schema): Schema
