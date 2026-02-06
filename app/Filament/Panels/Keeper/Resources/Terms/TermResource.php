@@ -25,13 +25,13 @@ final class TermResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Activity';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationLabel = 'Terms & Conditions';
+    protected static ?string $navigationLabel = 'Terms';
 
-    protected static ?string $modelLabel = 'Terms & Conditions';
+    protected static ?string $modelLabel = 'Terms';
 
-    protected static ?string $pluralModelLabel = 'Terms & Conditions';
+    protected static ?string $pluralModelLabel = 'Terms';
 
     public static function canAccess(): bool
     {
