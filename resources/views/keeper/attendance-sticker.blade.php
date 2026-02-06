@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print Sticker - {{ $childName }}</title>
+    <title>Print Sticker - {{ $childKnownAs }} {{ $childLastName }}</title>
     <style>
         @media print {
 
@@ -21,7 +21,7 @@
                 height: auto !important;
                 padding: 2mm 4mm !important;
                 width: 90mm !important;
-                text-align: center;
+                text-align: center !important;
             }
         }
 
@@ -32,7 +32,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background-color: #f3f4f6;
             min-height: 100vh;
             display: flex;
@@ -44,37 +44,96 @@
 
         .sticker {
             width: 100mm;
-            height: 100%;
+            height: auto;
             background: white;
             border: 2px dashed #d1d5db;
             border-radius: 4px;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             padding: 2mm 5mm;
-            text-align: left;
+            text-align: center;
+            gap: 1mm;
+        }
+
+        .sticker-row {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #111827;
+            line-height: 1.25;
+            text-align: center;
         }
 
         .child-name {
-            font-size: 16px;
+            font-size: 25px;
             font-weight: 700;
-            color: #111827;
-            line-height: 1.2;
-            flex: 1;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 1.5mm;
+            min-width: 0;
+        }
+
+        .child-known-as {
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
-        .gatepass-code {
-            font-size: 18px;
-            font-weight: 800;
-            color: #1f2937;
-            letter-spacing: 2px;
-            font-family: 'Courier New', Courier, monospace;
+        .child-last-name {
             flex-shrink: 0;
-            margin-left: 4mm;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .child-checkin-code {
+            border: 0.5px solid #111827;
+            color: #ffffff;
+            background-color: #111827;
+            font-weight: 100;
+            font-size: 18px;
+            padding: 0.3mm 0.9mm;
+        }
+
+        .child-tags,
+        .child-note {
+            font-size: 15px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .child-tags {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1mm;
+        }
+
+        .tag-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 500;
+            line-height: 1.2;
+            letter-spacing: 0.05em;
+            color: #111827;
+            background: #ffffff;
+            border-radius: 0;
+            border: 0.5px solid #111827;
+            padding: 0.8mm 1.6mm;
+        }
+
+        .child-note {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .actions {
@@ -124,8 +183,22 @@
     <div class="no-print preview-label">Sticker Preview</div>
 
     <div class="sticker">
-        <div class="child-name">{{ $childName }}</div>
-        <div class="gatepass-code">{{ $gatepassCode }}</div>
+        <div class="sticker-row child-name">
+            <span class="child-checkin-code" >{{ $checkinCode }}</span>
+            <span class="child-known-as">{{ $childKnownAs }}</span>
+            <span class="child-last-name">{{ $childLastName }}</span>
+
+        </div>
+        @if (count($childTags) > 0)
+            <div class="sticker-row child-tags">
+                @foreach ($childTags as $childTag)
+                    <span class="tag-badge">{{ $childTag }}</span>
+                @endforeach
+            </div>
+        @endif
+        @if ($guardianNote !== '')
+            <div class="sticker-row child-note">{{ $guardianNote }}</div>
+        @endif
     </div>
 
     <div class="actions no-print">
