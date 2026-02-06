@@ -72,7 +72,7 @@ final class GatepassInfolist
                 ->hiddenLabel()
                 ->collection('avatar')
                 ->circular()
-                ->size(48)
+                ->imageSize(48)
                 ->grow(false)
                 ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->child->full_name)),
             TextEntry::make('child.full_name')
@@ -87,7 +87,7 @@ final class GatepassInfolist
                 ->hiddenLabel()
                 ->collection('avatar')
                 ->circular()
-                ->size(48)
+                ->imageSize(48)
                 ->grow(false)
                 ->defaultImageUrl(fn (Gatepass $record): string => Avatar::generateUrl($record->guardian->full_name)),
             TextEntry::make('guardian.full_name')

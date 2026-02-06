@@ -17,8 +17,8 @@ use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Fieldset;
@@ -110,9 +110,9 @@ final class RegisterActivity extends Page
             ->statePath('data');
     }
 
-    private static function descriptionPlaceholder(Activity $activity): Placeholder
+    private static function descriptionPlaceholder(Activity $activity): TextEntry
     {
-        return Placeholder::make('description')
+        return TextEntry::make('description')
             ->label('Description')
             ->state(new HtmlString(
                 '<div class="fi-prose prose dark:prose-invert max-w-none">'.
@@ -134,9 +134,9 @@ final class RegisterActivity extends Page
             ]);
     }
 
-    private static function termsContentPlaceholder(Activity $activity): Placeholder
+    private static function termsContentPlaceholder(Activity $activity): TextEntry
     {
-        return Placeholder::make('terms_content')
+        return TextEntry::make('terms_content')
             ->hiddenLabel()
             ->state(new HtmlString(
                 '<div class="fi-prose prose dark:prose-invert max-w-none">'.
@@ -307,7 +307,7 @@ final class RegisterActivity extends Page
                 ->icon('entypo-lock')
                 ->compact()
                 ->schema([
-                    Placeholder::make('no_registrations')
+                    TextEntry::make('no_registrations')
                         ->hiddenLabel()
                         ->state('No children registered yet.'),
                 ]);
@@ -326,7 +326,7 @@ final class RegisterActivity extends Page
             ->icon('entypo-lock')
             ->compact()
             ->schema([
-                Placeholder::make('registrations')
+                TextEntry::make('registrations')
                     ->hiddenLabel()
                     ->state(new HtmlString('<div class="divide-y divide-gray-200 dark:divide-gray-700">'.$content.'</div>'))
                     ->html(),

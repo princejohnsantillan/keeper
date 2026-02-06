@@ -25,7 +25,7 @@ final class ViewActivityAction
             ->slideOver(false)
             ->schema([
                 AppSpatieMediaLibraryImageEntry::thumbnail()
-                    ->height(300)
+                    ->imageHeight(300)
                     ->extraImgAttributes(['class' => 'rounded-xl object-cover w-full'])
                     ->columnSpanFull(),
 
