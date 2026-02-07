@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0aab0983e5218b2e5ef80fc9238ec1c",
+    "content-hash": "5a325c722580ed5ad9b29f32f41677b3",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -9592,28 +9592,6 @@
             "time": "2025-08-14T07:29:31+00:00"
         },
         {
-            "name": "filament/blueprint",
-            "version": "v2.1.0",
-            "dist": {
-                "type": "zip",
-                "url": "https://packages.filamentphp.com/composer/10/473/download"
-            },
-            "require": {
-                "filament/support": "^5.0",
-                "laravel/boost": "^1.8|^2.0"
-            },
-            "type": "library",
-            "license": [
-                "proprietary"
-            ],
-            "description": "Guidelines for AI agents to produce detailed Filament implementation plans.",
-            "homepage": "https://github.com/filamentphp/filament",
-            "support": {
-                "issues": "https://github.com/filamentphp/filament/issues",
-                "source": "https://github.com/filamentphp/filament"
-            }
-        },
-        {
             "name": "filp/whoops",
             "version": "2.18.4",
             "source": {
@@ -13186,5 +13164,5 @@
         "php": "^8.3"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
