@@ -57,7 +57,7 @@ final class ListGuardians extends ListRecords
                         $createAction->halt(true);
                     }
 
-                    return $createGuardian($data, $syncData);
+                    return $createGuardian($data, $syncData, AuthUser::user());
                 }),
         ];
     }

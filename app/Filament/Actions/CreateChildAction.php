@@ -23,7 +23,7 @@ final class CreateChildAction
             ->slideOver()
             ->fillForm(function (): array {
                 $guardians = Guardian::query()
-                    ->where('owner_id', AuthUser::userId())
+                    ->ownedBy(AuthUser::user())
                     ->get();
 
                 return [
@@ -60,7 +60,7 @@ final class CreateChildAction
                     $createAction->halt(true);
                 }
 
-                $child = $createChildBusinessAction($data);
+                $child = $createChildBusinessAction($data, AuthUser::user());
 
                 $syncGuardians($child, $syncData);
 

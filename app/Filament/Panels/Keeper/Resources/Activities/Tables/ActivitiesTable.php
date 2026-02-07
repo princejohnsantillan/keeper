@@ -32,8 +32,7 @@ final class ActivitiesTable
                 //
             ])
             ->recordActions([
-                WalkInAction::make()
-                    ->hidden(),
+                WalkInAction::make(),
                 ViewAttendanceAction::make(),
                 EditAction::make()->slideOver()
                     ->hiddenLabel()

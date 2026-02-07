@@ -40,9 +40,9 @@ final class GatepassService implements GatepassServiceInterface
 
     public function sendCreatedEmail(Gatepass $gatepass): void
     {
-        $email = $gatepass->guardian->user?->email;
+        $email = $gatepass->guardian->user?->email ?? $gatepass->guardian->email;
 
-        if ($email === null) {
+        if ($email === null || trim($email) === '') {
             return;
         }
 

@@ -21,7 +21,7 @@ final class EditChildAction
             ->slideOver()
             ->mutateRecordDataUsing(function (array $data, Child $record): array {
                 $guardians = Guardian::query()
-                    ->where('owner_id', AuthUser::userId())
+                    ->ownedBy(AuthUser::user())
                     ->get();
 
                 $relationshipsByGuardianId = Relationship::query()

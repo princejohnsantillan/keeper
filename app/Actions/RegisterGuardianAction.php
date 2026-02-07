@@ -9,6 +9,10 @@ use App\Models\User;
 
 final class RegisterGuardianAction
 {
+    public function __construct(
+        private CreateOwnershipAction $createOwnershipAction,
+    ) {}
+
     /**
      * Register a new guardian with their associated user account.
      *
@@ -30,8 +34,9 @@ final class RegisterGuardianAction
             'gender' => $data['gender'] ?? null,
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
-            'owner_id' => $user->id,
         ]);
+
+        ($this->createOwnershipAction)($guardian, $user);
 
         $user->update(['guardian_id' => $guardian->id]);
 
