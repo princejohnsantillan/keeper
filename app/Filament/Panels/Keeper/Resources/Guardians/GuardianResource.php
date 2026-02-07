@@ -60,7 +60,7 @@ final class GuardianResource extends Resource
                         $activityQuery->where('organization_id', $organization->id);
                     });
             })
-            ->with('children');
+            ->with(['children', 'ownerships']);
     }
 
     public static function form(Schema $schema): Schema

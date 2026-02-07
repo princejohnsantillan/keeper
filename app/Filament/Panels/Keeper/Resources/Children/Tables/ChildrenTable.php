@@ -6,11 +6,13 @@ namespace App\Filament\Panels\Keeper\Resources\Children\Tables;
 
 use App\Filament\Actions\EditOrganizationNoteAction;
 use App\Filament\Actions\EditOrganizationTagsAction;
+use App\Filament\Actions\KeeperEditChildAction;
 use App\Filament\Components\Tables\AppIconColumn;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
 use App\Filament\Components\Tables\AppTagsColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
@@ -34,8 +36,14 @@ final class ChildrenTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                self::getEditAction(),
                 self::annotateActionGroup(),
             ]);
+    }
+
+    public static function getEditAction(): EditAction
+    {
+        return KeeperEditChildAction::make();
     }
 
     private static function annotateActionGroup(): ActionGroup

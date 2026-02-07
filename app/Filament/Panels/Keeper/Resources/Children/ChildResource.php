@@ -60,7 +60,7 @@ final class ChildResource extends Resource
                         $activityQuery->where('organization_id', $organization->id);
                     });
             })
-            ->with('guardians');
+            ->with(['guardians', 'ownerships']);
     }
 
     public static function form(Schema $schema): Schema

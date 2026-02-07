@@ -6,11 +6,13 @@ namespace App\Filament\Panels\Keeper\Resources\Guardians\Tables;
 
 use App\Filament\Actions\EditOrganizationNoteAction;
 use App\Filament\Actions\EditOrganizationTagsAction;
+use App\Filament\Actions\KeeperEditGuardianAction;
 use App\Filament\Components\Tables\AppIconColumn;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
 use App\Filament\Components\Tables\AppTagsColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -36,9 +38,15 @@ final class GuardiansTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                self::getEditAction(),
                 self::annotateActionGroup(),
             ])
             ->toolbarActions([]);
+    }
+
+    public static function getEditAction(): EditAction
+    {
+        return KeeperEditGuardianAction::make();
     }
 
     private static function birthDateColumn(): TextColumn
