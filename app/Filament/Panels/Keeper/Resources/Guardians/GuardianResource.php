@@ -51,7 +51,8 @@ final class GuardianResource extends Resource
         return parent::getEloquentQuery()
             ->whereHas('gatepasses.activity', function (Builder $query) use ($organization): void {
                 $query->where('organization_id', $organization?->id);
-            });
+            })
+            ->with('children');
     }
 
     public static function form(Schema $schema): Schema
