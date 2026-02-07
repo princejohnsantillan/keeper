@@ -39,7 +39,7 @@ final class ChildResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('owner_id', AuthUser::user()->id)
+            ->ownedBy(AuthUser::user())
             ->with('guardians');
     }
 

@@ -7,11 +7,11 @@ namespace App\Models;
 use App\Enums\Gender;
 use App\Models\Concerns\HasOrganizationNote;
 use App\Models\Concerns\HasOrganizationTags;
+use App\Models\Concerns\HasOwnership;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,6 +29,7 @@ final class Guardian extends Model implements HasMedia
 
     use HasOrganizationNote;
     use HasOrganizationTags;
+    use HasOwnership;
     use HasUlids;
     use InteractsWithMedia;
     use SoftDeletes;
@@ -55,14 +56,6 @@ final class Guardian extends Model implements HasMedia
     public function user(): HasOne
     {
         return $this->hasOne(User::class);
-    }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'owner_id');
     }
 
     /**

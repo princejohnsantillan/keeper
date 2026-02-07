@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
-use App\AuthUser;
 use App\Models\Child;
+use App\Models\Organization;
+use App\Models\User;
 
 final class CreateChildAction
 {
+    public function __construct(
+        private CreateOwnershipAction $createOwnershipAction,
+    ) {}
+
     /**
-     * Create a new child with owner_id from the current authenticated user.
-     *
      * @param  array<string, mixed>  $childData
      */
-    public function __invoke(array $childData): Child
+    public function __invoke(array $childData, User|Organization $owner): Child
     {
-        return Child::query()->create([
-            ...$childData,
-            'owner_id' => AuthUser::userId(),
-        ]);
+        $child = Child::query()->create($childData);
+
+        ($this->createOwnershipAction)($child, $owner);
+
+        return $child;
     }
 }

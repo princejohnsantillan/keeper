@@ -39,7 +39,7 @@ final class GuardianResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('owner_id', AuthUser::user()->id)
+            ->ownedBy(AuthUser::user())
             ->with('children');
     }
 

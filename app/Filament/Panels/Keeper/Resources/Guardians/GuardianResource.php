@@ -48,9 +48,17 @@ final class GuardianResource extends Resource
     {
         $organization = Subdomain::organization();
 
+        if ($organization === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
         return parent::getEloquentQuery()
-            ->whereHas('gatepasses.activity', function (Builder $query) use ($organization): void {
-                $query->where('organization_id', $organization?->id);
+            ->where(function (Builder $query) use ($organization): void {
+                $query
+                    ->ownedBy($organization)
+                    ->orWhereHas('gatepasses.activity', function (Builder $activityQuery) use ($organization): void {
+                        $activityQuery->where('organization_id', $organization->id);
+                    });
             })
             ->with('children');
     }
