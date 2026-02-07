@@ -9,10 +9,14 @@ use App\Filament\Actions\EditOrganizationTagsAction;
 use App\Filament\Components\Infolists\AppIconEntry;
 use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
 use App\Filament\Components\Infolists\AppTextEntry;
+use App\Models\Guardian;
 use Filament\Actions\Action;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 
 final class ChildInfolist
 {
@@ -30,10 +34,76 @@ final class ChildInfolist
                 AppIconEntry::gender(),
                 AppTextEntry::notes('notes', "Guardian's notes")
                     ->columnSpanFull(),
+                self::guardiansSection(),
                 AppTextEntry::createdAt(),
                 AppTextEntry::updatedAt(),
                 self::organizationSection(),
             ]);
+    }
+
+    private static function guardiansSection(): Section
+    {
+        return Section::make('Guardians')
+            ->icon('entypo-shield')
+            ->compact()
+            ->extraAttributes(['class' => 'max-w-3xl'])
+            ->collapsible()
+            ->columnSpanFull()
+            ->schema([
+                self::guardiansRepeatable(),
+            ]);
+    }
+
+    private static function guardiansRepeatable(): RepeatableEntry
+    {
+        return RepeatableEntry::make('guardians')
+            ->hiddenLabel()
+            ->contained(false)
+            ->schema([
+                Flex::make([
+                    self::guardianNameEntry(),
+                    self::relationshipEntry(),
+                    self::guardianPhoneEntry(),
+                    self::guardianEmailEntry(),
+                ])->from('md'),
+            ]);
+    }
+
+    private static function guardianNameEntry(): TextEntry
+    {
+        return TextEntry::make('full_name')
+            ->hiddenLabel()
+            ->weight(FontWeight::Medium)
+            ->icon(fn (Guardian $record): string => $record->gender->getIcon())
+            ->iconColor(fn (Guardian $record): array => $record->gender->getColor())
+            ->grow(false);
+    }
+
+    private static function relationshipEntry(): TextEntry
+    {
+        return TextEntry::make('pivot.relationship')
+            ->hiddenLabel()
+            ->badge()
+            ->grow(false);
+    }
+
+    private static function guardianPhoneEntry(): TextEntry
+    {
+        return TextEntry::make('phone')
+            ->hiddenLabel()
+            ->icon('heroicon-o-phone')
+            ->copyable()
+            ->placeholder('—')
+            ->grow(false);
+    }
+
+    private static function guardianEmailEntry(): TextEntry
+    {
+        return TextEntry::make('email')
+            ->hiddenLabel()
+            ->icon('heroicon-o-envelope')
+            ->copyable()
+            ->placeholder('—');
     }
 
     private static function organizationSection(): Section
