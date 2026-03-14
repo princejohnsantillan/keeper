@@ -1,1 +1,0 @@
-spawn GOOGLE_GENAI_USE_VERTEXAI=true GOOGLE_CLOUD_PROJECT=betterworld-general /opt/homebrew/bin/gemini ENOENT
