@@ -1,0 +1,2421 @@
+2026-03-14T14:55:33.869046Z ERROR codex_core::models_manager::manager: failed to refresh available models: timeout waiting for child process to exit
+OpenAI Codex v0.114.0 (research preview)
+--------
+workdir: /Users/princejohnsantillan/Herd/keeper
+model: gpt-5.3-codex
+provider: openai
+approval: never
+sandbox: read-only
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019cecd8-71ef-7e03-a861-c7382ab0f11e
+--------
+user
+Read the file at /Users/princejohnsantillan/Herd/keeper/agents/counselors/1773500122-review-request-question-create-a-plan-t/prompt.md and follow the instructions within it.
+mcp: laravel-boost starting
+mcp: herd starting
+mcp: herd ready
+mcp: laravel-boost ready
+mcp startup: ready: herd, laravel-boost
+codex
+I’ll open that prompt file first, and in parallel I’ll pull application context so I can follow its instructions accurately.
+exec
+/bin/zsh -lc 'cat /Users/princejohnsantillan/Herd/keeper/agents/counselors/1773500122-review-request-question-create-a-plan-t/prompt.md' in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+# Second Opinion Request
+
+## Question
+# Review Request
+
+## Question
+Create a plan to add a way for keepers to edit information of a child or guardian only if they are the owner of those records, this is defined by the `ownership` table. When editing a guardian make it in a way that they can manage related children as well. When editing a child make it in a way that they can manage related guardians as well.
+
+## Context
+
+### Ownership System
+The ownership system uses a polymorphic `ownership` table connecting owners (User or Organization) to models (Child, Guardian).
+
+Key files:
+- @app/Models/Ownership.php - Polymorphic pivot model with `owner()` and `model()` MorphTo relationships
+- @app/Models/Concerns/HasOwnership.php - Trait providing `ownerships()` MorphMany and `scopeOwnedBy(Model $owner)` scope
+- @database/migrations/2026_02_07_003800_create_ownership_table.php - Table: owner_type, owner_id, model_type, model_id (unique constraint)
+
+### Models
+- @app/Models/Child.php - Uses HasOwnership trait. Has `guardians()` BelongsToMany via `relationships` pivot
+tool laravel-boost.application-info({})
+laravel-boost.application-info({}) success in 458ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"php_version\":\"8.4.19\",\"laravel_version\":\"12.54.1\",\"database_engine\":\"pgsql\",\"packages\":[{\"roster_name\":\"FILAMENT\",\"version\":\"5.3.5\",\"package_name\":\"filament/filament\"},{\"roster_name\":\"LARAVEL\",\"version\":\"12.54.1\",\"package_name\":\"laravel/framework\"},{\"roster_name\":\"HORIZON\",\"version\":\"5.45.3\",\"package_name\":\"laravel/horizon\"},{\"roster_name\":\"NIGHTWATCH\",\"version\":\"1.24.3\",\"package_name\":\"laravel/nightwatch\"},{\"roster_name\":\"PROMPTS\",\"version\":\"0.3.14\",\"package_name\":\"laravel/prompts\"},{\"roster_name\":\"LIVEWIRE\",\"version\":\"4.2.1\",\"package_name\":\"livewire/livewire\"},{\"roster_name\":\"LARASTAN\",\"version\":\"3.9.3\",\"package_name\":\"larastan/larastan\"},{\"roster_name\":\"BOOST\",\"version\":\"2.3.1\",\"package_name\":\"laravel/boost\"},{\"roster_name\":\"MCP\",\"version\":\"0.6.2\",\"package_name\":\"laravel/mcp\"},{\"roster_name\":\"PAIL\",\"version\":\"1.2.6\",\"package_name\":\"laravel/pail\"},{\"roster_name\":\"PINT\",\"version\":\"1.29.0\",\"package_name\":\"laravel/pint\"},{\"roster_name\":\"PEST\",\"version\":\"4.4.2\",\"package_name\":\"pestphp/pest\"},{\"roster_name\":\"PHPUNIT\",\"version\":\"12.5.12\",\"package_name\":\"phpunit/phpunit\"},{\"roster_name\":\"TAILWINDCSS\",\"version\":\"4.1.17\",\"package_name\":\"tailwindcss\"}],\"models\":[\"App\\\\Models\\\\Organization\"]}"
+    }
+  ],
+  "isError": false
+}
+codex
+I’ve loaded the request prompt and will now inspect the referenced models, resources, forms, and actions to ground the plan in actual code paths.
+exec
+/bin/zsh -lc "sed -n '1,220p' app/Models/Ownership.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+/**
+ * @mixin IdeHelperOwnership
+ */
+final class Ownership extends Model
+{
+    /** @use HasFactory<\Database\Factories\OwnershipFactory> */
+    use HasFactory;
+
+    use HasUlids;
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Models/Concerns/HasOwnership.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models\Concerns;
+
+use App\Models\Ownership;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+trait HasOwnership
+{
+    /**
+     * @return MorphMany<Ownership, $this>
+     */
+    public function ownerships(): MorphMany
+    {
+        return $this->morphMany(Ownership::class, 'model');
+    }
+exec
+/bin/zsh -lc 'ls -la' in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+total 15680
+drwxr-xr-x@ 48 princejohnsantillan  staff     1536 Mar 14 22:13 .
+drwxr-xr-x@ 27 princejohnsantillan  staff      864 Mar 12 21:13 ..
+drwxr-xr-x@  3 princejohnsantillan  staff       96 Feb  6 10:51 .agents
+drwxr-xr-x@  5 princejohnsantillan  staff      160 Feb  6 18:58 .ai
+drwxr-xr-x@  3 princejohnsantillan  staff       96 Mar 14 21:38 .claude
+drwxr-xr-x@  4 princejohnsantillan  staff      128 Feb 13 19:00 .codex
+drwxr-xr-x@  5 princejohnsantillan  staff      160 Jan 31 14:57 .cursor
+-rw-r--r--@  1 princejohnsantillan  staff      252 Nov  7 01:42 .editorconfig
+-rw-r--r--@  1 princejohnsantillan  staff     1232 Feb  6 11:21 .env
+-rw-r--r--@  1 princejohnsantillan  staff     1123 Dec 28 07:33 .env.example
+drwxr-xr-x@  3 princejohnsantillan  staff       96 Mar 14 21:38 .gemini
+drwxr-xr-x  19 princejohnsantillan  staff      608 Mar 14 22:46 .git
+-rw-r--r--@  1 princejohnsantillan  staff      186 Nov  7 01:42 .gitattributes
+-rw-r--r--@  1 princejohnsantillan  staff      403 Feb  6 10:52 .gitignore
+drwxr-xr-x@ 14 princejohnsantillan  staff      448 Mar  9 20:10 .idea
+-rw-r--r--@  1 princejohnsantillan  staff      462 Mar 14 21:38 .mcp.json
+-rw-r--r--   1 princejohnsantillan  staff  6089776 Feb  5 19:10 .phpstorm.meta.php
+-rw-r--r--@  1 princejohnsantillan  staff    41323 Mar 14 21:38 AGENTS.md
+-rw-r--r--@  1 princejohnsantillan  staff    41323 Mar 14 21:38 CLAUDE.md
+exec
+/bin/zsh -lc 'rg --files app/Models app/Filament app/Actions app/Providers database/migrations | head -n 200' in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+app/Actions/UpdateChildAction.php
+app/Actions/CreateGuardianAction.php
+app/Actions/InviteKeeperAction.php
+app/Actions/ChangeKeeperRoleAction.php
+app/Actions/CancelKeeperInvitationAction.php
+app/Actions/RegisterGuardianAction.php
+app/Actions/ArchiveTermAction.php
+app/Actions/GetCurrentKeeperAction.php
+app/Actions/UpdateGuardianAction.php
+app/Actions/ArchiveMessageAction.php
+app/Actions/SyncOrganizationTagsAction.php
+app/Actions/UpsertOrganizationNoteAction.php
+app/Actions/WalkInRegistrationAction.php
+app/Actions/CreateOwnershipAction.php
+app/Actions/SyncChildGuardiansAction.php
+app/Actions/AcceptKeeperInvitationAction.php
+app/Actions/CreateChildAction.php
+app/Actions/DetachChildFromGuardianAction.php
+app/Actions/DetachGuardianFromChildrenAction.php
+app/Filament/Notifications/AppNotification.php
+codex
+I confirmed the ownership trait and pivot model; next I’m reading the keeper/user/child/guardian models plus ownership migrations to validate the exact ownership semantics.
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Models/Child.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,260p' app/Models/User.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,260p' app/Models/Keeper.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Enums\Gender;
+use App\Models\Concerns\HasOrganizationNote;
+use App\Models\Concerns\HasOrganizationTags;
+use App\Models\Concerns\HasOwnership;
+use Database\Factories\ChildFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Facades\Subdomain;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+/**
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Enums\KeeperRole;
+use App\Enums\KeeperStatus;
+use Database\Factories\KeeperFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * @mixin IdeHelperKeeper
+ */
+final class Keeper extends Model
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Models/Guardian.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Enums\Gender;
+use App\Models\Concerns\HasOrganizationNote;
+use App\Models\Concerns\HasOrganizationTags;
+use App\Models\Concerns\HasOwnership;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+codex
+Model review is in; I’ll now inspect `AuthUser`, ownership migrations, and relationship model details since those directly affect authorization and sync behavior.
+exec
+/bin/zsh -lc "sed -n '1,260p' app/AuthUser.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use App\Models\Guardian;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+final class AuthUser
+{
+    public static function user(): User
+    {
+        $user = Auth::user();
+
+        if ($user === null) {
+            abort(403);
+        }
+
+exec
+/bin/zsh -lc "sed -n '1,260p' database/migrations/2026_02_07_003800_create_ownership_table.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,260p' app/Models/Relationship.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('ownership', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->ulidMorphs('owner');
+            $table->ulidMorphs('model');
+            $table->timestamps();
+        });
+    }
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Enums\Relationship as RelationshipEnum;
+use Database\Factories\RelationshipFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+/**
+ * @mixin IdeHelperRelationship
+ */
+final class Relationship extends Pivot
+{
+    /** @use HasFactory<RelationshipFactory> */
+    use HasFactory;
+exec
+/bin/zsh -lc "sed -n '1,300p' database/migrations/2026_02_07_021333_migrate_child_and_guardian_owner_ids_to_ownership_table.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+use App\Models\Child;
+use App\Models\Guardian;
+use App\Models\User;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+codex
+Ownership migration confirms polymorphic owner support with uniqueness. I’m now checking Keeper panel resource/page wiring to see where edit actions can be safely added.
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Filament/Panels/Keeper/Resources/Children/ChildResource.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Children;
+
+use App\Actions\GetCurrentKeeperAction;
+use App\Facades\Subdomain;
+use App\Filament\Panels\Keeper\Resources\Children\Pages\ListChildren;
+use App\Filament\Panels\Keeper\Resources\Children\Pages\ViewChild;
+use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildForm;
+use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildInfolist;
+use App\Filament\Panels\Keeper\Resources\Children\Tables\ChildrenTable;
+use App\Models\Child;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
+exec
+/bin/zsh -lc "sed -n '1,220p' app/Filament/Panels/Keeper/Resources/Children/Pages/ViewChild.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Children\Pages;
+
+use App\Filament\Panels\Keeper\Resources\Children\ChildResource;
+use Filament\Resources\Pages\ViewRecord;
+
+final class ViewChild extends ViewRecord
+{
+    protected static string $resource = ChildResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [];
+    }
+}
+exec
+/bin/zsh -lc "sed -n '1,280p' app/Filament/Panels/Keeper/Resources/Children/Schemas/ChildInfolist.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Children\Schemas;
+
+use App\Filament\Actions\EditOrganizationNoteAction;
+use App\Filament\Actions\EditOrganizationTagsAction;
+use App\Filament\Components\Infolists\AppIconEntry;
+use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
+use App\Filament\Components\Infolists\AppTextEntry;
+use App\Models\Guardian;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
+
+exec
+/bin/zsh -lc "sed -n '1,280p' app/Filament/Panels/Keeper/Resources/Children/Schemas/ChildForm.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Children\Schemas;
+
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSelect;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppTagsInput;
+use App\Filament\Components\Forms\AppTextarea;
+use App\Filament\Components\Forms\AppTextInput;
+use Filament\Schemas\Schema;
+
+final class ChildForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+exec
+/bin/zsh -lc "sed -n '1,300p' app/Filament/Panels/Keeper/Resources/Guardians/Schemas/GuardianForm.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,280p' app/Filament/Panels/Keeper/Resources/Guardians/GuardianResource.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
+
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSelect;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppTagsInput;
+use App\Filament\Components\Forms\AppTextInput;
+use Filament\Schemas\Schema;
+
+final class GuardianForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                AppSpatieMediaLibraryFileUpload::avatar()
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Guardians;
+
+use App\Actions\GetCurrentKeeperAction;
+use App\Facades\Subdomain;
+use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
+use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ViewGuardian;
+use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianForm;
+use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianInfolist;
+use App\Filament\Panels\Keeper\Resources\Guardians\Tables\GuardiansTable;
+use App\Models\Guardian;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use UnitEnum;
+exec
+/bin/zsh -lc "sed -n '1,220p' app/Filament/Panels/Keeper/Resources/Guardians/Pages/ViewGuardian.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Guardians\Pages;
+
+use App\Filament\Panels\Keeper\Resources\Guardians\GuardianResource;
+use Filament\Resources\Pages\ViewRecord;
+
+final class ViewGuardian extends ViewRecord
+{
+    protected static string $resource = GuardianResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [];
+    }
+}
+exec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Panels/Keeper/Resources/Guardians/Schemas/GuardianInfolist.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
+
+use App\Enums\Relationship as RelationshipEnum;
+use App\Filament\Actions\EditOrganizationNoteAction;
+use App\Filament\Actions\EditOrganizationTagsAction;
+use App\Filament\Components\Infolists\AppIconEntry;
+use App\Filament\Components\Infolists\AppSpatieMediaLibraryImageEntry;
+use App\Filament\Components\Infolists\AppTextEntry;
+use App\Models\Child;
+use Carbon\CarbonImmutable;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Flex;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+codex
+Keeper pages are currently view-only as expected. I’m now comparing Guardian panel implementations, especially their edit actions and relationship repeaters, so we can reuse the same patterns.
+exec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Panels/Guardian/Resources/Guardians/Schemas/GuardianForm.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Panels/Guardian/Resources/Children/Schemas/ChildForm.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,260p' app/Filament/Panels/Guardian/Resources/Children/ChildResource.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Guardians\Schemas;
+
+use App\Enums\Relationship;
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppTextInput;
+use App\Filament\Components\Forms\AppToggleButtons;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
+
+final class GuardianForm
+{
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Children;
+
+use App\AuthUser;
+use App\Filament\Panels\Guardian\Resources\Children\Pages\ListChildren;
+use App\Filament\Panels\Guardian\Resources\Children\Pages\ViewChild;
+use App\Filament\Panels\Guardian\Resources\Children\Schemas\ChildForm;
+use App\Filament\Panels\Guardian\Resources\Children\Schemas\ChildInfolist;
+use App\Filament\Panels\Guardian\Resources\Children\Tables\ChildrenTable;
+use App\Models\Child;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Children\Schemas;
+
+use App\Enums\Relationship;
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+use App\Filament\Components\Forms\AppTextarea;
+use App\Filament\Components\Forms\AppTextInput;
+use App\Filament\Components\Forms\AppToggleButtons;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Schema;
+
+final class ChildForm
+exec
+/bin/zsh -lc "sed -n '1,240p' app/Filament/Panels/Guardian/Resources/Children/Pages/ViewChild.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Children\Pages;
+
+use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
+use App\Filament\Panels\Guardian\Resources\Children\Tables\ChildrenTable;
+use App\Models\Child;
+use Filament\Resources\Pages\ViewRecord;
+
+final class ViewChild extends ViewRecord
+{
+    protected static string $resource = ChildResource::class;
+
+    public function getHeading(): string
+    {
+        /** @var Child $record */
+        $record = $this->getRecord();
+
+exec
+/bin/zsh -lc "sed -n '1,240p' app/Filament/Panels/Guardian/Resources/Guardians/GuardianResource.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,360p' app/Filament/Panels/Guardian/Resources/Guardians/Tables/GuardiansTable.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,240p' app/Filament/Panels/Guardian/Resources/Guardians/Pages/ViewGuardian.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Guardians\Pages;
+
+use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
+use App\Filament\Panels\Guardian\Resources\Guardians\Tables\GuardiansTable;
+use App\Models\Guardian;
+use Filament\Resources\Pages\ViewRecord;
+
+final class ViewGuardian extends ViewRecord
+{
+    protected static string $resource = GuardianResource::class;
+
+    public function getHeading(): string
+    {
+        /** @var Guardian $record */
+        $record = $this->getRecord();
+
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Guardians;
+
+use App\AuthUser;
+use App\Filament\Panels\Guardian\Resources\Guardians\Pages\ListGuardians;
+use App\Filament\Panels\Guardian\Resources\Guardians\Pages\ViewGuardian;
+use App\Filament\Panels\Guardian\Resources\Guardians\Schemas\GuardianForm;
+use App\Filament\Panels\Guardian\Resources\Guardians\Schemas\GuardianInfolist;
+use App\Filament\Panels\Guardian\Resources\Guardians\Tables\GuardiansTable;
+use App\Models\Guardian;
+use BackedEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use UnitEnum;
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Guardians\Tables;
+
+use App\Filament\Actions\DeleteGuardianAction;
+use App\Filament\Actions\EditGuardianAction;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
+use App\Models\Guardian;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+exec
+/bin/zsh -lc "sed -n '1,340p' app/Filament/Panels/Guardian/Resources/Children/Tables/ChildrenTable.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Children\Tables;
+
+use App\Filament\Actions\DeleteChildAction;
+use App\Filament\Actions\EditChildAction;
+use App\Filament\Actions\UpdateChildGuardiansAction;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
+use App\Models\Child;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+codex
+I confirmed Guardian panel uses shared `EditChildAction`/`EditGuardianAction`; next I’m validating those actions and business actions to see if ownership checks already exist or need a dedicated layer.
+exec
+/bin/zsh -lc "sed -n '1,360p' app/Filament/Actions/EditGuardianAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Actions/UpdateChildGuardiansAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Actions/CreateChildAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Actions;
+
+use App\Actions\UpdateGuardianAction;
+use App\AuthUser;
+use App\Models\Child;
+use App\Models\Guardian;
+use App\Models\Relationship;
+use Filament\Actions\EditAction;
+
+final class EditGuardianAction
+{
+    public static function make(?string $name = 'edit'): EditAction
+    {
+        return EditAction::make($name)
+            ->slideOver()
+            ->mutateRecordDataUsing(function (array $data, Guardian $record): array {
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Actions;
+
+use App\Actions\SyncChildGuardiansAction;
+use App\AuthUser;
+use App\Enums\Relationship as RelationshipEnum;
+use App\Filament\Notifications\AppNotification;
+use App\Models\Child;
+use App\Models\Guardian;
+use App\Models\Relationship;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Database\Eloquent\Builder;
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Actions;
+
+use App\Actions\CreateChildAction as CreateChildBusinessAction;
+use App\Actions\SyncChildGuardiansAction;
+use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
+use App\Models\Child;
+use App\Models\Guardian;
+use Filament\Actions\CreateAction;
+
+final class CreateChildAction
+{
+    public static function make(?string $name = null, string $label = 'Add child'): CreateAction
+    {
+        return CreateAction::make($name)->label($label)
+            ->modalHeading('Add Child')
+exec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Actions/EditChildAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Actions;
+
+use App\Actions\SyncChildGuardiansAction;
+use App\Actions\UpdateChildAction;
+use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
+use App\Models\Child;
+use App\Models\Guardian;
+use App\Models\Relationship;
+use Filament\Actions\EditAction;
+
+final class EditChildAction
+{
+    public static function make(?string $name = 'edit'): EditAction
+    {
+        return EditAction::make($name)
+exec
+/bin/zsh -lc "sed -n '1,280p' app/Actions/CreateOwnershipAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,300p' app/Actions/SyncChildGuardiansAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,300p' app/Actions/UpdateChildAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Child;
+
+final class SyncChildGuardiansAction
+{
+    /**
+     * Sync the guardians of a child with the given sync data.
+     *
+     * @param  array<int|string, array{relationship: string}>  $syncData  Guardian IDs mapped to pivot data
+     */
+    public function __invoke(Child $child, array $syncData): void
+    {
+        $child->guardians()->sync($syncData);
+    }
+}
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Child;
+
+final class UpdateChildAction
+{
+    /**
+     * Update a child's data.
+     *
+     * @param  array<string, mixed>  $childData
+     */
+    public function __invoke(Child $child, array $childData): Child
+    {
+        $child->update($childData);
+
+        return $child;
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Ownership;
+use Illuminate\Database\Eloquent\Model;
+
+final class CreateOwnershipAction
+{
+    /**
+     * Ensure an ownership record exists for this model-owner pair.
+     */
+    public function __invoke(Model $model, Model $owner): void
+    {
+        Ownership::query()->updateOrCreate([
+            'owner_type' => $owner->getMorphClass(),
+            'owner_id' => (string) $owner->getKey(),
+            'model_type' => $model->getMorphClass(),
+exec
+/bin/zsh -lc "sed -n '1,360p' app/Actions/UpdateGuardianAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Guardian;
+
+final class UpdateGuardianAction
+{
+    /**
+     * Update a guardian and optionally sync children relationships.
+     *
+     * @param  array<string, mixed>  $guardianData
+     * @param  array<string, array{relationship: string}>|null  $childrenSyncData  Child IDs (ULIDs) mapped to pivot data
+     */
+    public function __invoke(
+        Guardian $guardian,
+        array $guardianData,
+        ?array $childrenSyncData = null,
+exec
+/bin/zsh -lc "sed -n '1,300p' app/Providers/ServiceServiceProvider.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,340p' app/Actions/CreateGuardianAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,280p' app/Actions/GetCurrentKeeperAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,340p' app/Actions/CreateChildAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers;
+
+use App\Services\AttendanceService;
+use App\Services\Contracts\AttendanceServiceInterface;
+use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\KeeperInvitationServiceInterface;
+use App\Services\Contracts\SubdomainInterface;
+use App\Services\Contracts\TermAcceptanceServiceInterface;
+use App\Services\GatepassService;
+use App\Services\KeeperInvitationService;
+use App\Services\SubdomainService;
+use App\Services\TermAcceptanceService;
+use Illuminate\Support\ServiceProvider;
+
+/**
+ * Binds service interfaces to their implementations.
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Guardian;
+use App\Models\Organization;
+use App\Models\User;
+
+final class CreateGuardianAction
+{
+    public function __construct(
+        private CreateOwnershipAction $createOwnershipAction,
+    ) {}
+
+    /**
+     * Create a guardian and sync their children relationships.
+     *
+     * @param  array<string, mixed>  $guardianData
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Facades\Subdomain;
+use App\Models\Keeper;
+use Illuminate\Support\Facades\Auth;
+
+final class GetCurrentKeeperAction
+{
+    public function __invoke(): Keeper
+    {
+        $organization = Subdomain::organization();
+        $userId = Auth::id();
+
+        $keeper = Keeper::query()
+            ->where('organization_id', $organization?->id)
+            ->where('user_id', $userId)
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Child;
+use App\Models\Organization;
+use App\Models\User;
+
+final class CreateChildAction
+{
+    public function __construct(
+        private CreateOwnershipAction $createOwnershipAction,
+    ) {}
+
+    /**
+     * @param  array<string, mixed>  $childData
+     */
+    public function __invoke(array $childData, User|Organization $owner): Child
+codex
+Business actions currently do no authorization, so ownership gating will need to happen above them. I’m checking existing action visibility patterns (like delete) to mirror the panel-specific behavior cleanly.
+exec
+/bin/zsh -lc "sed -n '1,340p' app/Filament/Actions/DeleteGuardianAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Actions/DeleteChildAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Actions;
+
+use App\Actions\DetachGuardianFromChildrenAction;
+use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
+use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
+use App\Models\Guardian;
+use Filament\Actions\DeleteAction;
+
+final class DeleteGuardianAction
+{
+    public static function make(?string $name = 'delete'): DeleteAction
+    {
+        return DeleteAction::make($name)
+            ->using(function (Guardian $record, DetachGuardianFromChildrenAction $detachGuardian): bool {
+                $childIds = AuthUser::guardian()->children()->pluck('children.id');
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Actions;
+
+use App\Actions\DetachChildFromGuardianAction;
+use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
+use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
+use App\Models\Child;
+use Filament\Actions\DeleteAction;
+
+final class DeleteChildAction
+{
+    public static function make(?string $name = 'delete'): DeleteAction
+    {
+        return DeleteAction::make($name)
+            ->using(function (Child $record, DetachChildFromGuardianAction $detachChild): bool {
+                $guardian = AuthUser::guardian();
+exec
+/bin/zsh -lc "sed -n '1,300p' app/Actions/DetachGuardianFromChildrenAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,280p' app/Actions/DetachChildFromGuardianAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Guardian;
+use Illuminate\Support\Collection;
+
+final class DetachGuardianFromChildrenAction
+{
+    /**
+     * Soft delete a guardian. Relationships are preserved for reporting purposes.
+     *
+     * @param  Collection<int, int>|array<int, int>  $childIds
+     */
+    public function __invoke(Guardian $guardian, Collection|array $childIds): void
+    {
+        $guardian->delete();
+    }
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Child;
+use App\Models\Guardian;
+
+final class DetachChildFromGuardianAction
+{
+    /**
+     * Soft delete a child. Relationships are preserved for reporting purposes.
+     */
+    public function __invoke(Child $child, Guardian $guardian): void
+    {
+        $child->delete();
+    }
+}
+exec
+/bin/zsh -lc "sed -n '1,360p' app/Filament/Panels/Keeper/Resources/Children/Tables/ChildrenTable.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Children\Tables;
+
+use App\Filament\Actions\EditOrganizationNoteAction;
+use App\Filament\Actions\EditOrganizationTagsAction;
+use App\Filament\Components\Tables\AppIconColumn;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppTagsColumn;
+use App\Filament\Components\Tables\AppTextColumn;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Table;
+
+final class ChildrenTable
+{
+    public static function configure(Table $table): Table
+    {
+exec
+/bin/zsh -lc "sed -n '1,220p' app/Filament/Panels/Keeper/Resources/Guardians/Pages/ListGuardians.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,360p' app/Filament/Panels/Keeper/Resources/Guardians/Tables/GuardiansTable.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,220p' app/Filament/Panels/Keeper/Resources/Children/Pages/ListChildren.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Children\Pages;
+
+use App\Filament\Panels\Keeper\Resources\Children\ChildResource;
+use Filament\Resources\Pages\ListRecords;
+
+final class ListChildren extends ListRecords
+{
+    protected static string $resource = ChildResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [];
+    }
+}
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Guardians\Pages;
+
+use App\Filament\Panels\Keeper\Resources\Guardians\GuardianResource;
+use Filament\Resources\Pages\ListRecords;
+
+final class ListGuardians extends ListRecords
+{
+    protected static string $resource = GuardianResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+
+        ];
+    }
+}
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Guardians\Tables;
+
+use App\Filament\Actions\EditOrganizationNoteAction;
+use App\Filament\Actions\EditOrganizationTagsAction;
+use App\Filament\Components\Tables\AppIconColumn;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppTagsColumn;
+use App\Filament\Components\Tables\AppTextColumn;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+final class GuardiansTable
+{
+    public static function configure(Table $table): Table
+codex
+I’m scanning for existing policy/authorization patterns to decide whether ownership checks should live in resource policies, query scopes, or action visibility.
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Providers/Filament/KeeperPanelProvider.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers\Filament;
+
+use App\Facades\Subdomain;
+use App\Filament\Panels\Keeper\Pages\Login;
+use App\Http\Middleware\RequireOrganizationSubdomain;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Providers/Filament/GuardianPanelProvider.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers\Filament;
+
+use App\Filament\Panels\Guardian\Pages\Login;
+use App\Filament\Panels\Guardian\Pages\Register;
+use App\Http\Middleware\RedirectGuardianDashboard;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+exec
+/bin/zsh -lc "find app -maxdepth 3 -type d | rg 'Policies|Policy'" in /Users/princejohnsantillan/Herd/keeper exited 1 in 0ms:
+
+exec
+/bin/zsh -lc "rg -n \"class .*Policy|Gate::policy|->authorize|can\\(|canEdit|canView|ownership\" app -g'*.php'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+app/Models/Concerns/HasOwnership.php:17:    public function ownerships(): MorphMany
+app/Models/Concerns/HasOwnership.php:28:        return $query->whereHas('ownerships', function (Builder $ownershipQuery) use ($owner): void {
+app/Models/Concerns/HasOwnership.php:29:            $ownershipQuery
+app/Actions/CreateOwnershipAction.php:13:     * Ensure an ownership record exists for this model-owner pair.
+app/Models/Ownership.php:22:    protected $table = 'ownership';
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Filament/Panels/Guardian/Resources/Children/Pages/ListChildren.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,260p' app/Filament/Panels/Guardian/Resources/Guardians/Pages/ListGuardians.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Children\Pages;
+
+use App\Filament\Actions\CreateChildAction;
+use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
+use Filament\Resources\Pages\ListRecords;
+
+final class ListChildren extends ListRecords
+{
+    protected static string $resource = ChildResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateChildAction::make(),
+        ];
+    }
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Guardian\Resources\Guardians\Pages;
+
+use App\Actions\CreateGuardianAction;
+use App\AuthUser;
+use App\Filament\Notifications\AppNotification;
+use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
+use App\Models\Child;
+use App\Models\Guardian;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ListRecords;
+
+final class ListGuardians extends ListRecords
+{
+    protected static string $resource = GuardianResource::class;
+
+    protected function getHeaderActions(): array
+exec
+/bin/zsh -lc "rg -n \"CreateGuardianAction|CreateChildAction|EditChildAction|EditGuardianAction\" app/Filament/Panels -g'*.php'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+app/Filament/Panels/Guardian/Resources/Guardians/Pages/ListGuardians.php:7:use App\Actions\CreateGuardianAction;
+app/Filament/Panels/Guardian/Resources/Guardians/Pages/ListGuardians.php:41:                ->using(function (CreateAction $createAction, array $data, CreateGuardianAction $createGuardian): Guardian {
+app/Filament/Panels/Guardian/Resources/Guardians/Tables/GuardiansTable.php:8:use App\Filament\Actions\EditGuardianAction;
+app/Filament/Panels/Guardian/Resources/Guardians/Tables/GuardiansTable.php:96:        return EditGuardianAction::make();
+app/Filament/Panels/Guardian/Resources/Children/Pages/ListChildren.php:7:use App\Filament\Actions\CreateChildAction;
+app/Filament/Panels/Guardian/Resources/Children/Pages/ListChildren.php:18:            CreateChildAction::make(),
+app/Filament/Panels/Guardian/Resources/Children/Tables/ChildrenTable.php:8:use App\Filament\Actions\EditChildAction;
+app/Filament/Panels/Guardian/Resources/Children/Tables/ChildrenTable.php:79:        return EditChildAction::make();
+exec
+/bin/zsh -lc "rg -n \"ownedBy\\(|CreateOwnershipAction|owner_type|ownership\" app -g'*.php' | head -n 200" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+app/Actions/CreateGuardianAction.php:14:        private CreateOwnershipAction $createOwnershipAction,
+app/Filament/Actions/EditChildAction.php:24:                    ->ownedBy(AuthUser::user())
+app/Filament/Actions/CreateChildAction.php:26:                    ->ownedBy(AuthUser::user())
+app/Actions/RegisterGuardianAction.php:13:        private CreateOwnershipAction $createOwnershipAction,
+app/Models/Concerns/HasOwnership.php:17:    public function ownerships(): MorphMany
+app/Models/Concerns/HasOwnership.php:28:        return $query->whereHas('ownerships', function (Builder $ownershipQuery) use ($owner): void {
+app/Models/Concerns/HasOwnership.php:29:            $ownershipQuery
+app/Models/Concerns/HasOwnership.php:30:                ->where('owner_type', $owner->getMorphClass())
+app/Actions/CreateChildAction.php:14:        private CreateOwnershipAction $createOwnershipAction,
+app/Filament/Panels/Guardian/Resources/Children/ChildResource.php:42:            ->ownedBy(AuthUser::user())
+app/Actions/CreateOwnershipAction.php:10:final class CreateOwnershipAction
+app/Actions/CreateOwnershipAction.php:13:     * Ensure an ownership record exists for this model-owner pair.
+app/Actions/CreateOwnershipAction.php:18:            'owner_type' => $owner->getMorphClass(),
+app/Actions/WalkInRegistrationAction.php:20:        private CreateOwnershipAction $createOwnershipAction,
+app/Models/Ownership.php:22:    protected $table = 'ownership';
+app/Filament/Panels/Keeper/Resources/Children/ChildResource.php:58:                    ->ownedBy($organization)
+app/Filament/Panels/Guardian/Resources/Guardians/GuardianResource.php:42:            ->ownedBy(AuthUser::user())
+app/Filament/Panels/Keeper/Resources/Guardians/GuardianResource.php:58:                    ->ownedBy($organization)
+exec
+/bin/zsh -lc "sed -n '1,320p' app/Models/Organization.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,380p' app/Actions/WalkInRegistrationAction.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Panels/Keeper/Pages/WalkInRegistration.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Actions/RegisterGuardianAction.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use Database\Factories\OrganizationFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+/**
+ * @mixin IdeHelperOrganization
+ */
+final class Organization extends Model
+{
+    /** @use HasFactory<OrganizationFactory> */
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Enums\Relationship as RelationshipEnum;
+use App\Models\Activity;
+use App\Models\Child;
+use App\Models\Gatepass;
+use App\Models\Guardian;
+use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\TermAcceptanceServiceInterface;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+
+final class WalkInRegistrationAction
+{
+    public function __construct(
+        private CreateOwnershipAction $createOwnershipAction,
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions;
+
+use App\Models\Guardian;
+use App\Models\User;
+
+final class RegisterGuardianAction
+{
+    public function __construct(
+        private CreateOwnershipAction $createOwnershipAction,
+    ) {}
+
+    /**
+     * Register a new guardian with their associated user account.
+     *
+     * @param  array<string, mixed>  $data
+     */
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Pages;
+
+use App\Actions\WalkInRegistrationAction;
+use App\Enums\Relationship as RelationshipEnum;
+use App\Filament\Components\Forms\AppDatePicker;
+use App\Filament\Components\Forms\AppSelect;
+use App\Filament\Components\Forms\AppTextarea;
+use App\Filament\Components\Forms\AppTextInput;
+use App\Filament\Components\Forms\AppToggleButtons;
+use App\Filament\Notifications\AppNotification;
+use App\Models\Activity;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
+exec
+/bin/zsh -lc "sed -n '1,320p' app/Filament/Components/Forms/AppSelect.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Components\Forms;
+
+use App\Enums\Gender;
+use App\Enums\Relationship;
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
+
+final class AppSelect
+{
+    public static function relationship(string $field = 'relationship', string $label = 'Relationship'): Select
+    {
+        return Select::make($field)->label($label)
+            ->options(Relationship::class)
+            ->required();
+    }
+
+exec
+/bin/zsh -lc "sed -n '1,300p' app/Filament/Components/Forms/AppToggleButtons.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,360p' app/Filament/Components/Forms/AppTextInput.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,300p' app/Filament/Components/Forms/AppDatePicker.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Components\Forms;
+
+use App\Enums\Gender;
+use Filament\Forms\Components\ToggleButtons;
+
+final class AppToggleButtons
+{
+    public static function gender(string $field = 'gender', ?string $label = 'Gender'): ToggleButtons
+    {
+        return ToggleButtons::make($field)->label($label)
+            ->options(Gender::class)
+            ->required()
+            ->inline();
+    }
+}
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Components\Forms;
+
+use Filament\Forms\Components\TextInput;
+
+final class AppTextInput
+{
+    public static function firstName(string $field = 'first_name', string $label = 'First name'): TextInput
+    {
+        return TextInput::make($field)->label($label)
+            ->required()
+            ->rules(['max:80']);
+    }
+
+    public static function middleName(string $field = 'middle_name', string $label = 'Middle name'): TextInput
+    {
+        return TextInput::make($field)->label($label)
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Components\Forms;
+
+use Filament\Forms\Components\DatePicker;
+
+final class AppDatePicker
+{
+    public static function birthDate(string $field = 'birth_date', string $label = 'Birth date'): DatePicker
+    {
+        return DatePicker::make($field)->label($label)
+            ->maxDate(now())
+            ->displayFormat('d M Y')
+            ->required();
+    }
+}
+codex
+I’ve validated UI and action wiring; next I’ll inspect actual ownership data patterns (owner types and overlap) so the plan can define exact keeper ownership checks, not assumptions.
+tool laravel-boost.database-schema({"summary":true})
+laravel-boost.database-schema({"summary":true}) success in 492ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"engine\":\"pgsql\",\"tables\":{\"activities\":{\"id\":\"character(26)\",\"title\":\"character varying(255)\",\"description\":\"character varying(255)\",\"location\":\"character varying(255)\",\"location_map_link\":\"character varying(255)\",\"starts_at\":\"timestamp(0) without time zone\",\"ends_at\":\"timestamp(0) without time zone\",\"publish_at\":\"timestamp(0) without time zone\",\"notes\":\"text\",\"organization_id\":\"character(26)\",\"term_id\":\"character(26)\",\"message_id\":\"character(26)\",\"created_by\":\"character(26)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"attendances\":{\"id\":\"character(26)\",\"activity_id\":\"character(26)\",\"organization_id\":\"character(26)\",\"child_id\":\"character(26)\",\"checkin_keeper_id\":\"character(26)\",\"checkin_gatepass_id\":\"character(26)\",\"checked_in_at\":\"timestamp(0) without time zone\",\"checkout_keeper_id\":\"character(26)\",\"checkout_gatepass_id\":\"character(26)\",\"checked_out_at\":\"timestamp(0) without time zone\",\"notes\":\"text\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"cache\":{\"key\":\"character varying(255)\",\"value\":\"text\",\"expiration\":\"integer\"},\"cache_locks\":{\"key\":\"character varying(255)\",\"owner\":\"character varying(255)\",\"expiration\":\"integer\"},\"children\":{\"id\":\"character(26)\",\"first_name\":\"character varying(80)\",\"middle_name\":\"character varying(80)\",\"last_name\":\"character varying(80)\",\"nickname\":\"character varying(40)\",\"birth_date\":\"date\",\"gender\":\"boolean\",\"notes\":\"text\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\",\"deleted_at\":\"timestamp(0) without time zone\"},\"failed_jobs\":{\"id\":\"bigint\",\"uuid\":\"character varying(255)\",\"connection\":\"text\",\"queue\":\"text\",\"payload\":\"text\",\"exception\":\"text\",\"failed_at\":\"timestamp(0) without time zone\"},\"gatepasses\":{\"id\":\"character(26)\",\"organization_id\":\"character(26)\",\"guardian_id\":\"character(26)\",\"child_id\":\"character(26)\",\"activity_id\":\"character(26)\",\"term_acceptance_id\":\"character(26)\",\"code\":\"character varying(255)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"guardians\":{\"id\":\"character(26)\",\"first_name\":\"character varying(80)\",\"middle_name\":\"character varying(80)\",\"last_name\":\"character varying(80)\",\"birth_date\":\"date\",\"gender\":\"boolean\",\"email\":\"character varying(255)\",\"phone\":\"character varying(255)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\",\"deleted_at\":\"timestamp(0) without time zone\"},\"job_batches\":{\"id\":\"character varying(255)\",\"name\":\"character varying(255)\",\"total_jobs\":\"integer\",\"pending_jobs\":\"integer\",\"failed_jobs\":\"integer\",\"failed_job_ids\":\"text\",\"options\":\"text\",\"cancelled_at\":\"integer\",\"created_at\":\"integer\",\"finished_at\":\"integer\"},\"jobs\":{\"id\":\"bigint\",\"queue\":\"character varying(255)\",\"payload\":\"text\",\"attempts\":\"smallint\",\"reserved_at\":\"integer\",\"available_at\":\"integer\",\"created_at\":\"integer\"},\"keeper_invitations\":{\"id\":\"character(26)\",\"organization_id\":\"character(26)\",\"user_id\":\"character(26)\",\"invited_by\":\"character(26)\",\"role\":\"character varying(255)\",\"token\":\"character varying(255)\",\"accepted_at\":\"timestamp(0) without time zone\",\"expires_at\":\"timestamp(0) without time zone\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"keepers\":{\"id\":\"character(26)\",\"organization_id\":\"character(26)\",\"user_id\":\"character(26)\",\"status\":\"character varying(255)\",\"role\":\"character varying(255)\",\"permissions\":\"json\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\",\"deleted_at\":\"timestamp(0) without time zone\"},\"media\":{\"id\":\"bigint\",\"model_type\":\"character varying(255)\",\"model_id\":\"character(26)\",\"uuid\":\"uuid\",\"collection_name\":\"character varying(255)\",\"name\":\"character varying(255)\",\"file_name\":\"character varying(255)\",\"mime_type\":\"character varying(255)\",\"disk\":\"character varying(255)\",\"conversions_disk\":\"character varying(255)\",\"size\":\"bigint\",\"manipulations\":\"json\",\"custom_properties\":\"json\",\"generated_conversions\":\"json\",\"responsive_images\":\"json\",\"order_column\":\"integer\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"messages\":{\"id\":\"character(26)\",\"organization_id\":\"character(26)\",\"name\":\"character varying(255)\",\"content\":\"text\",\"archived_at\":\"timestamp(0) without time zone\",\"created_by\":\"character(26)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"migrations\":{\"id\":\"integer\",\"migration\":\"character varying(255)\",\"batch\":\"integer\"},\"organization_notes\":{\"id\":\"character(26)\",\"organization_id\":\"character(26)\",\"notable_type\":\"character varying(255)\",\"notable_id\":\"character(26)\",\"note\":\"text\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"organization_tags\":{\"id\":\"character(26)\",\"organization_id\":\"character(26)\",\"taggable_type\":\"character varying(255)\",\"taggable_id\":\"character(26)\",\"name\":\"character varying(255)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"organizations\":{\"id\":\"character(26)\",\"name\":\"character varying(255)\",\"slug\":\"character varying(255)\",\"owner_id\":\"character(26)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\",\"deleted_at\":\"timestamp(0) without time zone\"},\"ownership\":{\"id\":\"character(26)\",\"owner_type\":\"character varying(255)\",\"owner_id\":\"character(26)\",\"model_type\":\"character varying(255)\",\"model_id\":\"character(26)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"password_reset_tokens\":{\"email\":\"character varying(255)\",\"token\":\"character varying(255)\",\"created_at\":\"timestamp(0) without time zone\"},\"relationships\":{\"id\":\"character(26)\",\"guardian_id\":\"character(26)\",\"child_id\":\"character(26)\",\"relationship\":\"character varying(255)\",\"is_primary\":\"boolean\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"sessions\":{\"id\":\"character varying(255)\",\"user_id\":\"character(26)\",\"ip_address\":\"character varying(45)\",\"user_agent\":\"text\",\"payload\":\"text\",\"last_activity\":\"integer\"},\"term_acceptances\":{\"id\":\"character(26)\",\"term_id\":\"character(26)\",\"guardian_id\":\"character(26)\",\"ip_address\":\"inet\",\"user_agent\":\"character varying(255)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"terms\":{\"id\":\"character(26)\",\"name\":\"character varying(255)\",\"content\":\"text\",\"version\":\"integer\",\"published_at\":\"timestamp(0) without time zone\",\"archived_at\":\"timestamp(0) without time zone\",\"organization_id\":\"character(26)\",\"created_by\":\"character(26)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\"},\"users\":{\"id\":\"character(26)\",\"name\":\"character varying(255)\",\"email\":\"character varying(255)\",\"email_verified_at\":\"timestamp(0) without time zone\",\"password\":\"character varying(255)\",\"remember_token\":\"character varying(100)\",\"created_at\":\"timestamp(0) without time zone\",\"updated_at\":\"timestamp(0) without time zone\",\"guardian_id\":\"character(26)\"}}}"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT model_type, COUNT(DISTINCT model_id) AS records, COUNT(*) AS ownership_rows FROM ownership GROUP BY model_type ORDER BY model_type;"})
+laravel-boost.database-query({"query":"SELECT model_type, COUNT(DISTINCT model_id) AS records, COUNT(*) AS ownership_rows FROM ownership GROUP BY model_type ORDER BY model_type;"}) success in 252ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"model_type\":\"App\\\\Models\\\\Child\",\"records\":6,\"ownership_rows\":6},{\"model_type\":\"App\\\\Models\\\\Guardian\",\"records\":6,\"ownership_rows\":6}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT owner_type, model_type, COUNT(*) AS total FROM ownership GROUP BY owner_type, model_type ORDER BY owner_type, model_type;"})
+laravel-boost.database-query({"query":"SELECT owner_type, model_type, COUNT(*) AS total FROM ownership GROUP BY owner_type, model_type ORDER BY owner_type, model_type;"}) success in 253ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"owner_type\":\"App\\\\Models\\\\Organization\",\"model_type\":\"App\\\\Models\\\\Child\",\"total\":3},{\"owner_type\":\"App\\\\Models\\\\Organization\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"total\":2},{\"owner_type\":\"App\\\\Models\\\\User\",\"model_type\":\"App\\\\Models\\\\Child\",\"total\":3},{\"owner_type\":\"App\\\\Models\\\\User\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"total\":4}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT COUNT(*) FILTER (WHERE owner_type LIKE '%Organization%') AS organization_owner_rows, COUNT(*) FILTER (WHERE owner_type LIKE '%User%') AS user_owner_rows, COUNT(*) AS total_rows FROM ownership;"})
+laravel-boost.database-query({"query":"SELECT COUNT(*) FILTER (WHERE owner_type LIKE '%Organization%') AS organization_owner_rows, COUNT(*) FILTER (WHERE owner_type LIKE '%User%') AS user_owner_rows, COUNT(*) AS total_rows FROM ownership;"}) success in 254ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"organization_owner_rows\":5,\"user_owner_rows\":7,\"total_rows\":12}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT model_type, model_id, COUNT(*) AS owner_count FROM ownership GROUP BY model_type, model_id HAVING COUNT(*) > 1;"})
+laravel-boost.database-query({"query":"SELECT model_type, model_id, COUNT(*) AS owner_count FROM ownership GROUP BY model_type, model_id HAVING COUNT(*) > 1;"}) success in 305ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT o.owner_type, COUNT(*) AS child_count FROM ownership o WHERE o.model_type = 'App\\\\Models\\\\Child' GROUP BY o.owner_type ORDER BY o.owner_type;"})
+laravel-boost.database-query({"query":"SELECT o.owner_type, COUNT(*) AS child_count FROM ownership o WHERE o.model_type = 'App\\\\Models\\\\Child' GROUP BY o.owner_type ORDER BY o.owner_type;"}) success in 262ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT o.owner_type, COUNT(*) AS guardian_count FROM ownership o WHERE o.model_type = 'App\\\\Models\\\\Guardian' GROUP BY o.owner_type ORDER BY o.owner_type;"})
+laravel-boost.database-query({"query":"SELECT o.owner_type, COUNT(*) AS guardian_count FROM ownership o WHERE o.model_type = 'App\\\\Models\\\\Guardian' GROUP BY o.owner_type ORDER BY o.owner_type;"}) success in 256ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT COUNT(*) AS relationship_pairs, COUNT(*) FILTER (WHERE child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id) AS same_owner_pairs FROM relationships r JOIN ownership child_ownership ON child_ownership.model_type = 'App\\\\Models\\\\Child' AND child_ownership.model_id = r.child_id JOIN ownership guardian_ownership ON guardian_ownership.model_type = 'App\\\\Models\\\\Guardian' AND guardian_ownership.model_id = r.guardian_id;"})
+laravel-boost.database-query({"query":"SELECT COUNT(*) AS relationship_pairs, COUNT(*) FILTER (WHERE child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id) AS same_owner_pairs FROM relationships r JOIN ownership child_ownership ON child_ownership.model_type = 'App\\\\Models\\\\Child' AND child_ownership.model_id = r.child_id JOIN ownership guardian_ownership ON guardian_ownership.model_type = 'App\\\\Models\\\\Guardian' AND guardian_ownership.model_id = r.guardian_id;"}) success in 262ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"relationship_pairs\":0,\"same_owner_pairs\":0}]"
+    }
+  ],
+  "isError": false
+}
+codex
+I found no multi-owner duplicates per model record in current data; I’m running one more pass with less strict SQL matching to verify owner-type distribution reliably.
+tool laravel-boost.database-query({"query":"SELECT model_type, owner_type, COUNT(*) AS total FROM ownership GROUP BY model_type, owner_type ORDER BY model_type, owner_type;"})
+laravel-boost.database-query({"query":"SELECT model_type, owner_type, COUNT(*) AS total FROM ownership GROUP BY model_type, owner_type ORDER BY model_type, owner_type;"}) success in 305ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"model_type\":\"App\\\\Models\\\\Child\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"total\":3},{\"model_type\":\"App\\\\Models\\\\Child\",\"owner_type\":\"App\\\\Models\\\\User\",\"total\":3},{\"model_type\":\"App\\\\Models\\\\Guardian\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"total\":2},{\"model_type\":\"App\\\\Models\\\\Guardian\",\"owner_type\":\"App\\\\Models\\\\User\",\"total\":4}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT id, owner_type, owner_id, model_type, model_id FROM ownership ORDER BY created_at DESC LIMIT 12;"})
+laravel-boost.database-query({"query":"SELECT id, owner_type, owner_id, model_type, model_id FROM ownership ORDER BY created_at DESC LIMIT 12;"}) success in 268ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"id\":\"01kkpcyp0mce8zw2q53zf7q7wk\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"owner_id\":\"01kkmssxj3mmmc1j2432k0k5wm\",\"model_type\":\"App\\\\Models\\\\Child\",\"model_id\":\"01kkpcyp0h4e10ew28jyp1xqnr\"},{\"id\":\"01kkpcyp064y24febc1f3721af\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"owner_id\":\"01kkmssxj3mmmc1j2432k0k5wm\",\"model_type\":\"App\\\\Models\\\\Child\",\"model_id\":\"01kkpcyp04hgbyn50vzfm0es72\"},{\"id\":\"01kkpcynzytzeeb6mn7n9x0m8t\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"owner_id\":\"01kkmssxj3mmmc1j2432k0k5wm\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"model_id\":\"01kkpcynztewk3yfv6gnzmf5x3\"},{\"id\":\"01kkpctdz2ytdnnxgk4pj0gj98\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"owner_id\":\"01kkmssxj3mmmc1j2432k0k5wm\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"model_id\":\"01kkpctdywn5jpj5t4w041p9vc\"},{\"id\":\"01kkpctdzcjabsfv8fn1t6n5ms\",\"owner_type\":\"App\\\\Models\\\\Organization\",\"owner_id\":\"01kkmssxj3mmmc1j2432k0k5wm\",\"model_type\":\"App\\\\Models\\\\Child\",\"model_id\":\"01kkpctdz9tnwc19qgs6r2mm8z\"},{\"id\":\"01kknnx6z6wy3sg876wr19qvv1\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmssxhqak8tt0maj8j1nkr4\",\"model_type\":\"App\\\\Models\\\\Child\",\"model_id\":\"01kknnx6z2ntsaa6hdtm4erksq\"},{\"id\":\"01kkmtvvhbw7rp9m8vfh75zxcw\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmt9gy8st6wv4mk23aqcxg0\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"model_id\":\"01kkmtvvh8g0zz4b2w5efmegc5\"},{\"id\":\"01kkmtdj7gm50e7s8t4z0mrst2\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmt9gy8st6wv4mk23aqcxg0\",\"model_type\":\"App\\\\Models\\\\Child\",\"model_id\":\"01kkmtdj7dnpkbasmprc1jms63\"},{\"id\":\"01kkmtc1kdt6may5ryk2pwc5nt\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmt9gy8st6wv4mk23aqcxg0\",\"model_type\":\"App\\\\Models\\\\Child\",\"model_id\":\"01kkmtc1kapjcj1pzxnbjk77an\"},{\"id\":\"01kkmt9gyfdbrb7j9xkz2ptp0w\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmt9gy8st6wv4mk23aqcxg0\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"model_id\":\"01kkmt9gybsrdztezx98q98z7n\"},{\"id\":\"01KKMSSXXHRKF8KTHG87PMQFH7\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmssxhqak8tt0maj8j1nkr4\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"model_id\":\"01kkmssxhyazy7990pj5kxptcg\"},{\"id\":\"01KKMSSXXHRKF8KTHG87PMQFH8\",\"owner_type\":\"App\\\\Models\\\\User\",\"owner_id\":\"01kkmssxtzregrp5sk2yr7tvce\",\"model_type\":\"App\\\\Models\\\\Guardian\",\"model_id\":\"01kkmssxv06r0nncwh9ww9m64v\"}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT COUNT(*) AS relationships_total FROM relationships;"})
+laravel-boost.database-query({"query":"SELECT COUNT(*) AS relationships_total FROM relationships;"}) success in 252ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"relationships_total\":8}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT c.id AS child_id, g.id AS guardian_id FROM children c CROSS JOIN guardians g LIMIT 1;"})
+laravel-boost.database-query({"query":"SELECT c.id AS child_id, g.id AS guardian_id FROM children c CROSS JOIN guardians g LIMIT 1;"}) success in 257ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"child_id\":\"01kkmtc1kapjcj1pzxnbjk77an\",\"guardian_id\":\"01kkmssxhyazy7990pj5kxptcg\"}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT COUNT(*) AS relationship_pairs, COUNT(*) FILTER (WHERE child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id) AS same_owner_pairs, COUNT(*) FILTER (WHERE NOT (child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id)) AS cross_owner_pairs FROM relationships r JOIN ownership child_ownership ON child_ownership.model_id = r.child_id AND child_ownership.model_type LIKE '%Child' JOIN ownership guardian_ownership ON guardian_ownership.model_id = r.guardian_id AND guardian_ownership.model_type LIKE '%Guardian';"})
+laravel-boost.database-query({"query":"SELECT COUNT(*) AS relationship_pairs, COUNT(*) FILTER (WHERE child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id) AS same_owner_pairs, COUNT(*) FILTER (WHERE NOT (child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id)) AS cross_owner_pairs FROM relationships r JOIN ownership child_ownership ON child_ownership.model_id = r.child_id AND child_ownership.model_type LIKE '%Child' JOIN ownership guardian_ownership ON guardian_ownership.model_id = r.guardian_id AND guardian_ownership.model_type LIKE '%Guardian';"}) success in 311ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[{\"relationship_pairs\":8,\"same_owner_pairs\":8,\"cross_owner_pairs\":0}]"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.database-query({"query":"SELECT r.id, child_ownership.owner_type AS child_owner_type, child_ownership.owner_id AS child_owner_id, guardian_ownership.owner_type AS guardian_owner_type, guardian_ownership.owner_id AS guardian_owner_id FROM relationships r JOIN ownership child_ownership ON child_ownership.model_id = r.child_id AND child_ownership.model_type LIKE '%Child' JOIN ownership guardian_ownership ON guardian_ownership.model_id = r.guardian_id AND guardian_ownership.model_type LIKE '%Guardian' WHERE NOT (child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id) LIMIT 10;"})
+laravel-boost.database-query({"query":"SELECT r.id, child_ownership.owner_type AS child_owner_type, child_ownership.owner_id AS child_owner_id, guardian_ownership.owner_type AS guardian_owner_type, guardian_ownership.owner_id AS guardian_owner_id FROM relationships r JOIN ownership child_ownership ON child_ownership.model_id = r.child_id AND child_ownership.model_type LIKE '%Child' JOIN ownership guardian_ownership ON guardian_ownership.model_id = r.guardian_id AND guardian_ownership.model_type LIKE '%Guardian' WHERE NOT (child_ownership.owner_type = guardian_ownership.owner_type AND child_ownership.owner_id = guardian_ownership.owner_id) LIMIT 10;"}) success in 254ms:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "[]"
+    }
+  ],
+  "isError": false
+}
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Facades/Subdomain.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,280p' app/Http/Middleware/RequireOrganizationSubdomain.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,320p' app/Services/SubdomainService.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,260p' app/Services/Contracts/SubdomainInterface.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Models\Organization;
+use App\Services\Contracts\SubdomainInterface;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+
+final class SubdomainService implements SubdomainInterface
+{
+    public function organization(): ?Organization
+    {
+        return once(function (): ?Organization {
+            $slug = Str::beforeLast(request()->host(), '.'.Config::string('app.domain'));
+
+            return rescue(fn (): ?Organization => Organization::query()->where('slug', $slug)->first());
+        });
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Facades;
+
+use App\Models\Organization;
+use App\Services\Contracts\SubdomainInterface;
+use App\Services\Fakes\FakeSubdomain;
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * @method static Organization|null organization()
+ * @method static bool defined()
+ *
+ * @see \App\Services\SubdomainService
+ */
+final class Subdomain extends Facade
+{
+    public static function fake(?Organization $organization = null): FakeSubdomain
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use App\Facades\Subdomain;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+final class RequireOrganizationSubdomain
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services\Contracts;
+
+use App\Models\Organization;
+
+interface SubdomainInterface
+{
+    /**
+     * Get the organization for the current subdomain.
+     */
+    public function organization(): ?Organization;
+
+    /**
+     * Check if the request is on a subdomain.
+     */
+    public function defined(): bool;
+}
+codex
+I identified a major blocker: shared edit actions are Guardian-centric (`AuthUser::guardian()`/`AuthUser::user()` assumptions), so Keeper reuse is not safe without abstraction. I’ll quickly pull version-specific Filament docs on action authorization patterns before finalizing the plan.
+tool laravel-boost.search-docs({"packages":["filament/filament","laravel/framework"],"queries":["resource authorization policies","table and page actions visibility","edit action using callback","view record header actions","authorize action"],"token_limit":7000})
+laravel-boost.search-docs({"packages":["filament/filament","laravel/framework"],"queries":["resource authorization policies","table and page actions visibility","edit action using callback","view record header actions","authorize action"],"token_limit":7000}) success in 5.67s:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "# Documentation Search Results\n\n**Packages:** laravel/framework@12.x, filament/filament@5.x\n**Results:** 29 documents, 1341 chunks\n\n---\n\n## structure.md > The App Directory > The Policies Directory\nPackage: laravel/framework@12.x\n\n<a name=\"the-policies-directory\"></a>\n### The Policies Directory\n\nThis directory does not exist by default, but will be created for you if you execute the `make:policy` Artisan command. The `Policies` directory contains the [authorization policy classes](/docs/{{version}}/authorization) for your application. Policies are used to determine if a user can perform a given action against a resource.\n\n---\n\n## tables/09-custom-data.md > External API actions\nPackage: filament/filament@5.x\n\n### External API actions\n\nWhen using [actions](../actions/overview) in a table with an external API, the process is almost identical to working with [Eloquent models](https://laravel.com/docs/eloquent). The main difference is that the `$record` parameter in the action's callback function will be an `array` instead of a `Model` instance.\n\nFilament provides a variety of [built-in actions](../actions/overview#available-actions) that you can use in your application. However, you are not limited to these. You can create [custom actions](../actions/overview#introduction) tailored to your application's needs.\n\nThe examples below demonstrate how to create and use actions with an external API using [DummyJSON](https://dummyjson.com) as a simulated API source.\n\n#### External API create action example\n\nThe create action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) that allows users to create a new product using an external API. When the form is submitted, a `POST` request is sent to the API to create the new product.\n\n```php\nuse Filament\\Actions\\Action;\nuse Filament\\Forms\\Components\\Select;\nuse Filament\\Forms\\Components\\TextInput;\nuse Filament\\Notifications\\Notification;\nuse Filament\\Tables\\Columns\\TextColumn;\nuse Filament\\Tables\\Table;\nuse Illuminate\\Support\\Collection;\nuse Illuminate\\Support\\Facades\\Http;\n\npublic function table(Table $table): Table\n{\n    $baseUrl = 'https://dummyjson.com';\n\n    return $table\n        ->records(fn (): array => Http::baseUrl($baseUrl)\n            ->get('products')\n            ->collect()\n            ->get('products', [])\n        )\n        ->columns([\n            TextColumn::make('title'),\n            TextColumn::make('category'),\n        ])\n        ->headerActions([\n            Action::make('create')\n                ->modalHeading('Create product')\n                ->schema([\n                    TextInput::make('title')\n                        ->required(),\n                    Select::make('category')\n                        ->options(fn (): Collection => Http::get(\"{$baseUrl}/products/categories\")\n                            ->collect()\n                            ->pluck('name', 'slug')\n                        )\n                        ->required(),\n                ])\n                ->action(function (array $data) use ($baseUrl) {\n                    $response = Http::post(\"{$baseUrl}/products/add\", [\n                        'title' => $data['title'],\n                        'category' => $data['category'],\n                    ]);\n\n                    if ($response->failed()) {\n                        Notification::make()\n                            ->title('Product failed to create')\n                            ->danger()\n                            ->send();\n                            \n                        return;\n                    }\n                    \n                    Notification::make()\n                        ->title('Product created')\n                        ->success()\n                        ->send();\n                }),\n        ]);\n}\n```\n\n- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.\n- [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.\n- `action()` defines the logic that will be executed when the user submits the form.\n\n\n    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.\n\n\n\n    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not add it into the server. It will simulate a `POST` request and will return the new created product with a new id.\n\n\nIf you don't need a modal, you can directly redirect users to a specified URL when they click the create action button. In this case, you can define a custom URL pointing to the product creation page:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('create')\n    ->url(route('products.create'))\n```\n\n#### External API edit action example\n\nThe edit action in this example provides a [modal form](../actions/modals#rendering-a-form-in-a-modal) for editing product details fetched from an external API. Users can update fields such as the product title and category, and the changes will be sent to the external API using a `PUT` request.\n\n```php\nuse Filament\\Actions\\Action;\nuse Filament\\Forms\\Components\\Select;\nuse Filament\\Forms\\Components\\TextInput;\nuse Filament\\Notifications\\Notification;\nuse Filament\\Support\\Icons\\Heroicon;\nuse Filament\\Tables\\Columns\\TextColumn;\nuse Filament\\Tables\\Table;\nuse Illuminate\\Support\\Collection;\nuse Illuminate\\Support\\Facades\\Http;\n\npublic function table(Table $table): Table\n{\n    $baseUrl = 'https://dummyjson.com';\n\n    return $table\n        ->records(fn (): array => Http::baseUrl($baseUrl)\n            ->get('products')\n            ->collect()\n            ->get('products', [])\n        )\n        ->columns([\n            TextColumn::make('title'),\n            TextColumn::make('category'),\n        ])\n        ->recordActions([\n            Action::make('edit')\n                ->icon(Heroicon::PencilSquare)\n                ->modalHeading('Edit product')\n                ->fillForm(fn (array $record) => $record)\n                ->schema([\n                    TextInput::make('title')\n                        ->required(),\n                    Select::make('category')\n                        ->options(fn (): Collection => Http::get(\"{$baseUrl}/products/categories\")\n                            ->collect()\n                            ->pluck('name', 'slug')\n                        )\n                        ->required(),\n                ])\n                ->action(function (array $data, array $record) use ($baseUrl) {\n                    $response = Http::put(\"{$baseUrl}/products/{$record['id']}\", [\n                        'title' => $data['title'],\n                        'category' => $data['category'],\n                    ]);\n\n                    if ($response->failed()) {\n                        Notification::make()\n                            ->title('Product failed to save')\n                            ->danger()\n                            ->send();\n                            \n                        return;\n                    }\n                    \n                    Notification::make()\n                        ->title('Product save')\n                        ->success()\n                        ->send();\n                }),\n        ]);\n}\n```\n\n- `icon()` defines the icon shown for this action in the table.\n- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.\n- [`fillForm()`](../actions/modals#filling-the-form-with-existing-data) automatically fills the form fields with the existing values of the selected record.\n- [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.\n- `action()` defines the logic that will be executed when the user submits the form.\n\n\n    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.\n\n\n\n    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not update it into the server. It will simulate a `PUT`/`PATCH` request and will return updated product with modified data.\n\n\nIf you don't need a modal, you can directly redirect users to a specified URL when they click the action button. You can achieve this by defining a URL with a dynamic route that includes the `record` parameter:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (array $record): string => route('products.edit', ['product' => $record['id']]))\n```\n\n#### External API view action example\n\nThe view action in this example opens a [modal](../actions/modals) displaying detailed product information fetched from an external API. This allows you to build a user interface with various components such as [text entries](../infolists/text-entry) and [images](../infolists/image-entry).\n\n```php\nuse Filament\\Actions\\Action;\nuse Filament\\Infolists\\Components\\ImageEntry;\nuse Filament\\Infolists\\Components\\TextEntry;\nuse Filament\\Schemas\\Components\\Flex;\nuse Filament\\Schemas\\Components\\Grid;\nuse Filament\\Schemas\\Components\\Section;\nuse Filament\\Support\\Icons\\Heroicon;\nuse Filament\\Tables\\Columns\\TextColumn;\nuse Filament\\Tables\\Table;\nuse Illuminate\\Support\\Facades\\Http;\n\npublic function table(Table $table): Table\n{\n    $baseUrl = 'https://dummyjson.com';\n\n    return $table\n        ->records(fn (): array => Http::baseUrl($baseUrl)\n            ->get('products', [\n                'select' => 'id,title,description,brand,category,thumbnail,price',\n            ])\n            ->collect()\n            ->get('products', [])\n        )\n        ->columns([\n            TextColumn::make('title'),\n            TextColumn::make('category'),\n        ])\n        ->recordActions([\n            Action::make('view')\n                ->color('gray')\n                ->icon(Heroicon::Eye)\n                ->modalHeading('View product')\n                ->schema([\n                    Section::make()\n                        ->schema([\n                            Flex::make([\n                                Grid::make(2)\n                                    ->schema([\n                                        TextEntry::make('title'),\n                                        TextEntry::make('category'),\n                                        TextEntry::make('brand'),\n                                        TextEntry::make('price')\n                                            ->money(),\n                                    ]),\n                                ImageEntry::make('thumbnail')\n                                    ->hiddenLabel()\n                                    ->grow(false),\n                            ])->from('md'),\n                            TextEntry::make('description')\n                                ->prose(),\n                        ]),\n                ])\n                ->modalSubmitAction(false)\n                ->modalCancelActionLabel('Close'),\n        ]);\n}\n```\n\n- `color()` sets the color of the action button.\n- `icon()` defines the icon shown for this action in the table.\n- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.\n- [`schema()`](../actions/modals#rendering-a-schema-in-a-modal) defines the form fields displayed in the modal.\n- [`modalSubmitAction(false)`](../actions/modals#modifying-the-default-modal-footer-action-button) disables the submit button, making this a read-only view action.\n- [`modalCancelActionLabel()`](../actions/modals#modifying-the-default-modal-footer-action-button) customizes the label for the close button.\n\n\n    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.\n\n\n\n    The [`select`](https://dummyjson.com/docs/products#products-limit_skip) parameter is used to limit the fields returned by the API. This helps reduce payload size and improves performance when rendering the table.\n\n\nIf you don't need a modal, you can directly redirect users to a specified URL when they click the action button. You can achieve this by defining a URL with a dynamic route that includes the `record` parameter:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('view')\n    ->url(fn (array $record): string => route('products.view', ['product' => $record['id']]))\n```\n\n#### External API delete action example\n\nThe delete action in this example allows users to delete a product fetched from an external API.\n\n```php\nuse Filament\\Actions\\Action;\nuse Filament\\Notifications\\Notification;\nuse Filament\\Support\\Icons\\Heroicon;\nuse Filament\\Tables\\Columns\\TextColumn;\nuse Filament\\Tables\\Table;\nuse Illuminate\\Support\\Facades\\Http;\n\npublic function table(Table $table): Table\n{\n    $baseUrl = 'https://dummyjson.com';\n\n    return $table\n        ->records(fn (): array => Http::baseUrl($baseUrl)\n            ->get('products')\n            ->collect()\n            ->get('products', [])\n        )\n        ->columns([\n            TextColumn::make('title'),\n            TextColumn::make('category'),\n            TextColumn::make('price')\n                ->money(),\n        ])\n        ->recordActions([\n            Action::make('delete')\n                ->color('danger')\n                ->icon(Heroicon::Trash)\n                ->modalIcon(Heroicon::OutlinedTrash)\n                ->modalHeading('Delete Product')\n                ->requiresConfirmation()\n                ->action(function (array $record) use ($baseUrl) {\n                    $response = Http::baseUrl($baseUrl)\n                        ->delete(\"products/{$record['id']}\");\n\n                    if ($response->failed()) {\n                        Notification::make()\n                            ->title('Product failed to delete')\n                            ->danger()\n                            ->send();\n                            \n                        return;\n                    }\n                    \n                    Notification::make()\n                        ->title('Product deleted')\n                        ->success()\n                        ->send();\n                }),\n        ]);\n}\n```\n\n- `color()` sets the color of the action button.\n- `icon()` defines the icon shown for this action in the table.\n- [`modalIcon()`](../actions/modals#adding-an-icon-inside-the-modal) sets the icon that will appear in the confirmation modal.\n- [`modalHeading()`](../actions/modals#customizing-the-modals-heading-description-and-submit-action-label) sets the title of the modal that appears when the action is triggered.\n- [`requiresConfirmation()`](../actions/modals#confirmation-modals) ensures that the user must confirm the deletion before it is executed.\n- `action()` defines the logic that will be executed when the user confirms the submission.\n\n\n    This is a basic example for demonstration purposes only. It's the developer's responsibility to implement proper authentication, authorization, validation, error handling, rate limiting, and other best practices when working with APIs.\n\n\n\n    [`DummyJSON`](https://dummyjson.com/docs/products#products-update) API will not delete it into the server. It will simulate a `DELETE` request and will return deleted product with `isDeleted` and `deletedOn` keys.\n\n---\n\n## authorization.md > Authorizing Actions Using Policies > Supplying Additional Context\nPackage: laravel/framework@12.x\n\n<a name=\"supplying-additional-context\"></a>\n### Supplying Additional Context\n\nWhen authorizing actions using policies, you may pass an array as the second argument to the various authorization functions and helpers. The first element in the array will be used to determine which policy should be invoked, while the rest of the array elements are passed as parameters to the policy method and can be used for additional context when making authorization decisions. For example, consider the following `PostPolicy` method definition which contains an additional `$category` parameter:\n\n```php\n/**\n * Determine if the given post can be updated by the user.\n */\npublic function update(User $user, Post $post, int $category): bool\n{\n    return $user->id === $post->user_id &&\n           $user->canUpdateCategory($category);\n}\n```\n\nWhen attempting to determine if the authenticated user can update a given post, we can invoke this policy method like so:\n\n```php\n/**\n * Update the given blog post.\n *\n * @throws \\Illuminate\\Auth\\Access\\AuthorizationException\n */\npublic function update(Request $request, Post $post): RedirectResponse\n{\n    Gate::authorize('update', [$post, $request->category]);\n\n    // The current user can update the blog post...\n\n    return redirect('/posts');\n}\n```\n\n---\n\n## tables/05-layout.md > Custom HTML\nPackage: filament/filament@5.x\n\n### Custom HTML\n\nYou may add custom HTML to your table using a `View` component. It can even be `collapsible()`:\n\n```php\nuse Filament\\Support\\Enums\\FontWeight;\nuse Filament\\Tables\\Columns\\Layout\\Split;\nuse Filament\\Tables\\Columns\\Layout\\View;\nuse Filament\\Tables\\Columns\\ImageColumn;\nuse Filament\\Tables\\Columns\\TextColumn;\n\n[\n    Split::make([\n        ImageColumn::make('avatar')\n            ->circular(),\n        TextColumn::make('name')\n            ->weight(FontWeight::Bold)\n            ->searchable()\n            ->sortable(),\n    ]),\n    View::make('users.table.collapsible-row-content')\n        ->collapsible(),\n]\n```\n\nNow, create a `/resources/views/users/table/collapsible-row-content.blade.php` file, and add in your HTML. You can access the table record using `$getRecord()`:\n\n```blade\n<p class=\"px-4 py-3 bg-gray-100 rounded-lg\">\n    <span class=\"font-medium\">\n        Email address:\n    </span>\n\n    <span>\n        {{ $getRecord()->email }}\n    </span>\n</p>\n```\n\n#### Embedding other components\n\nYou could even pass in columns or other layout components to the `components()` method:\n\n```php\nuse Filament\\Support\\Enums\\FontWeight;\nuse Filament\\Tables\\Columns\\Layout\\Split;\nuse Filament\\Tables\\Columns\\Layout\\View;\nuse Filament\\Tables\\Columns\\ImageColumn;\nuse Filament\\Tables\\Columns\\TextColumn;\n\n[\n    Split::make([\n        ImageColumn::make('avatar')\n            ->circular(),\n        TextColumn::make('name')\n            ->weight(FontWeight::Bold)\n            ->searchable()\n            ->sortable(),\n    ]),\n    View::make('users.table.collapsible-row-content')\n        ->components([\n            TextColumn::make('email')\n                ->icon('heroicon-m-envelope'),\n        ])\n        ->collapsible(),\n]\n```\n\nNow, render the components in the Blade file:\n\n```blade\n<div class=\"px-4 py-3 bg-gray-100 rounded-lg\">\n    @foreach ($getComponents() as $layoutComponent)\n        {{ $layoutComponent\n            ->record($getRecord())\n            ->recordKey($getRecordKey())\n            ->rowLoop($getRowLoop())\n            ->renderInLayout() }}\n    @endforeach\n</div>\n```\n\n---\n\n## docs/10-testing/02-testing-resources.md > Testing a resource view page\nPackage: filament/filament@5.x\n\n## Testing a resource view page\n\nTo test if the view page is able to load, test the view page as a Livewire component, and call `assertOk()` to ensure that the HTTP response was 200 OK. You can also use the `assertSchemaStateSet()` method to check if the infolist entries are set to the correct values:\n\n```php\nuse App\\Filament\\Resources\\Users\\Pages\\ViewUser;\nuse App\\Models\\User;\n\nit('can load the page', function () {\n    $user = User::factory()->create();\n\n    livewire(ViewUser::class, [\n        'record' => $user->id,\n    ])\n        ->assertOk()\n        ->assertSchemaStateSet([\n            'name' => $user->name,\n            'email' => $user->email,\n        ]);\n});\n```\n\nTo test the infolist on the view page, you should visit the [Testing schemas](testing-schemas) section. To test any actions in the header of the page or in the infolist, you should visit the [Testing actions](testing-actions) section.\n\n---\n\n## authorization.md > Authorizing Actions Using Policies\nPackage: laravel/framework@12.x\n\n<a name=\"authorizing-actions-using-policies\"></a>\n## Authorizing Actions Using Policies\n\n---\n\n## actions/01-overview.md > Authorization using a policy\nPackage: filament/filament@5.x\n\n### Authorization using a policy\n\nYou can use a policy to authorize an action. To do this, pass the name of the policy method to the `authorize()` method, and Filament will use the current Eloquent model for that action to find the correct policy:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))\n    ->authorize('update')\n```\n\n\n    If you're using an action in a panel resource or relation manager, you don't need to use the `authorize()` method, since Filament will automatically read the policy based on the resource model for the built-in actions like `CreateAction`, `EditAction` and `DeleteAction`. For more information, visit the [resource authorization](../resources/overview#authorization) section.\n\n\nIf your policy method returns a [response message](https://laravel.com/docs/authorization#policy-responses), you can disable the action instead of hiding it, and add a tooltip containing the message, using the `authorizationTooltip()` method:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))\n    ->authorize('update')\n    ->authorizationTooltip()\n```\n\nYou may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))\n    ->authorize('update')\n    ->authorizationNotification()\n```\n\n---\n\n## tables/04-actions.md > Record actions\nPackage: filament/filament@5.x\n\n## Record actions\n\nAction buttons can be rendered at the end of each table row. You can put them in the `$table->recordActions()` method:\n\n```php\nuse Filament\\Tables\\Table;\n\npublic function table(Table $table): Table\n{\n    return $table\n        ->recordActions([\n            // ...\n        ]);\n}\n```\n\nActions may be created using the static `make()` method, passing its unique name.\n\nYou can then pass a function to `action()` which executes the task, or a function to `url()` which creates a link:\n\n```php\nuse App\\Models\\Post;\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (Post $record): string => route('posts.edit', $record))\n    ->openUrlInNewTab()\n\nAction::make('delete')\n    ->requiresConfirmation()\n    ->action(fn (Post $record) => $record->delete())\n```\n\nAll methods on the action accept callback functions, where you can access the current table `$record` that was clicked.\n\n<AutoScreenshot name=\"tables/actions/simple\" alt=\"Table with actions\" version=\"5.x\" />\n\n---\n\n## authorization.md > Authorizing Actions Using Policies > Via Middleware\nPackage: laravel/framework@12.x\n\n<a name=\"via-middleware\"></a>\n### Via Middleware\n\nLaravel includes a middleware that can authorize actions before the incoming request even reaches your routes or controllers. By default, the `Illuminate\\Auth\\Middleware\\Authorize` middleware may be attached to a route using the `can` [middleware alias](/docs/{{version}}/middleware#middleware-aliases), which is automatically registered by Laravel. Let's explore an example of using the `can` middleware to authorize that a user can update a post:\n\n```php\nuse App\\Models\\Post;\n\nRoute::put('/post/{post}', function (Post $post) {\n    // The current user may update the post...\n})->middleware('can:update,post');\n```\n\nIn this example, we're passing the `can` middleware two arguments. The first is the name of the action we wish to authorize and the second is the route parameter we wish to pass to the policy method. In this case, since we are using [implicit model binding](/docs/{{version}}/routing#implicit-binding), an `App\\Models\\Post` model will be passed to the policy method. If the user is not authorized to perform the given action, an HTTP response with a 403 status code will be returned by the middleware.\n\nFor convenience, you may also attach the `can` middleware to your route using the `can` method:\n\n```php\nuse App\\Models\\Post;\n\nRoute::put('/post/{post}', function (Post $post) {\n    // The current user may update the post...\n})->can('update', 'post');\n```\n\n---\n\n## schemas/09-custom-components.md > Accessing the current component instance in the Blade view\nPackage: filament/filament@5.x\n\n### Accessing the current component instance in the Blade view\n\nInside the Blade view, you may access the current component instance using `$schemaComponent`. You can call public methods on this object to access other information that may not be available in variables:\n\n```blade\n<p>\n    @if ($schemaComponent->getState())\n        This is a new post.\n    @endif\n</p>\n```\n\n---\n\n## tables/02-columns/08-text-input.md > Using icons as affixes\nPackage: filament/filament@5.x\n\n### Using icons as affixes\n\nYou may place an [icon](../../styling/icons) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:\n\n```php\nuse Filament\\Tables\\Columns\\TextInputColumn;\nuse Filament\\Support\\Icons\\Heroicon;\n\nTextInputColumn::make('domain')\n    ->prefixIcon(Heroicon::GlobeAlt)\n    ->suffixIcon(Heroicon::CheckCircle)\n```\n\n<UtilityInjection set=\"tableColumns\" version=\"5.x\">As well as allowing static values, the `prefixIcon()` and `suffixIcon()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>\n\n#### Setting the affix icon's color\n\nAffix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:\n\n```php\nuse Filament\\Tables\\Columns\\TextInputColumn;\nuse Filament\\Support\\Icons\\Heroicon;\n\nTextInputColumn::make('status')\n    ->suffixIcon(Heroicon::CheckCircle)\n    ->suffixIconColor('success')\n```\n\n<UtilityInjection set=\"tableColumns\" version=\"5.x\">As well as allowing static values, the `prefixIconColor()` and `suffixIconColor()` methods also accept a function to dynamically calculate them. You can inject various utilities into the function as parameters.</UtilityInjection>\n\n---\n\n## authorization.md > Introduction\nPackage: laravel/framework@12.x\n\n<a name=\"introduction\"></a>\n## Introduction\n\nIn addition to providing built-in [authentication](/docs/{{version}}/authentication) services, Laravel also provides a simple way to authorize user actions against a given resource. For example, even though a user is authenticated, they may not be authorized to update or delete certain Eloquent models or database records managed by your application. Laravel's authorization features provide an easy, organized way of managing these types of authorization checks.\n\nLaravel provides two primary ways of authorizing actions: [gates](#gates) and [policies](#creating-policies). Think of gates and policies like routes and controllers. Gates provide a simple, closure-based approach to authorization while policies, like controllers, group logic around a particular model or resource. In this documentation, we'll explore gates first and then examine policies.\n\nYou do not need to choose between exclusively using gates or exclusively using policies when building an application. Most applications will most likely contain some mixture of gates and policies, and that is perfectly fine! Gates are most applicable to actions that are not related to any model or resource, such as viewing an administrator dashboard. In contrast, policies should be used when you wish to authorize an action for a particular model or resource.\n\n_[Content truncated due to token limit]_"
+    }
+  ],
+  "isError": false
+}
+tool laravel-boost.search-docs({"packages":["filament/filament"],"queries":["resource authorization canEdit canViewAny canView","resource policies built in edit action authorization","ViewRecord header actions authorize"],"token_limit":4000})
+laravel-boost.search-docs({"packages":["filament/filament"],"queries":["resource authorization canEdit canViewAny canView","resource policies built in edit action authorization","ViewRecord header actions authorize"],"token_limit":4000}) success in 4.11s:
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "# Documentation Search Results\n\n**Packages:** filament/filament@5.x\n**Results:** 22 documents, 431 chunks\n\n---\n\n## actions/01-overview.md > Authorization using a policy\nPackage: filament/filament@5.x\n\n### Authorization using a policy\n\nYou can use a policy to authorize an action. To do this, pass the name of the policy method to the `authorize()` method, and Filament will use the current Eloquent model for that action to find the correct policy:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))\n    ->authorize('update')\n```\n\n\n    If you're using an action in a panel resource or relation manager, you don't need to use the `authorize()` method, since Filament will automatically read the policy based on the resource model for the built-in actions like `CreateAction`, `EditAction` and `DeleteAction`. For more information, visit the [resource authorization](../resources/overview#authorization) section.\n\n\nIf your policy method returns a [response message](https://laravel.com/docs/authorization#policy-responses), you can disable the action instead of hiding it, and add a tooltip containing the message, using the `authorizationTooltip()` method:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))\n    ->authorize('update')\n    ->authorizationTooltip()\n```\n\nYou may instead allow the action to still be clickable even if the user is not authorized, but send a notification containing the response message, using the `authorizationNotification()` method:\n\n```php\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))\n    ->authorize('update')\n    ->authorizationNotification()\n```\n\n---\n\n## docs/06-navigation/02-custom-pages.md > Header actions\nPackage: filament/filament@5.x\n\n### Header actions\n\nYou can also easily add actions to the header of any page, including [resource pages](../resources/overview). You don't need to worry about adding anything to the Blade template, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:\n\n```php\nuse Filament\\Actions\\Action;\n\nprotected function getHeaderActions(): array\n{\n    return [\n        Action::make('edit')\n            ->url(route('posts.edit', ['post' => $this->post])),\n        Action::make('delete')\n            ->requiresConfirmation()\n            ->action(fn () => $this->post->delete()),\n    ];\n}\n```\n\n#### Aligning header actions\n\nBy default, header actions are aligned to the left on mobile. To change the alignment of the header actions on mobile, set `$headerActionsAlignment`:\n\n```php\nuse Filament\\Support\\Enums\\Alignment;\n\nprotected ?Alignment $headerActionsAlignment = Alignment::End;\n```\n\n---\n\n## docs/11-plugins/05-configurable-resources-and-pages.md > Using configurable resources in a plugin class\nPackage: filament/filament@5.x\n\n## Using configurable resources in a plugin class\n\nHere's a complete example of a plugin that exposes configurable resources to its users:\n\n```php\nuse Filament\\Contracts\\Plugin;\nuse Filament\\Panel;\n\nclass TasksPlugin implements Plugin\n{\n    /** @var array<TaskResourceConfiguration> */\n    protected array $taskResourceConfigurations = [];\n\n    public static function make(): static\n    {\n        return app(static::class);\n    }\n\n    public function getId(): string\n    {\n        return 'tasks';\n    }\n\n    /**\n     * @param  array<TaskResourceConfiguration>  $configurations\n     */\n    public function taskResources(array $configurations): static\n    {\n        $this->taskResourceConfigurations = $configurations;\n\n        return $this;\n    }\n\n    public function register(Panel $panel): void\n    {\n        $panel->resources([\n            TaskResource::class,\n            ...$this->taskResourceConfigurations,\n        ]);\n    }\n\n    public function boot(Panel $panel): void\n    {\n        //\n    }\n}\n```\n\nUsers of the plugin can then register multiple task views:\n\n```php\nuse Vendor\\TasksPlugin\\TasksPlugin;\nuse Vendor\\TasksPlugin\\TaskResource;\n\npublic function panel(Panel $panel): Panel\n{\n    return $panel\n        ->plugin(\n            TasksPlugin::make()\n                ->taskResources([\n                    TaskResource::make('my-tasks')\n                        ->ownedByCurrentUser(),\n                    TaskResource::make('team-tasks')\n                        ->ownedByCurrentTeam(),\n                ])\n        );\n}\n```\n\n---\n\n## docs/03-resources/04-editing-records.md > Adding a save action button to the header\nPackage: filament/filament@5.x\n\n### Adding a save action button to the header\n\nThe \"Save\" button can be added to the header of the page by overriding the `getHeaderActions()` method and using `getSaveFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:\n\n```php\nprotected function getHeaderActions(): array\n{\n    return [\n        $this->getSaveFormAction()\n            ->formId('form'),\n    ];\n}\n```\n\nYou may remove all actions from the form by overriding the `getFormActions()` method to return an empty array:\n\n```php\nprotected function getFormActions(): array\n{\n    return [];\n}\n```\n\n---\n\n## docs/03-resources/03-creating-records.md > Custom actions\nPackage: filament/filament@5.x\n\n## Custom actions\n\n\"Actions\" are buttons that are displayed on pages, which allow the user to run a Livewire method on the page or visit a URL.\n\nOn resource pages, actions are usually in 2 places: in the top right of the page, and below the form.\n\nFor example, you may add a new button action in the header of the Create page:\n\n```php\nuse App\\Filament\\Imports\\UserImporter;\nuse Filament\\Actions;\nuse Filament\\Resources\\Pages\\CreateRecord;\n\nclass CreateUser extends CreateRecord\n{\n    // ...\n\n    protected function getHeaderActions(): array\n    {\n        return [\n            Actions\\ImportAction::make()\n                ->importer(UserImporter::class),\n        ];\n    }\n}\n```\n\nOr, a new button next to \"Create\" below the form:\n\n```php\nuse Filament\\Actions\\Action;\nuse Filament\\Resources\\Pages\\CreateRecord;\n\nclass CreateUser extends CreateRecord\n{\n    // ...\n\n    protected function getFormActions(): array\n    {\n        return [\n            ...parent::getFormActions(),\n            Action::make('close')->action('createAndClose'),\n        ];\n    }\n\n    public function createAndClose(): void\n    {\n        // ...\n    }\n}\n```\n\nTo view the entire actions API, please visit the [pages section](../navigation/custom-pages#adding-actions-to-pages).\n\n---\n\n## docs/03-resources/05-viewing-records.md > Authorization\nPackage: filament/filament@5.x\n\n## Authorization\n\nFor authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.\n\nUsers may access the View page if the `view()` method of the model policy returns `true`.\n\n---\n\n## tables/04-actions.md > Authorizing bulk actions\nPackage: filament/filament@5.x\n\n### Authorizing bulk actions\n\nWhen using a bulk action, you may check a policy method for each record that is selected. This is useful for checking if the user has permission to perform the action on each record. You can use the `authorizeIndividualRecords()` method, passing the name of a policy method, which will be called for each record. If the policy denies authorization, the record will not be present in the bulk action's `$records` parameter:\n\n```php\nuse Filament\\Actions\\BulkAction;\nuse Illuminate\\Database\\Eloquent\\Collection;\n\nBulkAction::make('delete')\n    ->requiresConfirmation()\n    ->authorizeIndividualRecords('delete')\n    ->action(fn (Collection $records) => $records->each->delete())\n```\n\n---\n\n## docs/11-plugins/05-configurable-resources-and-pages.md > Temporarily switching configuration context\nPackage: filament/filament@5.x\n\n## Temporarily switching configuration context\n\nYou may use `withConfiguration()` to execute code in the context of a specific configuration. This is useful when you need to generate URLs or access configuration values for a registration other than the currently active one:\n\n```php\n$archivedUrl = OrderResource::withConfiguration('archived', function () {\n    return OrderResource::getUrl('index');\n});\n```\n\n---\n\n## docs/03-resources/04-editing-records.md > Authorization\nPackage: filament/filament@5.x\n\n## Authorization\n\nFor authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.\n\nUsers may access the Edit page if the `update()` method of the model policy returns `true`.\n\nThey also have the ability to delete the record if the `delete()` method of the policy returns `true`.\n\n---\n\n## docs/03-resources/03-creating-records.md > Adding a create action button to the header\nPackage: filament/filament@5.x\n\n### Adding a create action button to the header\n\nThe \"Create\" button can be moved to the header of the page by overriding the `getHeaderActions()` method and using `getCreateFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:\n\n```php\nprotected function getHeaderActions(): array\n{\n    return [\n        $this->getCreateFormAction()\n            ->formId('form'),\n    ];\n}\n```\n\nYou may remove all actions from the form by overriding the `getFormActions()` method to return an empty array:\n\n```php\nprotected function getFormActions(): array\n{\n    return [];\n}\n```\n\n---\n\n## docs/05-panel-configuration.md > Strict authorization mode\nPackage: filament/filament@5.x\n\n## Strict authorization mode\n\nBy default, when Filament authorizes the user access to a resource, it will first check if the policy exists for that model, and if it does, it will check if a method exists on the policy to perform the action. If the policy or policy method does not exist, it will grant the user access to the resource, as it assumes you have not set up authorization yet, or you do not require it.\n\nIf you would prefer Filament to throw an exception if the policy or policy method does not exist, you can enable strict authorization mode using the `strictAuthorization()` method:\n\n```php\nuse Filament\\Panel;\n\npublic function panel(Panel $panel): Panel\n{\n    return $panel\n        // ...\n        ->strictAuthorization();\n}\n```\n\n---\n\n## docs/11-plugins/05-configurable-resources-and-pages.md > Configurable pages\nPackage: filament/filament@5.x\n\n## Configurable pages\n\nPages follow the same pattern as resources. The key differences are:\n\n- Your configuration class extends `PageConfiguration` instead of `ResourceConfiguration`\n- You register configurations using `$panel->pages()` instead of `$panel->resources()`\n- Since pages are Livewire components, you can read configuration values in `mount()`:\n\n```php\nuse Filament\\Pages\\Page;\n\nclass SettingsPage extends Page\n{\n    protected static ?string $configurationClass = SettingsPageConfiguration::class;\n\n    public function mount(): void\n    {\n        if ($configuration = static::getConfiguration()) {\n            $this->settingsCategory = $configuration->getSettingsCategory();\n        }\n    }\n\n    // ...\n}\n```\n\n```php\n$panel->pages([\n    SettingsPage::make('general')\n        ->slug('general-settings')\n        ->settingsCategory('general'),\n    SettingsPage::make('advanced')\n        ->slug('advanced-settings')\n        ->settingsCategory('advanced'),\n]);\n```\n\n---\n\n## docs/07-users/01-overview.md > Authorizing guests in policies\nPackage: filament/filament@5.x\n\n### Authorizing guests in policies\n\nWhen present, Filament relies on [Laravel Model Policies](https://laravel.com/docs/authorization#generating-policies) for access control. To give read-access for [guest users in a model policy](https://laravel.com/docs/authorization#guest-users), create the Policy and update the `viewAny()` and `view()` methods, changing the `User $user` param to `?User $user` so that it's optional, and `return true;`. Alternatively, you can remove those methods from the policy entirely.\n\n---\n\n## actions/12-export.md > Authorization\nPackage: filament/filament@5.x\n\n## Authorization\n\nBy default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/authorization#registering-policies):\n\n```php\nuse App\\Policies\\ExportPolicy;\nuse Filament\\Actions\\Exports\\Models\\Export;\n\nprotected $policies = [\n    Export::class => ExportPolicy::class,\n];\n```\n\nThe `view()` method of the policy will be used to authorize access to the downloads.\n\nPlease note that if you define a policy, the existing logic of ensuring only the user who started the export can access it will be removed. You will need to add that logic to your policy if you want to keep it:\n\n```php\nuse App\\Models\\User;\nuse Filament\\Actions\\Exports\\Models\\Export;\n\npublic function view(User $user, Export $export): bool\n{\n    return $export->user()->is($user);\n}\n```\n\n---\n\n## docs/07-users/01-overview.md > Authorizing access to Resources\nPackage: filament/filament@5.x\n\n## Authorizing access to Resources\n\nSee the [Authorization](../resources/overview#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.\n\n---\n\n## docs/11-plugins/05-configurable-resources-and-pages.md > Generating URLs for a specific configuration\nPackage: filament/filament@5.x\n\n## Generating URLs for a specific configuration\n\nWhen generating URLs for a configured resource, pass the `configuration` argument to `getUrl()`:\n\n```php\n// URL for the default (unconfigured) registration\nOrderResource::getUrl();\n\n// URL for the \"active\" configuration\nOrderResource::getUrl(configuration: 'active');\n\n// URL for a specific page within the \"archived\" configuration\nOrderResource::getUrl('edit', ['record' => $order], configuration: 'archived');\n```\n\nWhen you're already inside a configured request (e.g., in a resource page), `getUrl()` automatically uses the current configuration context. You only need to pass the `configuration` argument when linking to a different configuration from the one you're currently in.\n\n---\n\n## docs/03-resources/04-editing-records.md > Custom actions\nPackage: filament/filament@5.x\n\n## Custom actions\n\n\"Actions\" are buttons that are displayed on pages, which allow the user to run a Livewire method on the page or visit a URL.\n\nOn resource pages, actions are usually in 2 places: in the top right of the page, and below the form.\n\nFor example, you may add a new button action next to \"Delete\" on the Edit page:\n\n```php\nuse Filament\\Actions;\nuse Filament\\Resources\\Pages\\EditRecord;\n\nclass EditUser extends EditRecord\n{\n    // ...\n\n    protected function getHeaderActions(): array\n    {\n        return [\n            Actions\\Action::make('impersonate')\n                ->action(function (): void {\n                    // ...\n                }),\n            Actions\\DeleteAction::make(),\n        ];\n    }\n}\n```\n\nOr, a new button next to \"Save\" below the form:\n\n```php\nuse Filament\\Actions\\Action;\nuse Filament\\Resources\\Pages\\EditRecord;\n\nclass EditUser extends EditRecord\n{\n    // ...\n\n    protected function getFormActions(): array\n    {\n        return [\n            ...parent::getFormActions(),\n            Action::make('close')->action('saveAndClose'),\n        ];\n    }\n\n    public function saveAndClose(): void\n    {\n        // ...\n    }\n}\n```\n\nTo view the entire actions API, please visit the [pages section](../navigation/custom-pages#adding-actions-to-pages).\n\n---\n\n## tables/04-actions.md > Record actions\nPackage: filament/filament@5.x\n\n## Record actions\n\nAction buttons can be rendered at the end of each table row. You can put them in the `$table->recordActions()` method:\n\n```php\nuse Filament\\Tables\\Table;\n\npublic function table(Table $table): Table\n{\n    return $table\n        ->recordActions([\n            // ...\n        ]);\n}\n```\n\nActions may be created using the static `make()` method, passing its unique name.\n\nYou can then pass a function to `action()` which executes the task, or a function to `url()` which creates a link:\n\n```php\nuse App\\Models\\Post;\nuse Filament\\Actions\\Action;\n\nAction::make('edit')\n    ->url(fn (Post $record): string => route('posts.edit', $record))\n    ->openUrlInNewTab()\n\nAction::make('delete')\n    ->requiresConfirmation()\n    ->action(fn (Post $record) => $record->delete())\n```\n\nAll methods on the action accept callback functions, where you can access the current table `$record` that was clicked.\n\n<AutoScreenshot name=\"tables/actions/simple\" alt=\"Table with actions\" version=\"5.x\" />\n\n_[Content truncated due to token limit]_"
+    }
+  ],
+  "isError": false
+}
+codex
+The prompt is explicitly a “second opinion” task, so I’m activating the `counselors` skill now and will follow its workflow before I finalize the plan.
+exec
+/bin/zsh -lc "sed -n '1,260p' /Users/princejohnsantillan/.codex/skills/counselors/SKILL.md" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+---
+name: counselors
+description: Get parallel second opinions from multiple AI coding agents with the counselors CLI. Use when the user wants independent code review, architecture feedback, bug hunting, risk analysis, sanity checks on a plan or diff, or iterative multi-agent analysis across the current repository.
+---
+
+# Counselors
+
+Use `counselors` to fan out a review prompt to multiple configured AI coding agents, then synthesize the results.
+
+Treat `counselors` runs as long-running work. A dispatch commonly takes 10 to 20+ minutes. Prefer launching it, monitoring progress, and returning once results are available instead of blocking without updates.
+
+## Workflow
+
+### 1. Gather context
+
+Parse the user request and identify the smallest useful review scope.
+
+Collect:
+- files explicitly mentioned by the user
+- recent changes from `git diff HEAD` and `git diff --staged`
+exec
+/bin/zsh -lc 'command -v counselors && counselors --help | head -n 40' in /Users/princejohnsantillan/Herd/keeper succeeded in 38ms:
+Usage: counselors [options] [command]
+
+Fan out prompts to multiple AI coding tools (agents) in parallel
+
+Options:
+  -V, --version             output the version number
+  -h, --help                display help for command
+
+Commands:
+  run [options] [prompt]    Dispatch prompt to configured AI tools in parallel
+  loop [options] [prompt]   Multi-round dispatch — tools (agents) iterate,
+                            seeing prior outputs each round
+  mkdir [options] [prompt]  Create an output directory and optionally write
+                            prompt.md without dispatching (supports prompt arg,
+                            -f, or stdin)
+  cleanup [options]         Delete run output directories older than a given age
+  config                    Show resolved configuration
+  doctor                    Check tool configuration and health
+  init [options]            Interactive setup wizard
+  agent                     Print setup and skill installation instructions
+codex
+I verified the `counselors` CLI is installed. I’ll quickly inspect configured tools/groups now; if dispatch isn’t practical in this environment, I’ll explicitly fall back to a direct second-opinion plan based on repository evidence.
+exec
+/bin/zsh -lc 'counselors ls' in /Users/princejohnsantillan/Herd/keeper succeeded in 38ms:
+
+Configured tools:
+
+  claude-opus (/opt/homebrew/bin/claude)
+  codex-5.3-xhigh (/opt/homebrew/bin/codex)
+  gemini-3-pro-preview (GOOGLE_GENAI_USE_VERTEXAI=true GOOGLE_CLOUD_PROJECT=betterworld-general /opt/homebrew/bin/gemini)
+  claude-sonnet (/opt/homebrew/bin/claude)
+  claude-haiku (/opt/homebrew/bin/claude)
+  codex-5.3-high (/opt/homebrew/bin/codex)
+  codex-5.3-medium (/opt/homebrew/bin/codex)
+  gemini-3-pro (/opt/homebrew/bin/gemini)
+  gemini-2.5-pro (/opt/homebrew/bin/gemini)
+  gemini-3-flash (/opt/homebrew/bin/gemini)
+  gemini-2.5-flash (/opt/homebrew/bin/gemini)
+
+(Use -v to show flags)
+
+exec
+/bin/zsh -lc 'counselors groups ls' in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+
+Configured groups:
+
+  smart: claude-opus, codex-5.3-xhigh, gemini-3-pro-preview
+
+exec
+/bin/zsh -lc 'counselors doctor' in /Users/princejohnsantillan/Herd/keepercodex
+I’m running `counselors doctor` to confirm whether multi-agent dispatch is viable here; if it fails or hangs, I’ll proceed with the direct evidence-based plan immediately.
+ exited 1 in 51.70s:
+
+Doctor results:
+
+  ✓ Config file: /Users/princejohnsantillan/.config/counselors/config.json
+  ✓ claude-opus: binary: /opt/homebrew/bin/claude
+  ✓ claude-opus: version: 2.1.76 (Claude Code)
+  ✓ claude-opus: read-only: enforced
+  ✓ codex-5.3-xhigh: binary: /opt/homebrew/bin/codex
+  ✓ codex-5.3-xhigh: version: codex-cli 0.114.0
+  ✓ codex-5.3-xhigh: read-only: enforced
+  ✗ gemini-3-pro-preview: binary: "GOOGLE_GENAI_USE_VERTEXAI=true GOOGLE_CLOUD_PROJECT=betterworld-general /opt/homebrew/bin/gemini" not found in PATH
+  ✓ claude-sonnet: binary: /opt/homebrew/bin/claude
+  ✓ claude-sonnet: version: 2.1.76 (Claude Code)
+  ✓ claude-sonnet: read-only: enforced
+  ✓ claude-haiku: binary: /opt/homebrew/bin/claude
+  ✓ claude-haiku: version: 2.1.76 (Claude Code)
+  ✓ claude-haiku: read-only: enforced
+  ✓ codex-5.3-high: binary: /opt/homebrew/bin/codex
+  ✓ codex-5.3-high: version: codex-cli 0.114.0
+  ✓ codex-5.3-high: read-only: enforced
+exec
+/bin/zsh -lc "sed -n '1,320p' app/Enums/Relationship.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Enums;
+
+use Filament\Support\Contracts\HasLabel;
+
+/**
+ * An enumeration of Guardian to Child relationships.
+ */
+enum Relationship: string implements HasLabel
+{
+    case Father = 'father';
+    case Mother = 'mother';
+    case Brother = 'brother';
+    case Sister = 'sister';
+    case Grandfather = 'grandfather';
+    case Grandmother = 'grandmother';
+    case Uncle = 'uncle';
+exec
+/bin/zsh -lc "sed -n '1,360p' app/Filament/Notifications/AppNotification.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Notifications;
+
+use App\Enums\KeeperRole;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+
+final class AppNotification
+{
+    // ─────────────────────────────────────────────────────────────────────────
+    // Success Notifications
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public static function registeredToActivity(): Notification
+    {
+        return Notification::make()
+            ->success()
+exec
+/bin/zsh -lc "rg -n \"GetCurrentKeeperAction|Subdomain::organization\\(|ownedBy\\(\\"'$organization'"\\)|owner_type\" app/Filament app/Actions app/Models -g'*.php'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+app/Models/OrganizationNote.php:41:            $organizationId = Subdomain::organization()?->id;
+app/Models/OrganizationTag.php:52:            $organizationId = Subdomain::organization()?->id;
+app/Models/User.php:74:        $organization = Subdomain::organization();
+app/Models/Scopes/OrganizationScope.php:16:        $organization = Subdomain::organization();
+app/Filament/Actions/CheckOutGatepassAction.php:7:use App\Actions\GetCurrentKeeperAction;
+app/Filament/Actions/CheckOutGatepassAction.php:27:                GetCurrentKeeperAction $getCurrentKeeper,
+app/Actions/GetCurrentKeeperAction.php:11:final class GetCurrentKeeperAction
+app/Actions/GetCurrentKeeperAction.php:15:        $organization = Subdomain::organization();
+app/Models/Concerns/HasOwnership.php:30:                ->where('owner_type', $owner->getMorphClass())
+app/Filament/Actions/InviteKeeperAction.php:43:                $organization = Subdomain::organization();
+app/Filament/Actions/CheckInGatepassAction.php:7:use App\Actions\GetCurrentKeeperAction;
+app/Filament/Actions/CheckInGatepassAction.php:28:                GetCurrentKeeperAction $getCurrentKeeper,
+app/Filament/Actions/ChangeKeeperRoleAction.php:8:use App\Actions\GetCurrentKeeperAction;
+app/Filament/Actions/ChangeKeeperRoleAction.php:40:                GetCurrentKeeperAction $getCurrentKeeper,
+app/Filament/Actions/ChangeKeeperRoleAction.php:64:        $currentKeeper = app(GetCurrentKeeperAction::class)->__invoke();
+app/Actions/CreateOwnershipAction.php:18:            'owner_type' => $owner->getMorphClass(),
+app/Filament/Actions/CheckOutAttendanceAction.php:7:use App\Actions\GetCurrentKeeperAction;
+app/Filament/Actions/CheckOutAttendanceAction.php:29:                GetCurrentKeeperAction $getCurrentKeeper,
+app/Filament/Actions/CheckInAttendanceAction.php:7:use App\Actions\GetCurrentKeeperAction;
+app/Filament/Actions/CheckInAttendanceAction.php:29:                GetCurrentKeeperAction $getCurrentKeeper,
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Models/OrganizationNote.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,220p' app/Models/Scopes/OrganizationScope.php" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "sed -n '1,220p' app/Filament/Panels/Keeper/Resources/Activities/Tables/ActivitiesTable.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Facades\Subdomain;
+use App\Models\Scopes\OrganizationScope;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+
+#[ScopedBy(OrganizationScope::class)]
+/**
+ * @mixin IdeHelperOrganizationNote
+ */
+final class OrganizationNote extends Model
+exec
+/bin/zsh -lc "sed -n '1,260p' app/Models/OrganizationTag.php" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models\Scopes;
+
+use App\Facades\Subdomain;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Scope;
+
+final class OrganizationScope implements Scope
+{
+    public function apply(Builder $builder, Model $model): void
+    {
+        $organization = Subdomain::organization();
+
+        if ($organization !== null) {
+            $builder->where('organization_id', $organization->id);
+        }
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Panels\Keeper\Resources\Activities\Tables;
+
+use App\Actions\GetCurrentKeeperAction;
+use App\Filament\Actions\ViewAttendanceAction;
+use App\Filament\Actions\WalkInAction;
+use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+use App\Filament\Components\Tables\AppTextColumn;
+use App\Models\Activity;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+final class ActivitiesTable
+{
+    public static function configure(Table $table): Table
+ succeeded in 0ms:
+<?php
+
+declare(strict_types=1);
+
+namespace App\Models;
+
+use App\Facades\Subdomain;
+use App\Models\Scopes\OrganizationScope;
+use Database\Factories\OrganizationTagFactory;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+#[ScopedBy(OrganizationScope::class)]
+/**
+ * @mixin IdeHelperOrganizationTag
+codex
+I have enough context to draft the plan; I’m collecting exact line references for the critical constraints and risks so the recommendations map cleanly to concrete files.
+exec
+/bin/zsh -lc "nl -ba app/Filament/Actions/EditGuardianAction.php | sed -n '1,260p'" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "nl -ba app/Filament/Actions/EditChildAction.php | sed -n '1,300p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Actions;
+     6	
+     7	use App\Actions\UpdateGuardianAction;
+     8	use App\AuthUser;
+     9	use App\Models\Child;
+    10	use App\Models\Guardian;
+    11	use App\Models\Relationship;
+    12	use Filament\Actions\EditAction;
+    13	
+    14	final class EditGuardianAction
+    15	{
+    16	    public static function make(?string $name = 'edit'): EditAction
+    17	    {
+    18	        return EditAction::make($name)
+    19	            ->slideOver()
+    20	            ->mutateRecordDataUsing(function (array $data, Guardian $record): array {
+ succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Actions;
+     6	
+     7	use App\Actions\SyncChildGuardiansAction;
+     8	use App\Actions\UpdateChildAction;
+     9	use App\AuthUser;
+    10	use App\Filament\Notifications\AppNotification;
+    11	use App\Models\Child;
+    12	use App\Models\Guardian;
+    13	use App\Models\Relationship;
+    14	use Filament\Actions\EditAction;
+    15	
+    16	final class EditChildAction
+    17	{
+    18	    public static function make(?string $name = 'edit'): EditAction
+    19	    {
+    20	        return EditAction::make($name)
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Keeper/Resources/Children/ChildResource.php | sed -n '1,260p'" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Keeper/Resources/Guardians/GuardianResource.php | sed -n '1,260p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Keeper\Resources\Guardians;
+     6	
+     7	use App\Actions\GetCurrentKeeperAction;
+     8	use App\Facades\Subdomain;
+     9	use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ListGuardians;
+    10	use App\Filament\Panels\Keeper\Resources\Guardians\Pages\ViewGuardian;
+    11	use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianForm;
+    12	use App\Filament\Panels\Keeper\Resources\Guardians\Schemas\GuardianInfolist;
+    13	use App\Filament\Panels\Keeper\Resources\Guardians\Tables\GuardiansTable;
+    14	use App\Models\Guardian;
+    15	use BackedEnum;
+    16	use Filament\Resources\Resource;
+    17	use Filament\Schemas\Schema;
+    18	use Filament\Tables\Table;
+    19	use Illuminate\Database\Eloquent\Builder;
+    20	use UnitEnum;
+ succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Keeper\Resources\Children;
+     6	
+     7	use App\Actions\GetCurrentKeeperAction;
+     8	use App\Facades\Subdomain;
+     9	use App\Filament\Panels\Keeper\Resources\Children\Pages\ListChildren;
+    10	use App\Filament\Panels\Keeper\Resources\Children\Pages\ViewChild;
+    11	use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildForm;
+    12	use App\Filament\Panels\Keeper\Resources\Children\Schemas\ChildInfolist;
+    13	use App\Filament\Panels\Keeper\Resources\Children\Tables\ChildrenTable;
+    14	use App\Models\Child;
+    15	use BackedEnum;
+    16	use Filament\Resources\Resource;
+    17	use Filament\Schemas\Schema;
+    18	use Filament\Tables\Table;
+    19	use Illuminate\Database\Eloquent\Builder;
+    20	use UnitEnum;
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Keeper/Resources/Children/Schemas/ChildForm.php | sed -n '1,280p'" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Keeper/Resources/Children/Pages/ViewChild.php | sed -n '1,200p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Keeper\Resources\Children\Schemas;
+     6	
+     7	use App\Filament\Components\Forms\AppDatePicker;
+     8	use App\Filament\Components\Forms\AppSelect;
+     9	use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+    10	use App\Filament\Components\Forms\AppTagsInput;
+    11	use App\Filament\Components\Forms\AppTextarea;
+    12	use App\Filament\Components\Forms\AppTextInput;
+    13	use Filament\Schemas\Schema;
+    14	
+    15	final class ChildForm
+    16	{
+    17	    public static function configure(Schema $schema): Schema
+    18	    {
+    19	        return $schema
+    20	            ->components([
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Keeper/Resources/Guardians/Pages/ViewGuardian.php | sed -n '1,200p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Keeper\Resources\Children\Pages;
+     6	
+     7	use App\Filament\Panels\Keeper\Resources\Children\ChildResource;
+     8	use Filament\Resources\Pages\ViewRecord;
+     9	
+    10	final class ViewChild extends ViewRecord
+    11	{
+    12	    protected static string $resource = ChildResource::class;
+    13	
+    14	    protected function getHeaderActions(): array
+    15	    {
+    16	        return [];
+    17	    }
+    18	}
+ succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Keeper\Resources\Guardians\Pages;
+     6	
+     7	use App\Filament\Panels\Keeper\Resources\Guardians\GuardianResource;
+     8	use Filament\Resources\Pages\ViewRecord;
+     9	
+    10	final class ViewGuardian extends ViewRecord
+    11	{
+    12	    protected static string $resource = GuardianResource::class;
+    13	
+    14	    protected function getHeaderActions(): array
+    15	    {
+    16	        return [];
+    17	    }
+    18	}
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Keeper/Resources/Guardians/Schemas/GuardianForm.php | sed -n '1,300p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Keeper\Resources\Guardians\Schemas;
+     6	
+     7	use App\Filament\Components\Forms\AppDatePicker;
+     8	use App\Filament\Components\Forms\AppSelect;
+     9	use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+    10	use App\Filament\Components\Forms\AppTagsInput;
+    11	use App\Filament\Components\Forms\AppTextInput;
+    12	use Filament\Schemas\Schema;
+    13	
+    14	final class GuardianForm
+    15	{
+    16	    public static function configure(Schema $schema): Schema
+    17	    {
+    18	        return $schema
+    19	            ->components([
+    20	                AppSpatieMediaLibraryFileUpload::avatar()
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Guardian/Resources/Children/Pages/ViewChild.php | sed -n '1,220p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Guardian\Resources\Children\Pages;
+     6	
+     7	use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
+     8	use App\Filament\Panels\Guardian\Resources\Children\Tables\ChildrenTable;
+     9	use App\Models\Child;
+    10	use Filament\Resources\Pages\ViewRecord;
+    11	
+    12	final class ViewChild extends ViewRecord
+    13	{
+    14	    protected static string $resource = ChildResource::class;
+    15	
+    16	    public function getHeading(): string
+    17	    {
+    18	        /** @var Child $record */
+    19	        $record = $this->getRecord();
+    20	
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Guardian/Resources/Children/Schemas/ChildForm.php | sed -n '1,340p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Guardian\Resources\Children\Schemas;
+     6	
+     7	use App\Enums\Relationship;
+     8	use App\Filament\Components\Forms\AppDatePicker;
+     9	use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+    10	use App\Filament\Components\Forms\AppTextarea;
+    11	use App\Filament\Components\Forms\AppTextInput;
+    12	use App\Filament\Components\Forms\AppToggleButtons;
+    13	use Filament\Forms\Components\Hidden;
+    14	use Filament\Forms\Components\Repeater;
+    15	use Filament\Forms\Components\Select;
+    16	use Filament\Forms\Components\TextInput;
+    17	use Filament\Schemas\Components\Fieldset;
+    18	use Filament\Schemas\Schema;
+    19	
+    20	final class ChildForm
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Guardian/Resources/Guardians/Pages/ViewGuardian.php | sed -n '1,220p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Guardian\Resources\Guardians\Pages;
+     6	
+     7	use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
+     8	use App\Filament\Panels\Guardian\Resources\Guardians\Tables\GuardiansTable;
+     9	use App\Models\Guardian;
+    10	use Filament\Resources\Pages\ViewRecord;
+    11	
+    12	final class ViewGuardian extends ViewRecord
+    13	{
+    14	    protected static string $resource = GuardianResource::class;
+    15	
+    16	    public function getHeading(): string
+    17	    {
+    18	        /** @var Guardian $record */
+    19	        $record = $this->getRecord();
+    20	
+exec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Guardian/Resources/Guardians/Schemas/GuardianForm.php | sed -n '1,360p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Guardian\Resources\Guardians\Schemas;
+     6	
+     7	use App\Enums\Relationship;
+     8	use App\Filament\Components\Forms\AppDatePicker;
+     9	use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
+    10	use App\Filament\Components\Forms\AppTextInput;
+    11	use App\Filament\Components\Forms\AppToggleButtons;
+    12	use Filament\Forms\Components\Hidden;
+    13	use Filament\Forms\Components\Repeater;
+    14	use Filament\Forms\Components\Select;
+    15	use Filament\Forms\Components\TextInput;
+    16	use Filament\Schemas\Components\Fieldset;
+    17	use Filament\Schemas\Schema;
+    18	
+    19	final class GuardianForm
+    20	{
+exec
+/bin/zsh -lc "nl -ba app/Models/Concerns/HasOwnership.php | sed -n '1,240p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Models\Concerns;
+     6	
+     7	use App\Models\Ownership;
+     8	use Illuminate\Database\Eloquent\Builder;
+     9	use Illuminate\Database\Eloquent\Model;
+    10	use Illuminate\Database\Eloquent\Relations\MorphMany;
+    11	
+    12	trait HasOwnership
+    13	{
+    14	    /**
+    15	     * @return MorphMany<Ownership, $this>
+    16	     */
+    17	    public function ownerships(): MorphMany
+    18	    {
+    19	        return $this->morphMany(Ownership::class, 'model');
+    20	    }
+exec
+/bin/zsh -lc "nl -ba app/Actions/CreateOwnershipAction.php | sed -n '1,220p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Actions;
+     6	
+     7	use App\Models\Ownership;
+     8	use Illuminate\Database\Eloquent\Model;
+     9	
+    10	final class CreateOwnershipAction
+    11	{
+    12	    /**
+    13	     * Ensure an ownership record exists for this model-owner pair.
+    14	     */
+    15	    public function __invoke(Model $model, Model $owner): void
+    16	    {
+    17	        Ownership::query()->updateOrCreate([
+    18	            'owner_type' => $owner->getMorphClass(),
+    19	            'owner_id' => (string) $owner->getKey(),
+    20	            'model_type' => $model->getMorphClass(),
+exec
+/bin/zsh -lc "nl -ba database/migrations/2026_02_07_003800_create_ownership_table.php | sed -n '1,220p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	use Illuminate\Database\Migrations\Migration;
+     4	use Illuminate\Database\Schema\Blueprint;
+     5	use Illuminate\Support\Facades\Schema;
+     6	
+     7	return new class extends Migration
+     8	{
+     9	    /**
+    10	     * Run the migrations.
+    11	     */
+    12	    public function up(): void
+    13	    {
+    14	        Schema::create('ownership', function (Blueprint $table) {
+    15	            $table->ulid('id')->primary();
+    16	            $table->ulidMorphs('owner');
+    17	            $table->ulidMorphs('model');
+    18	            $table->timestamps();
+    19	        });
+    20	    }
+exec
+/bin/zsh -lc "nl -ba database/migrations/2026_02_07_021333_migrate_child_and_guardian_owner_ids_to_ownership_table.php | sed -n '1,320p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 0ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	use App\Models\Child;
+     6	use App\Models\Guardian;
+     7	use App\Models\User;
+     8	use Illuminate\Database\Migrations\Migration;
+     9	use Illuminate\Database\Query\JoinClause;
+    10	use Illuminate\Database\Schema\Blueprint;
+    11	use Illuminate\Support\Collection;
+    12	use Illuminate\Support\Facades\DB;
+    13	use Illuminate\Support\Facades\Schema;
+    14	use Illuminate\Support\Str;
+    15	
+    16	return new class extends Migration
+    17	{
+    18	    /**
+    19	     * Run the migrations.
+    20	     */
+exec
+/bin/zsh -lc "nl -ba app/Filament/Actions/UpdateChildGuardiansAction.php | sed -n '1,320p'" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Guardian/Resources/Children/Tables/ChildrenTable.php | sed -n '1,260p'" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "nl -ba app/AuthUser.php | sed -n '1,220p'" in /Users/princejohnsantillan/Herd/keeperexec
+/bin/zsh -lc "nl -ba app/Filament/Panels/Guardian/Resources/Guardians/Tables/GuardiansTable.php | sed -n '1,280p'" in /Users/princejohnsantillan/Herd/keeper succeeded in 27ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App;
+     6	
+     7	use App\Models\Guardian;
+     8	use App\Models\User;
+     9	use Illuminate\Support\Facades\Auth;
+    10	
+    11	final class AuthUser
+    12	{
+    13	    public static function user(): User
+    14	    {
+    15	        $user = Auth::user();
+    16	
+    17	        if ($user === null) {
+    18	            abort(403);
+    19	        }
+    20	
+ succeeded in 28ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Guardian\Resources\Children\Tables;
+     6	
+     7	use App\Filament\Actions\DeleteChildAction;
+     8	use App\Filament\Actions\EditChildAction;
+     9	use App\Filament\Actions\UpdateChildGuardiansAction;
+    10	use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+    11	use App\Filament\Panels\Guardian\Resources\Children\ChildResource;
+    12	use App\Models\Child;
+    13	use Filament\Actions\Action;
+    14	use Filament\Actions\DeleteAction;
+    15	use Filament\Actions\EditAction;
+    16	use Filament\Support\Enums\FontWeight;
+    17	use Filament\Tables\Columns\Layout\Split;
+    18	use Filament\Tables\Columns\Layout\Stack;
+    19	use Filament\Tables\Columns\TextColumn;
+    20	use Filament\Tables\Table;
+ succeeded in 44ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Actions;
+     6	
+     7	use App\Actions\SyncChildGuardiansAction;
+     8	use App\AuthUser;
+     9	use App\Enums\Relationship as RelationshipEnum;
+    10	use App\Filament\Notifications\AppNotification;
+    11	use App\Models\Child;
+    12	use App\Models\Guardian;
+    13	use App\Models\Relationship;
+    14	use Filament\Actions\Action;
+    15	use Filament\Forms\Components\Hidden;
+    16	use Filament\Forms\Components\Repeater;
+    17	use Filament\Forms\Components\Repeater\TableColumn;
+    18	use Filament\Forms\Components\Select;
+    19	use Filament\Forms\Components\TextInput;
+    20	use Illuminate\Database\Eloquent\Builder;
+ succeeded in 27ms:
+     1	<?php
+     2	
+     3	declare(strict_types=1);
+     4	
+     5	namespace App\Filament\Panels\Guardian\Resources\Guardians\Tables;
+     6	
+     7	use App\Filament\Actions\DeleteGuardianAction;
+     8	use App\Filament\Actions\EditGuardianAction;
+     9	use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
+    10	use App\Filament\Panels\Guardian\Resources\Guardians\GuardianResource;
+    11	use App\Models\Guardian;
+    12	use Filament\Actions\DeleteAction;
+    13	use Filament\Actions\EditAction;
+    14	use Filament\Support\Enums\FontWeight;
+    15	use Filament\Support\Icons\Heroicon;
+    16	use Filament\Tables\Columns\Layout\Split;
+    17	use Filament\Tables\Columns\Layout\Stack;
+    18	use Filament\Tables\Columns\TextColumn;
+    19	use Filament\Tables\Table;
+    20	
+codex
+**Decision**
+Do not bolt Keeper edit onto the current actions as-is. Refactor edit flow to be ownership-aware, then reuse it in both panels.
+
+**Critical Findings**
+1. Keeper resources intentionally include non-owned records via gatepass/activity joins, so visibility alone is not ownership-safe ([ChildResource](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Keeper/Resources/Children/ChildResource.php#L55), [GuardianResource](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Keeper/Resources/Guardians/GuardianResource.php#L55)).
+2. Keeper view pages have no edit entry points yet ([ViewChild](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Keeper/Resources/Children/Pages/ViewChild.php#L14), [ViewGuardian](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Keeper/Resources/Guardians/Pages/ViewGuardian.php#L14)).
+3. Existing shared edit actions are Guardian-context hardcoded:
+   - `EditChildAction` only pulls guardians owned by `AuthUser::user()` ([EditChildAction](/Users/princejohnsantillan/Herd/keeper/app/Filament/Actions/EditChildAction.php#L23)).
+   - `EditGuardianAction` calls `AuthUser::guardian()` which will 403 in Keeper context ([EditGuardianAction](/Users/princejohnsantillan/Herd/keeper/app/Filament/Actions/EditGuardianAction.php#L21), [AuthUser](/Users/princejohnsantillan/Herd/keeper/app/AuthUser.php#L24)).
+4. Keeper forms do not include relationship repeaters, so “edit with related children/guardians” is currently impossible ([Keeper ChildForm](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Keeper/Resources/Children/Schemas/ChildForm.php#L17), [Keeper GuardianForm](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Keeper/Resources/Guardians/Schemas/GuardianForm.php#L16)).
+5. Ownership model supports polymorphic owners and currently has both `User` and `Organization` owners in data, so Keeper checks must support both owner types ([HasOwnership](/Users/princejohnsantillan/Herd/keeper/app/Models/Concerns/HasOwnership.php#L26), [ownership migration](/Users/princejohnsantillan/Herd/keeper/database/migrations/2026_02_07_003800_create_ownership_table.php#L14)).
+
+**Implementation Plan**
+1. Add an ownership access service (interface + implementation) in `app/Services` to centralize:
+   - “can current actor edit this child/guardian?”
+   - “which owner(s) matched?” (user and/or organization)
+   - “fetch editable related children/guardians scoped to matched owner(s)”
+2. Bind that interface in [ServiceServiceProvider](/Users/princejohnsantillan/Herd/keeper/app/Providers/ServiceServiceProvider.php#L26).
+3. Add `ChildPolicy@update` and `GuardianPolicy@update` using the ownership service. Keep `view` behavior unchanged to preserve current Keeper listing behavior.
+4. Refactor existing `EditChildAction` and `EditGuardianAction` to use the ownership service instead of `AuthUser` assumptions. Keep business logic delegation to existing domain actions (`UpdateChildAction`, `SyncChildGuardiansAction`, `UpdateGuardianAction`).
+5. Add defensive server-side authorization inside `using()` closures (abort/deny if ownership check fails), not just `visible()`.
+6. Update Keeper forms to include relationship repeaters by reusing Guardian form patterns:
+   - Child edit includes guardians repeater (as in [Guardian ChildForm](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Guardian/Resources/Children/Schemas/ChildForm.php#L41)).
+   - Guardian edit includes children repeater (as in [Guardian GuardianForm](/Users/princejohnsantillan/Herd/keeper/app/Filament/Panels/Guardian/Resources/Guardians/Schemas/GuardianForm.php#L47)).
+   - Keep Keeper-specific fields (tags/notes) intact.
+7. Add edit header actions to Keeper view pages and gate them by policy/ownership check.
+8. Filter sync payload IDs to only IDs in the allowed related set before calling sync actions, preventing cross-owner relationship assignment.
+
+**Answer to Key Design Questions**
+1. Ownership check for keepers: allow edit only when ownership row matches either current Keeper’s organization or current authenticated user.
+2. Reuse existing edit actions: yes, but only after refactoring them to owner-aware logic; current versions are not Keeper-safe.
+3. Relationship management in Keeper forms: yes, add repeaters in Keeper forms so edit modals can manage related guardians/children.
+4. Visibility vs policy: use both. Policy is canonical; action-level checks are defense-in-depth.
+
+**Risks / Blind Spots**
+1. If you only hide actions and skip server-side checks, forged requests can still mutate records.
+2. If you scope related records by “all visible records” instead of matched owners, keepers can create unauthorized cross-owner relationships.
+3. Refactoring shared edit actions can regress Guardian panel behavior unless owner-scoping is carefully validated.
+tokens used
+185,898

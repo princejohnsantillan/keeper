@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Children\Pages;
 
+use App\Filament\Actions\KeeperEditChildAction;
 use App\Filament\Panels\Keeper\Resources\Children\ChildResource;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -13,6 +14,8 @@ final class ViewChild extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            KeeperEditChildAction::make(),
+        ];
     }
 }
