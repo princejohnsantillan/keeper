@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\KeeperRole;
+use Database\Factories\KeeperInvitationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,7 +17,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 final class KeeperInvitation extends Model
 {
+    use HasFactory;
     use HasUlids;
+
+    /**
+     * @return class-string<\Illuminate\Database\Eloquent\Factories\Factory<KeeperInvitation>>
+     */
+    protected static function newFactory(): KeeperInvitationFactory
+    {
+        return KeeperInvitationFactory::new();
+    }
 
     protected $keyType = 'string';
 

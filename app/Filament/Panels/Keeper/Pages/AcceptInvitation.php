@@ -10,8 +10,9 @@ use App\Models\KeeperInvitation;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Notifications\Notification;
-use Filament\Pages\SimplePage;
+use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -23,11 +24,17 @@ use Illuminate\Support\Facades\Hash;
 /**
  * @property-read Schema $form
  */
-final class AcceptInvitation extends SimplePage
+final class AcceptInvitation extends Page
 {
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string $routePath = '/invitation/accept';
+    protected static ?string $slug = 'invitation/accept';
+
+    protected static string $layout = 'filament-panels::components.layout.simple';
+
+    protected static string|array $withoutRouteMiddleware = [Authenticate::class];
+
+    protected string $view = 'filament-panels::pages.simple';
 
     public ?KeeperInvitation $invitation = null;
 

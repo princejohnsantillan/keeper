@@ -1,7 +1,6 @@
 <?php
 
 use App\Facades\Subdomain;
-use App\Http\Controllers\Keeper\AcceptInvitationController;
 use App\Http\Controllers\Keeper\PrintAttendanceStickerController;
 use App\Http\Controllers\Keeper\WalkInRegistrationController;
 use App\Http\Middleware\EnsureKeeperAuthenticated;
@@ -21,13 +20,6 @@ Route::get('/', function () {
     return redirect('/dashboard');
 
     //    return view('welcome');
-});
-
-// Keeper invitation acceptance routes
-Route::middleware([RequireOrganizationSubdomain::class])->group(function () {
-    Route::get('/admin/invitation/accept', [AcceptInvitationController::class, 'show'])
-        ->name('filament.keeper.invitation.accept');
-    Route::post('/admin/invitation/accept', [AcceptInvitationController::class, 'accept']);
 });
 
 Route::middleware([RequireOrganizationSubdomain::class, EnsureKeeperAuthenticated::class])->group(function () {
