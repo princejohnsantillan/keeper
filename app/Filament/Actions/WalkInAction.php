@@ -6,6 +6,7 @@ namespace App\Filament\Actions;
 
 use App\Models\Activity;
 use Filament\Actions\Action;
+use Illuminate\Support\Facades\URL;
 
 final class WalkInAction
 {
@@ -14,6 +15,11 @@ final class WalkInAction
         return Action::make($name)->label($label)
             ->icon('heroicon-o-user-plus')
             ->color('success')
-            ->url(fn (Activity $record): string => route('keeper.walk-ins.create', ['activity' => $record]));
+            ->url(fn (Activity $record): string => URL::temporarySignedRoute(
+                'filament.keeper.pages.walk-in-registration',
+                now()->addHours(24),
+                ['activity' => $record->id],
+            ))
+            ->openUrlInNewTab();
     }
 }

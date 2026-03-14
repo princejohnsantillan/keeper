@@ -23,42 +23,34 @@ final class WalkInRegistrationAction
     ) {}
 
     /**
-     * Register a walk-in guardian and child for an activity.
+     * Register a walk-in guardian and children for an activity.
      *
      * @param  array<string, mixed>  $guardianData
-     * @param  array<string, mixed>  $childData
+     * @param  array<int, array{data: array<string, mixed>, relationship: RelationshipEnum}>  $childrenData
+     * @return array<int, Gatepass>
      */
     public function __invoke(
         array $guardianData,
-        array $childData,
-        RelationshipEnum $relationship,
+        array $childrenData,
         Activity $activity,
         bool $agreeToTerms,
         ?string $ipAddress = null,
         ?string $userAgent = null,
-    ): Gatepass {
+    ): array {
         return DB::transaction(function () use (
             $guardianData,
-            $childData,
-            $relationship,
+            $childrenData,
             $activity,
             $agreeToTerms,
             $ipAddress,
             $userAgent,
-        ): Gatepass {
+        ): array {
             if ($activity->term !== null && ! $agreeToTerms) {
                 throw new InvalidArgumentException('Terms must be accepted before completing walk-in registration.');
             }
 
             $guardian = Guardian::query()->create($guardianData);
             ($this->createOwnershipAction)($guardian, $activity->organization);
-
-            $child = Child::query()->create($childData);
-            ($this->createOwnershipAction)($child, $activity->organization);
-
-            $guardian->children()->attach($child->id, [
-                'relationship' => $relationship->value,
-            ]);
 
             $termAcceptance = null;
 
@@ -71,7 +63,20 @@ final class WalkInRegistrationAction
                 );
             }
 
-            return $this->gatepassService->create($activity, $child, $guardian, $termAcceptance);
+            $gatepasses = [];
+
+            foreach ($childrenData as $entry) {
+                $child = Child::query()->create($entry['data']);
+                ($this->createOwnershipAction)($child, $activity->organization);
+
+                $guardian->children()->attach($child->id, [
+                    'relationship' => $entry['relationship']->value,
+                ]);
+
+                $gatepasses[] = $this->gatepassService->create($activity, $child, $guardian, $termAcceptance);
+            }
+
+            return $gatepasses;
         });
     }
 }
