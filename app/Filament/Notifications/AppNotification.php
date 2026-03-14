@@ -149,6 +149,22 @@ final class AppNotification
             ->body("{$childName} has not been checked in to this activity.");
     }
 
+    public static function activityNotPublished(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Activity not published')
+            ->body("{$activityTitle} is not published yet. Attendance actions are unavailable.");
+    }
+
+    public static function activityEnded(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Activity ended')
+            ->body("{$activityTitle} has already ended. Check-in is no longer available.");
+    }
+
     public static function childRelationshipRequired(): Notification
     {
         return Notification::make()

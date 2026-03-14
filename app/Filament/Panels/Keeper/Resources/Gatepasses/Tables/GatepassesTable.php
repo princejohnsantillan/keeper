@@ -24,6 +24,7 @@ final class GatepassesTable
             ->columns([
                 AppTextColumn::code(),
                 self::activityTitleColumn(),
+                self::eventScheduleColumn(),
                 self::guardianAvatarColumn(),
                 self::guardianGenderColumn(),
                 self::guardianFullNameColumn(),
@@ -42,6 +43,14 @@ final class GatepassesTable
         return TextColumn::make('activity.title')
             ->searchable()
             ->sortable();
+    }
+
+    private static function eventScheduleColumn(): TextColumn
+    {
+        return TextColumn::make('activity.starts_at')
+            ->label('Event')
+            ->dateTime('M d, Y h:i A')
+            ->description(fn (Gatepass $record): string => 'Ends: '.($record->activity->ends_at?->format('M d, Y h:i A') ?? 'No end time set'));
     }
 
     private static function guardianAvatarColumn(): SpatieMediaLibraryImageColumn

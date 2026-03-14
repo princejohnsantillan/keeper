@@ -43,9 +43,8 @@ final class CheckOutAttendanceAction
 
                 if (! $result['success']) {
                     match ($result['message']) {
-                        'already_checked_out' => AppNotification::alreadyCheckedOut($result['child_name'])->send(),
                         'no_check_in_found' => AppNotification::noCheckInFound($result['child_name'])->send(),
-                        default => AppNotification::invalidGatepassCode()->send(),
+                        default => AppNotification::error('Check-out failed.')->send(),
                     };
 
                     return;

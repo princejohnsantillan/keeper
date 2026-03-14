@@ -21,7 +21,7 @@ final class CheckOutGatepassAction
             ->requiresConfirmation()
             ->modalHeading('Check Out Child')
             ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check out {$record->child->full_name} from {$record->activity->title}?")
-            ->visible(fn (Gatepass $record, AttendanceServiceInterface $attendanceService): bool => $attendanceService->isCheckedIn($record->activity_id, $record->child_id))
+            ->visible(fn (Gatepass $record, AttendanceServiceInterface $attendanceService): bool => $attendanceService->resolveGatepassActionState($record)['can_check_out'])
             ->action(function (
                 Gatepass $record,
                 GetCurrentKeeperAction $getCurrentKeeper,
@@ -32,9 +32,8 @@ final class CheckOutGatepassAction
 
                 if (! $result['success']) {
                     match ($result['message']) {
-                        'already_checked_out' => AppNotification::alreadyCheckedOut($result['child_name'])->send(),
                         'no_check_in_found' => AppNotification::noCheckInFound($result['child_name'])->send(),
-                        default => AppNotification::invalidGatepassCode()->send(),
+                        default => AppNotification::error('Check-out failed.')->send(),
                     };
 
                     return;

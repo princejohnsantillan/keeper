@@ -44,7 +44,9 @@ final class CheckInAttendanceAction
                 if (! $result['success']) {
                     match ($result['message']) {
                         'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
-                        default => AppNotification::invalidGatepassCode()->send(),
+                        'activity_not_published' => AppNotification::activityNotPublished($activity->title)->send(),
+                        'activity_ended' => AppNotification::activityEnded($activity->title)->send(),
+                        default => AppNotification::error('Check-in failed.')->send(),
                     };
 
                     return;

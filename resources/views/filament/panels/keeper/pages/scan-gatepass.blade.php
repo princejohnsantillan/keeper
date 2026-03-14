@@ -1,6 +1,12 @@
 <x-filament::page>
     @php
         $gatepass = $this->getGatepass();
+        $attendanceState = $this->attendanceState ?? [
+            'status' => null,
+            'can_check_in' => false,
+            'can_check_out' => false,
+            'reason' => null,
+        ];
     @endphp
 
     <div class="space-y-6">
@@ -53,14 +59,14 @@
                     <div class="flex items-center justify-between">
                         <span>Gatepass Details</span>
                         <x-filament::badge
-                            :color="match ($this->attendanceStatus) {
+                            :color="match ($attendanceState['status']) {
                                 'not_checked_in' => 'gray',
                                 'checked_in' => 'success',
                                 'checked_out' => 'info',
                                 default => 'gray',
                             }"
                         >
-                            {{ match ($this->attendanceStatus) {
+                            {{ match ($attendanceState['status']) {
                                 'not_checked_in' => 'Not Checked In',
                                 'checked_in' => 'Checked In',
                                 'checked_out' => 'Checked Out',
@@ -149,7 +155,21 @@
                             </p>
                             @if ($gatepass->activity->starts_at)
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    {{ $gatepass->activity->starts_at->format('M d, Y h:i A') }}
+                                    Starts: {{ $gatepass->activity->starts_at->format('M d, Y h:i A') }}
+                                </p>
+                            @endif
+                            @if ($gatepass->activity->ends_at)
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    Ends: {{ $gatepass->activity->ends_at->format('M d, Y h:i A') }}
+                                </p>
+                            @endif
+                            @if ($attendanceState['reason'] === 'not_published')
+                                <p class="text-sm text-danger-600 dark:text-danger-400">
+                                    Attendance actions are unavailable until this activity is published.
+                                </p>
+                            @elseif ($attendanceState['reason'] === 'event_ended')
+                                <p class="text-sm text-warning-600 dark:text-warning-400">
+                                    Check-in is closed because this activity has already ended.
                                 </p>
                             @endif
                         </div>
@@ -158,7 +178,7 @@
 
                 {{-- Actions --}}
                 <div class="mt-6 flex flex-wrap gap-3">
-                    @if ($this->attendanceStatus === 'not_checked_in')
+                    @if ($attendanceState['can_check_in'])
                         <x-filament::button
                             wire:click="checkInAndPrint"
                             icon="heroicon-o-printer"
@@ -173,7 +193,9 @@
                         >
                             Check In
                         </x-filament::button>
-                    @elseif ($this->attendanceStatus === 'checked_in')
+                    @endif
+
+                    @if ($attendanceState['can_check_out'])
                         <x-filament::button
                             wire:click="checkOut"
                             color="warning"
@@ -183,7 +205,7 @@
                         </x-filament::button>
                     @endif
 
-                    @if (in_array($this->attendanceStatus, ['checked_in', 'checked_out'], true))
+                    @if (in_array($attendanceState['status'], ['checked_in', 'checked_out'], true))
                         <x-filament::button
                             wire:click="print"
                             color="gray"

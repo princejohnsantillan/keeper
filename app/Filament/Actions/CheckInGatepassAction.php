@@ -22,7 +22,7 @@ final class CheckInGatepassAction
             ->requiresConfirmation()
             ->modalHeading('Check In Child')
             ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check in {$record->child->full_name} for {$record->activity->title}?")
-            ->hidden(fn (Gatepass $record, AttendanceServiceInterface $attendanceService): bool => $attendanceService->isCheckedIn($record->activity_id, $record->child_id))
+            ->visible(fn (Gatepass $record, AttendanceServiceInterface $attendanceService): bool => $attendanceService->resolveGatepassActionState($record)['can_check_in'])
             ->action(function (
                 Gatepass $record,
                 GetCurrentKeeperAction $getCurrentKeeper,
@@ -35,7 +35,9 @@ final class CheckInGatepassAction
                 if (! $result['success']) {
                     match ($result['message']) {
                         'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
-                        default => AppNotification::invalidGatepassCode()->send(),
+                        'activity_not_published' => AppNotification::activityNotPublished($record->activity->title)->send(),
+                        'activity_ended' => AppNotification::activityEnded($record->activity->title)->send(),
+                        default => AppNotification::error('Check-in failed.')->send(),
                     };
 
                     return;

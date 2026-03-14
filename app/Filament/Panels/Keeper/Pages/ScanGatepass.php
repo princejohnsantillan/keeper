@@ -35,9 +35,12 @@ final class ScanGatepass extends Page
      */
     public ?array $data = [];
 
-    public ?string $gatepassId = null;
+    /**
+     * @var array{status: 'not_checked_in'|'checked_in'|'checked_out', can_check_in: bool, can_check_out: bool, reason: null|'not_published'|'event_ended'}|null
+     */
+    public ?array $attendanceState = null;
 
-    public ?string $attendanceStatus = null;
+    public ?string $gatepassId = null;
 
     public function mount(): void
     {
@@ -84,13 +87,13 @@ final class ScanGatepass extends Page
         if ($gatepass === null) {
             AppNotification::gatepassNotFound()->send();
             $this->gatepassId = null;
-            $this->attendanceStatus = null;
+            $this->attendanceState = null;
 
             return;
         }
 
         $this->gatepassId = $gatepass->id;
-        $this->determineAttendanceStatus($attendanceService, $gatepass);
+        $this->refreshAttendanceState($attendanceService);
 
         $this->form->fill(['code' => '']);
     }
@@ -139,11 +142,7 @@ final class ScanGatepass extends Page
         }
 
         $attendance = $attendanceService->findActiveAttendance($gatepass->activity_id, $gatepass->child_id)
-            ?? Attendance::query()
-                ->where('activity_id', $gatepass->activity_id)
-                ->where('child_id', $gatepass->child_id)
-                ->latest('checked_in_at')
-                ->first();
+            ?? $attendanceService->findLatestAttendance($gatepass->activity_id, $gatepass->child_id);
 
         if ($attendance === null) {
             AppNotification::error('No check-in record found to print.')->send();
@@ -169,7 +168,6 @@ final class ScanGatepass extends Page
 
         if (! $result['success']) {
             match ($result['message']) {
-                'already_checked_out' => AppNotification::alreadyCheckedOut($result['child_name'])->send(),
                 'no_check_in_found' => AppNotification::noCheckInFound($result['child_name'])->send(),
                 default => AppNotification::error('Check-out failed.')->send(),
             };
@@ -178,28 +176,27 @@ final class ScanGatepass extends Page
         }
 
         AppNotification::checkedOut($result['child_name'])->send();
-        $this->determineAttendanceStatus($attendanceService, $gatepass);
+        $this->refreshAttendanceState($attendanceService);
     }
 
     public function clearGatepass(): void
     {
         $this->gatepassId = null;
-        $this->attendanceStatus = null;
+        $this->attendanceState = null;
         $this->form->fill(['code' => '']);
     }
 
-    private function determineAttendanceStatus(AttendanceServiceInterface $attendanceService, Gatepass $gatepass): void
+    private function refreshAttendanceState(AttendanceServiceInterface $attendanceService): void
     {
-        $activityId = $gatepass->activity_id;
-        $childId = $gatepass->child_id;
+        $gatepass = $this->getGatepass();
 
-        if ($attendanceService->isAlreadyCheckedOut($activityId, $childId)) {
-            $this->attendanceStatus = 'checked_out';
-        } elseif ($attendanceService->isCheckedIn($activityId, $childId)) {
-            $this->attendanceStatus = 'checked_in';
-        } else {
-            $this->attendanceStatus = 'not_checked_in';
+        if ($gatepass === null) {
+            $this->attendanceState = null;
+
+            return;
         }
+
+        $this->attendanceState = $attendanceService->resolveGatepassActionState($gatepass);
     }
 
     private function performCheckIn(
@@ -218,6 +215,8 @@ final class ScanGatepass extends Page
         if (! $result['success']) {
             match ($result['message']) {
                 'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
+                'activity_not_published' => AppNotification::activityNotPublished($gatepass->activity->title)->send(),
+                'activity_ended' => AppNotification::activityEnded($gatepass->activity->title)->send(),
                 default => AppNotification::error('Check-in failed.')->send(),
             };
 
@@ -225,7 +224,7 @@ final class ScanGatepass extends Page
         }
 
         AppNotification::checkedIn($result['child_name'])->send();
-        $this->determineAttendanceStatus($attendanceService, $gatepass);
+        $this->refreshAttendanceState($attendanceService);
 
         return $result['attendance'];
     }

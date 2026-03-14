@@ -13,7 +13,12 @@ use App\Services\Contracts\AttendanceServiceInterface;
 final class AttendanceService implements AttendanceServiceInterface
 {
     /**
-     * @return array{success: bool, message: string, attendance: Attendance|null, child_name: string}
+     * @return array{
+     *     success: bool,
+     *     message: 'checked_in'|'already_checked_in'|'activity_not_published'|'activity_ended',
+     *     attendance: Attendance|null,
+     *     child_name: string
+     * }
      */
     public function checkIn(Activity $activity, Gatepass $gatepass, Keeper $keeper): array
     {
@@ -23,6 +28,24 @@ final class AttendanceService implements AttendanceServiceInterface
             return [
                 'success' => false,
                 'message' => 'already_checked_in',
+                'attendance' => null,
+                'child_name' => $childName,
+            ];
+        }
+
+        if (! $this->isActivityPublished($activity)) {
+            return [
+                'success' => false,
+                'message' => 'activity_not_published',
+                'attendance' => null,
+                'child_name' => $childName,
+            ];
+        }
+
+        if ($this->hasActivityEnded($activity)) {
+            return [
+                'success' => false,
+                'message' => 'activity_ended',
                 'attendance' => null,
                 'child_name' => $childName,
             ];
@@ -46,20 +69,16 @@ final class AttendanceService implements AttendanceServiceInterface
     }
 
     /**
-     * @return array{success: bool, message: string, attendance: Attendance|null, child_name: string}
+     * @return array{
+     *     success: bool,
+     *     message: 'checked_out'|'no_check_in_found',
+     *     attendance: Attendance|null,
+     *     child_name: string
+     * }
      */
     public function checkOut(Activity $activity, Gatepass $gatepass, Keeper $keeper): array
     {
         $childName = $gatepass->child->full_name;
-
-        if ($this->isAlreadyCheckedOut($activity->id, $gatepass->child_id)) {
-            return [
-                'success' => false,
-                'message' => 'already_checked_out',
-                'attendance' => null,
-                'child_name' => $childName,
-            ];
-        }
 
         $attendance = $this->findActiveAttendance($activity->id, $gatepass->child_id);
 
@@ -101,12 +120,48 @@ final class AttendanceService implements AttendanceServiceInterface
             ->first();
     }
 
-    public function isAlreadyCheckedOut(string $activityId, string $childId): bool
+    public function findLatestAttendance(string $activityId, string $childId): ?Attendance
     {
         return Attendance::query()
             ->where('activity_id', $activityId)
             ->where('child_id', $childId)
-            ->whereNotNull('checked_out_at')
-            ->exists();
+            ->latest('checked_in_at')
+            ->first();
+    }
+
+    public function resolveGatepassActionState(Gatepass $gatepass): array
+    {
+        $activity = $gatepass->activity;
+        $activeAttendance = $this->findActiveAttendance($gatepass->activity_id, $gatepass->child_id);
+        $latestAttendance = $this->findLatestAttendance($gatepass->activity_id, $gatepass->child_id);
+        $isPublished = $this->isActivityPublished($activity);
+        $hasEnded = $this->hasActivityEnded($activity);
+
+        $status = match (true) {
+            $activeAttendance !== null => 'checked_in',
+            $latestAttendance?->checked_out_at !== null => 'checked_out',
+            default => 'not_checked_in',
+        };
+
+        return [
+            'status' => $status,
+            'can_check_in' => $isPublished && (! $hasEnded) && $activeAttendance === null,
+            'can_check_out' => $isPublished && $activeAttendance !== null,
+            'reason' => match (true) {
+                ! $isPublished => 'not_published',
+                $hasEnded && $activeAttendance === null => 'event_ended',
+                default => null,
+            },
+        ];
+    }
+
+    private function isActivityPublished(Activity $activity): bool
+    {
+        return $activity->publish_at !== null && $activity->publish_at->lessThanOrEqualTo(now());
+    }
+
+    private function hasActivityEnded(Activity $activity): bool
+    {
+        return $activity->ends_at !== null && $activity->ends_at->isPast();
     }
 }
