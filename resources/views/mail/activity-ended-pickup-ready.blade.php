@@ -3,7 +3,7 @@ Hi {{ $guardianName }},
 
 **{{ $activityTitle }}** will end in about 15 minutes. Please prepare to pick up **{{ $childName }}**.
 
-Please have this gatepass ready when you arrive. The keeper can scan the QR code or use the gatepass code manually.
+Please have your gatepass ready when you arrive. The keeper can scan the QR code or use the gatepass code manually.
 
 @if($activityEndsAt || $activityLocation)
 <x-mail::table>
@@ -18,7 +18,7 @@ Please have this gatepass ready when you arrive. The keeper can scan the QR code
 </x-mail::table>
 @endif
 
-Your Gate Pass:
+For your convenience, here is a copy of your gatepass.
 
 <x-mail::panel>
 <div style="text-align: center;">
@@ -29,7 +29,7 @@ Your Gate Pass:
 </div>
 </x-mail::panel>
 
-Please do not forget to present this gatepass when picking up {{ $childName }}.
+Please do not forget to present your gatepass when picking up **{{ $childName }}**.
 
 Thanks,<br>
 {{ config('app.name') }}
