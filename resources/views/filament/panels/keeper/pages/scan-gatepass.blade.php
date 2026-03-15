@@ -172,6 +172,14 @@
                                 <p class="text-sm text-warning-600 dark:text-warning-400">
                                     Check-in is closed because this activity has already ended.
                                 </p>
+                            @elseif ($attendanceState['reason'] === 'checkin_closed')
+                                <p class="text-sm text-warning-600 dark:text-warning-400">
+                                    Check-in has been closed for this activity.
+                                </p>
+                            @elseif ($attendanceState['reason'] === 'checkin_not_open')
+                                <p class="text-sm text-danger-600 dark:text-danger-400">
+                                    Check-in is not open for this activity yet.
+                                </p>
                             @endif
                         </div>
                     </div>

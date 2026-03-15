@@ -58,6 +58,30 @@ final class AppNotification
             ->body("{$childName} has been checked out successfully.");
     }
 
+    public static function checkInOpened(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Check-in opened')
+            ->body("Check-in is now open for {$activityTitle}.");
+    }
+
+    public static function checkInReopened(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Check-in reopened')
+            ->body("Check-in has been reopened for {$activityTitle}.");
+    }
+
+    public static function checkInClosed(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Check-in closed')
+            ->body("Check-in has been closed for {$activityTitle}.");
+    }
+
     public static function walkInRegistered(): Notification
     {
         return Notification::make()
@@ -163,6 +187,22 @@ final class AppNotification
             ->danger()
             ->title('Activity ended')
             ->body("{$activityTitle} has already ended. Check-in is no longer available.");
+    }
+
+    public static function checkInNotOpen(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Check-in not open')
+            ->body("{$activityTitle} is not open for check-in yet.");
+    }
+
+    public static function checkInAlreadyClosed(string $activityTitle): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Check-in closed')
+            ->body("{$activityTitle} is already closed for check-in.");
     }
 
     public static function childRelationshipRequired(): Notification

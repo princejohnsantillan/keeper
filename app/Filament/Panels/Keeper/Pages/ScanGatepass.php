@@ -36,7 +36,7 @@ final class ScanGatepass extends Page
     public ?array $data = [];
 
     /**
-     * @var array{status: 'not_checked_in'|'checked_in'|'checked_out', can_check_in: bool, can_check_out: bool, reason: null|'not_published'|'event_ended'}|null
+     * @var array{status: 'not_checked_in'|'checked_in'|'checked_out', can_check_in: bool, can_check_out: bool, reason: null|'not_published'|'event_ended'|'checkin_not_open'|'checkin_closed'}|null
      */
     public ?array $attendanceState = null;
 
@@ -217,6 +217,8 @@ final class ScanGatepass extends Page
                 'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
                 'activity_not_published' => AppNotification::activityNotPublished($gatepass->activity->title)->send(),
                 'activity_ended' => AppNotification::activityEnded($gatepass->activity->title)->send(),
+                'checkin_not_open' => AppNotification::checkInNotOpen($gatepass->activity->title)->send(),
+                'checkin_closed' => AppNotification::checkInAlreadyClosed($gatepass->activity->title)->send(),
                 default => AppNotification::error('Check-in failed.')->send(),
             };
 

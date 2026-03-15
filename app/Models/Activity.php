@@ -37,8 +37,25 @@ final class Activity extends Model implements HasMedia
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
             'publish_at' => 'immutable_datetime',
+            'checkin_opened_at' => 'immutable_datetime',
+            'checkin_closed_at' => 'immutable_datetime',
             'summary_report_sent_at' => 'immutable_datetime',
         ];
+    }
+
+    public function hasCheckInOpened(): bool
+    {
+        return $this->checkin_opened_at !== null;
+    }
+
+    public function hasCheckInClosed(): bool
+    {
+        return $this->checkin_closed_at !== null;
+    }
+
+    public function isCheckInOpen(): bool
+    {
+        return $this->hasCheckInOpened() && (! $this->hasCheckInClosed());
     }
 
     /**

@@ -15,7 +15,7 @@ final class AttendanceService implements AttendanceServiceInterface
     /**
      * @return array{
      *     success: bool,
-     *     message: 'checked_in'|'already_checked_in'|'activity_not_published'|'activity_ended',
+     *     message: 'checked_in'|'already_checked_in'|'activity_not_published'|'activity_ended'|'checkin_not_open'|'checkin_closed',
      *     attendance: Attendance|null,
      *     child_name: string
      * }
@@ -46,6 +46,24 @@ final class AttendanceService implements AttendanceServiceInterface
             return [
                 'success' => false,
                 'message' => 'activity_ended',
+                'attendance' => null,
+                'child_name' => $childName,
+            ];
+        }
+
+        if ($activity->hasCheckInClosed()) {
+            return [
+                'success' => false,
+                'message' => 'checkin_closed',
+                'attendance' => null,
+                'child_name' => $childName,
+            ];
+        }
+
+        if (! $activity->hasCheckInOpened()) {
+            return [
+                'success' => false,
+                'message' => 'checkin_not_open',
                 'attendance' => null,
                 'child_name' => $childName,
             ];
@@ -145,11 +163,14 @@ final class AttendanceService implements AttendanceServiceInterface
 
         return [
             'status' => $status,
-            'can_check_in' => $isPublished && (! $hasEnded) && $activeAttendance === null,
+            'can_check_in' => $isPublished && (! $hasEnded) && $activity->isCheckInOpen() && $activeAttendance === null,
             'can_check_out' => $isPublished && $activeAttendance !== null,
             'reason' => match (true) {
+                $activeAttendance !== null => null,
                 ! $isPublished => 'not_published',
                 $hasEnded && $activeAttendance === null => 'event_ended',
+                $activity->hasCheckInClosed() => 'checkin_closed',
+                ! $activity->hasCheckInOpened() => 'checkin_not_open',
                 default => null,
             },
         ];

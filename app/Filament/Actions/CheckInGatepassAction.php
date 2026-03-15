@@ -37,6 +37,8 @@ final class CheckInGatepassAction
                         'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
                         'activity_not_published' => AppNotification::activityNotPublished($record->activity->title)->send(),
                         'activity_ended' => AppNotification::activityEnded($record->activity->title)->send(),
+                        'checkin_not_open' => AppNotification::checkInNotOpen($record->activity->title)->send(),
+                        'checkin_closed' => AppNotification::checkInAlreadyClosed($record->activity->title)->send(),
                         default => AppNotification::error('Check-in failed.')->send(),
                     };
 

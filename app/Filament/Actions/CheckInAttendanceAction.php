@@ -46,6 +46,8 @@ final class CheckInAttendanceAction
                         'already_checked_in' => AppNotification::alreadyCheckedIn($result['child_name'])->send(),
                         'activity_not_published' => AppNotification::activityNotPublished($activity->title)->send(),
                         'activity_ended' => AppNotification::activityEnded($activity->title)->send(),
+                        'checkin_not_open' => AppNotification::checkInNotOpen($activity->title)->send(),
+                        'checkin_closed' => AppNotification::checkInAlreadyClosed($activity->title)->send(),
                         default => AppNotification::error('Check-in failed.')->send(),
                     };
 

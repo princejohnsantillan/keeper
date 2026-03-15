@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Resources\Activities\Tables;
 
 use App\Actions\GetCurrentKeeperAction;
+use App\Filament\Actions\CloseActivityCheckInAction;
+use App\Filament\Actions\OpenActivityCheckInAction;
 use App\Filament\Actions\ViewAttendanceAction;
 use App\Filament\Actions\WalkInAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Activity;
 use Carbon\CarbonImmutable;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -33,14 +36,25 @@ final class ActivitiesTable
                 //
             ])
             ->recordActions([
-                WalkInAction::make(),
-                ViewAttendanceAction::make(),
-                EditAction::make()->slideOver()
-                    ->hiddenLabel()
-                    ->visible(fn (): bool => app(GetCurrentKeeperAction::class)->__invoke()->isAdmin()),
-                DeleteAction::make()->hiddenLabel()
-                    ->visible(fn (): bool => app(GetCurrentKeeperAction::class)->__invoke()->isAdmin()),
+                self::activityActionGroup(),
             ]);
+    }
+
+    private static function activityActionGroup(): ActionGroup
+    {
+        return ActionGroup::make([
+            WalkInAction::make(),
+            ViewAttendanceAction::make(),
+            OpenActivityCheckInAction::make(),
+            CloseActivityCheckInAction::make(),
+            EditAction::make()
+                ->slideOver()
+                ->visible(fn (): bool => app(GetCurrentKeeperAction::class)->__invoke()->isAdmin()),
+            DeleteAction::make()
+                ->visible(fn (): bool => app(GetCurrentKeeperAction::class)->__invoke()->isAdmin()),
+        ])
+            ->label('Actions')
+            ->icon('heroicon-o-ellipsis-horizontal');
     }
 
     private static function titleColumn(): TextColumn

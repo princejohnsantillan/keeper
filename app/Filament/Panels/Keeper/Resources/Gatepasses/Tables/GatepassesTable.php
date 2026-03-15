@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Resources\Gatepasses\Tables;
 
 use App\Avatar;
+use App\Filament\Actions\AttendanceStatusAction;
 use App\Filament\Actions\CheckInGatepassAction;
 use App\Filament\Actions\CheckOutGatepassAction;
 use App\Filament\Components\Tables\AppTextColumn;
@@ -35,6 +36,7 @@ final class GatepassesTable
             ->recordActions([
                 CheckInGatepassAction::make(),
                 CheckOutGatepassAction::make(),
+                AttendanceStatusAction::make(),
             ]);
     }
 

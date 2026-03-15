@@ -19,6 +19,10 @@ final class AppDateTimePicker
     {
         return DateTimePicker::make($field)->label($label)
             ->displayFormat('d M Y (h:i A)')
+            ->afterOrEqual('starts_at')
+            ->validationMessages([
+                'after_or_equal' => 'Ends at must be after or equal to Starts at.',
+            ])
             ->required();
     }
 

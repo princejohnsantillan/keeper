@@ -16,7 +16,7 @@ interface AttendanceServiceInterface
      *
      * @return array{
      *     success: bool,
-     *     message: 'checked_in'|'already_checked_in'|'activity_not_published'|'activity_ended',
+     *     message: 'checked_in'|'already_checked_in'|'activity_not_published'|'activity_ended'|'checkin_not_open'|'checkin_closed',
      *     attendance: Attendance|null,
      *     child_name: string
      * }
@@ -55,7 +55,7 @@ interface AttendanceServiceInterface
      *     status: 'not_checked_in'|'checked_in'|'checked_out',
      *     can_check_in: bool,
      *     can_check_out: bool,
-     *     reason: null|'not_published'|'event_ended'
+     *     reason: null|'not_published'|'event_ended'|'checkin_not_open'|'checkin_closed'
      * }
      */
     public function resolveGatepassActionState(Gatepass $gatepass): array;
