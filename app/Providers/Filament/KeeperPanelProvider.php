@@ -46,6 +46,7 @@ final class KeeperPanelProvider extends PanelProvider
                 'success' => Color::Green,
                 'warning' => Color::Orange,
             ])
+            ->databaseNotifications()
             ->breadcrumbs(false)
             ->sidebarWidth('14rem')
             ->discoverResources(in: app_path('Filament/Panels/Keeper/Resources'), for: 'App\Filament\Panels\Keeper\Resources')
