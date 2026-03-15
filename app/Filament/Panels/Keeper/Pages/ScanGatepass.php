@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Pages;
 
 use App\Actions\GetCurrentKeeperAction;
+use App\Actions\SyncOrganizationTagsAction;
 use App\Facades\Subdomain;
 use App\Filament\Notifications\AppNotification;
 use App\Models\Attendance;
 use App\Models\Gatepass;
+use App\Models\OrganizationTag;
 use App\Models\Scopes\OrganizationScope;
 use App\Services\Contracts\AttendanceServiceInterface;
 use App\Services\Contracts\GatepassServiceInterface;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
@@ -177,6 +181,94 @@ final class ScanGatepass extends Page
 
         AppNotification::checkedOut($result['child_name'])->send();
         $this->refreshAttendanceState($attendanceService);
+    }
+
+    public function editChildTagsAction(): Action
+    {
+        $gatepass = $this->getGatepass();
+
+        return Action::make('editChildTags')
+            ->label('Tags')
+            ->icon('heroicon-o-tag')
+            ->slideOver(false)
+            ->modalHeading($gatepass ? 'Tags for '.$gatepass->child->full_name : 'Tags')
+            ->modalSubmitActionLabel('Save')
+            ->fillForm(fn (): array => [
+                'tags' => $gatepass?->child->organizationTags()->pluck('name')->toArray() ?? [],
+            ])
+            ->schema([
+                TagsInput::make('tags')
+                    ->label('Tags')
+                    ->suggestions(fn (): array => OrganizationTag::query()
+                        ->distinct()
+                        ->orderBy('name')
+                        ->pluck('name')
+                        ->all())
+                    ->nestedRecursiveRules([
+                        'string',
+                        'max:255',
+                    ])
+                    ->columnSpanFull(),
+            ])
+            ->action(function (array $data, SyncOrganizationTagsAction $syncOrganizationTags): void {
+                $gatepass = $this->getGatepass();
+
+                if ($gatepass === null) {
+                    return;
+                }
+
+                /** @var array<int, mixed> $tags */
+                $tags = $data['tags'] ?? [];
+
+                $syncOrganizationTags($gatepass->child, $tags);
+
+                AppNotification::tagsUpdated()->send();
+            })
+            ->hidden(fn (): bool => $this->gatepassId === null);
+    }
+
+    public function editGuardianTagsAction(): Action
+    {
+        $gatepass = $this->getGatepass();
+
+        return Action::make('editGuardianTags')
+            ->label('Tags')
+            ->icon('heroicon-o-tag')
+            ->slideOver(false)
+            ->modalHeading($gatepass ? 'Tags for '.$gatepass->guardian->full_name : 'Tags')
+            ->modalSubmitActionLabel('Save')
+            ->fillForm(fn (): array => [
+                'tags' => $gatepass?->guardian->organizationTags()->pluck('name')->toArray() ?? [],
+            ])
+            ->schema([
+                TagsInput::make('tags')
+                    ->label('Tags')
+                    ->suggestions(fn (): array => OrganizationTag::query()
+                        ->distinct()
+                        ->orderBy('name')
+                        ->pluck('name')
+                        ->all())
+                    ->nestedRecursiveRules([
+                        'string',
+                        'max:255',
+                    ])
+                    ->columnSpanFull(),
+            ])
+            ->action(function (array $data, SyncOrganizationTagsAction $syncOrganizationTags): void {
+                $gatepass = $this->getGatepass();
+
+                if ($gatepass === null) {
+                    return;
+                }
+
+                /** @var array<int, mixed> $tags */
+                $tags = $data['tags'] ?? [];
+
+                $syncOrganizationTags($gatepass->guardian, $tags);
+
+                AppNotification::tagsUpdated()->send();
+            })
+            ->hidden(fn (): bool => $this->gatepassId === null);
     }
 
     public function clearGatepass(): void

@@ -102,7 +102,7 @@
                                     <x-filament::icon :icon="$gatepass->child->gender->getIcon()" class="h-4 w-4" />
                                     <span>{{ $gatepass->child->gender->getLabel() }}</span>
                                 </p>
-                                <div class="mt-2 flex flex-wrap gap-2">
+                                <div class="mt-2 flex flex-wrap items-center gap-2">
                                     @forelse ($gatepass->child->organizationTags as $tag)
                                         <x-filament::badge color="gray">
                                             {{ $tag->name }}
@@ -110,6 +110,13 @@
                                     @empty
                                         <p class="text-xs text-gray-500 dark:text-gray-400">No tags</p>
                                     @endforelse
+                                    <x-filament::icon-button
+                                        wire:click="mountAction('editChildTags')"
+                                        icon="heroicon-o-tag"
+                                        color="gray"
+                                        size="sm"
+                                        label="Edit child tags"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -132,7 +139,7 @@
                                     <x-filament::icon :icon="$gatepass->guardian->gender->getIcon()" class="h-4 w-4" />
                                     <span>{{ $gatepass->guardian->gender->getLabel() }}</span>
                                 </p>
-                                <div class="mt-2 flex flex-wrap gap-2">
+                                <div class="mt-2 flex flex-wrap items-center gap-2">
                                     @forelse ($gatepass->guardian->organizationTags as $tag)
                                         <x-filament::badge color="gray">
                                             {{ $tag->name }}
@@ -140,6 +147,13 @@
                                     @empty
                                         <p class="text-xs text-gray-500 dark:text-gray-400">No tags</p>
                                     @endforelse
+                                    <x-filament::icon-button
+                                        wire:click="mountAction('editGuardianTags')"
+                                        icon="heroicon-o-tag"
+                                        color="gray"
+                                        size="sm"
+                                        label="Edit guardian tags"
+                                    />
                                 </div>
                             </div>
                         </div>
