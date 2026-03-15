@@ -3,7 +3,7 @@ Hi {{ $guardianName }},
 
 **{{ $activityTitle }}** will start in about 15 minutes. We are excited to see you and **{{ $childName }}**.
 
-Please have your gatepass ready when you arrive. The keeper can scan the QR code or use the gatepass code manually.
+Please have your gatepass ready when you arrive. The Keeper can scan the QR code or use the gatepass code manually.
 
 @if($activityStartsAt || $activityLocation)
 <x-mail::table>
