@@ -41,6 +41,7 @@ final class GatepassesTable
     private static function activityTitleColumn(): TextColumn
     {
         return TextColumn::make('activity.title')
+            ->description(fn (Gatepass $record): ?string => $record->activity->location)
             ->searchable()
             ->sortable();
     }

@@ -1,0 +1,25 @@
+name: keeper
+icon: null
+processes:
+  NPM Dev:
+    command: npm run dev
+    working_dir: null
+    auto_start: true
+    auto_restart: true
+    restart_when_changed: []
+    env: {}
+  Horizon:
+    command: php artisan horizon
+    working_dir: null
+    auto_start: true
+    auto_restart: true
+    restart_when_changed:
+    - '**/*.php'
+    env: {}
+  Scheduler:
+    command: php artisan schedule:work
+    working_dir: null
+    auto_start: true
+    auto_restart: true
+    restart_when_changed: []
+    env: {}

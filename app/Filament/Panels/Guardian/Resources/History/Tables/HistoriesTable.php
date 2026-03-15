@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Guardian\Resources\History\Tables;
 
 use App\Filament\Components\Tables\AppTextColumn;
+use App\Models\Attendance;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -16,9 +17,8 @@ final class HistoriesTable
         return $table
             ->defaultSort('created_at', 'desc')
             ->columns([
-                AppTextColumn::title('activity.title', 'Activity'),
+                self::activityColumn(),
                 AppTextColumn::fullName('child.full_name', 'Child'),
-                self::guardianColumn(),
                 self::checkedInAtColumn(),
                 self::checkedOutAtColumn(),
             ])
@@ -26,13 +26,16 @@ final class HistoriesTable
             ->recordActions([]);
     }
 
-    private static function guardianColumn(): TextColumn
+    private static function activityColumn(): TextColumn
     {
-        return TextColumn::make('checkinGatepass.guardian.full_name')
-            ->label('Guardian')
+        return TextColumn::make('activity.title')
+            ->label('Activity')
+            ->description(fn (Attendance $record): string => collect([
+                $record->activity?->location,
+                $record->activity?->organization?->name,
+            ])->filter()->implode(' · '))
             ->searchable()
-            ->sortable()
-            ->placeholder('—');
+            ->sortable();
     }
 
     private static function checkedInAtColumn(): TextColumn
