@@ -1,0 +1,36 @@
+<x-mail::message>
+Hi {{ $guardianName }},
+
+**{{ $activityTitle }}** will start in about 15 minutes. We are excited to see you and **{{ $childName }}**.
+
+Please have your gatepass ready when you arrive. The keeper can scan the QR code or use the gatepass code manually.
+
+@if($activityStartsAt || $activityLocation)
+<x-mail::table>
+| | |
+|:--|:--|
+@if($activityStartsAt)
+| **Starts at** | {{ $activityStartsAt->format('l, F j, Y \a\t g:i A') }} |
+@endif
+@if($activityLocation)
+| **Location** | {{ $activityLocation }} |
+@endif
+</x-mail::table>
+@endif
+
+For your convenience, here is a copy of your gatepass.
+
+<x-mail::panel>
+<div style="text-align: center;">
+<img src="{{ $qrCode }}" alt="Gate Pass QR Code" style="width: 200px; height: 200px; margin: 0 auto 16px;">
+<div style="font-size: 24px; font-weight: bold; letter-spacing: 4px; font-family: monospace;">
+{{ $code }}
+</div>
+</div>
+</x-mail::panel>
+
+Please do not forget to present your gatepass when arriving with **{{ $childName }}**.
+
+Thanks,<br>
+{{ config('app.name') }}
+</x-mail::message>

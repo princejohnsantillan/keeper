@@ -29,6 +29,7 @@ final class Gatepass extends Model
     {
         return [
             'pickup_reminder_sent_at' => 'immutable_datetime',
+            'start_reminder_sent_at' => 'immutable_datetime',
         ];
     }
 
