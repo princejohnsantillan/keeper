@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Enums\RateLimiterName;
 use App\Models\Gatepass;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\HtmlString;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 final class GatepassCreated extends Mailable implements ShouldQueue
@@ -18,6 +22,17 @@ final class GatepassCreated extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(public Gatepass $gatepass) {}
+
+    /** @return array<int, RateLimited> */
+    public function middleware(): array
+    {
+        return [new RateLimited(RateLimiterName::ResendApi)];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addMinutes(30);
+    }
 
     public function envelope(): Envelope
     {
@@ -45,7 +60,7 @@ final class GatepassCreated extends Mailable implements ShouldQueue
     }
 
     /**
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
@@ -54,12 +69,12 @@ final class GatepassCreated extends Mailable implements ShouldQueue
 
     private function generateQrCode(): string
     {
-        /** @var \Illuminate\Support\HtmlString|string $qrCode */
+        /** @var HtmlString|string $qrCode */
         $qrCode = QrCode::format('png')
             ->size(200)
             ->margin(1)
             ->generate($this->gatepass->code);
 
-        return 'data:image/png;base64,'.base64_encode($qrCode instanceof \Illuminate\Support\HtmlString ? $qrCode->toHtml() : $qrCode);
+        return 'data:image/png;base64,'.base64_encode($qrCode instanceof HtmlString ? $qrCode->toHtml() : $qrCode);
     }
 }

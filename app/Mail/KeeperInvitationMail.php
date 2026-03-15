@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Enums\RateLimiterName;
 use App\Models\KeeperInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
 
 final class KeeperInvitationMail extends Mailable implements ShouldQueue
@@ -17,6 +20,17 @@ final class KeeperInvitationMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(public KeeperInvitation $invitation) {}
+
+    /** @return array<int, RateLimited> */
+    public function middleware(): array
+    {
+        return [new RateLimited(RateLimiterName::ResendApi)];
+    }
+
+    public function retryUntil(): \DateTime
+    {
+        return now()->addMinutes(30);
+    }
 
     public function envelope(): Envelope
     {
@@ -50,7 +64,7 @@ final class KeeperInvitationMail extends Mailable implements ShouldQueue
     }
 
     /**
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
