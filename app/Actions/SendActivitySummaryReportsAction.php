@@ -20,7 +20,7 @@ final class SendActivitySummaryReportsAction
 {
     public function __invoke(): int
     {
-        $cutoff = now()->subHours(2);
+        $cutoff = now()->subHour();
         $queuedEmails = 0;
 
         $activities = Activity::query()

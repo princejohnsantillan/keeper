@@ -32,6 +32,6 @@ Artisan::command('activities:send-summary-reports', function (SendActivitySummar
     $queuedEmails = $sendActivitySummaryReportsAction();
 
     $this->info("Queued {$queuedEmails} activity summary report email(s).");
-})->purpose('Queue activity summary report emails for activities that ended 2+ hours ago')
+})->purpose('Queue activity summary report emails for activities that ended 1+ hour ago')
     ->everyMinute()
     ->withoutOverlapping();
