@@ -10,6 +10,7 @@ use App\Filament\Actions\WalkInAction;
 use App\Filament\Components\Tables\AppSpatieMediaLibraryImageColumn;
 use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Activity;
+use Carbon\CarbonImmutable;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
@@ -54,8 +55,8 @@ final class ActivitiesTable
         return TextColumn::make('starts_at')
             ->dateTime('D - h:i A')
             ->description(function (Activity $record): string {
-                /** @var \Carbon\CarbonImmutable $startsAt */
-                $startsAt = $record->starts_at;
+                /** @var CarbonImmutable $startsAt */
+                $startsAt = $record->starts_at->setTimezone(config('app.display_timezone'));
 
                 return $startsAt->format('F d');
             })
@@ -67,8 +68,8 @@ final class ActivitiesTable
         return TextColumn::make('ends_at')
             ->dateTime('D - h:i A')
             ->description(function (Activity $record): string {
-                /** @var \Carbon\CarbonImmutable $endsAt */
-                $endsAt = $record->ends_at;
+                /** @var CarbonImmutable $endsAt */
+                $endsAt = $record->ends_at->setTimezone(config('app.display_timezone'));
 
                 return $endsAt->format('F d');
             })

@@ -27,7 +27,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
 
-        FilamentTimezone::set('Asia/Manila');
+        FilamentTimezone::set(config('app.display_timezone'));
 
         Organization::observe(OrganizationObserver::class);
     }

@@ -51,7 +51,7 @@ final class GatepassesTable
         return TextColumn::make('activity.starts_at')
             ->label('Event')
             ->dateTime('M d, Y h:i A')
-            ->description(fn (Gatepass $record): string => 'Ends: '.($record->activity->ends_at?->format('M d, Y h:i A') ?? 'No end time set'));
+            ->description(fn (Gatepass $record): string => 'Ends: '.($record->activity->ends_at?->setTimezone(config('app.display_timezone'))->format('M d, Y h:i A') ?? 'No end time set'));
     }
 
     private static function guardianAvatarColumn(): SpatieMediaLibraryImageColumn

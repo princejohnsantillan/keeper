@@ -1,6 +1,7 @@
 <x-filament::page>
     @php
         $gatepass = $this->getGatepass();
+        $displayTimezone = config('app.display_timezone');
         $attendanceState = $this->attendanceState ?? [
             'status' => null,
             'can_check_in' => false,
@@ -155,12 +156,12 @@
                             </p>
                             @if ($gatepass->activity->starts_at)
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    Starts: {{ $gatepass->activity->starts_at->format('M d, Y h:i A') }}
+                                    Starts: {{ $gatepass->activity->starts_at->setTimezone($displayTimezone)->format('M d, Y h:i A') }}
                                 </p>
                             @endif
                             @if ($gatepass->activity->ends_at)
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    Ends: {{ $gatepass->activity->ends_at->format('M d, Y h:i A') }}
+                                    Ends: {{ $gatepass->activity->ends_at->setTimezone($displayTimezone)->format('M d, Y h:i A') }}
                                 </p>
                             @endif
                             @if ($attendanceState['reason'] === 'not_published')

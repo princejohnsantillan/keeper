@@ -9,7 +9,7 @@ As a {{ $role }}, you will have access to the Keeper platform to manage activiti
 Accept Invitation
 </x-mail::button>
 
-This invitation will expire on {{ $expiresAt->format('l, F j, Y \a\t g:i A') }}.
+This invitation will expire on {{ $expiresAt->setTimezone(config('app.display_timezone'))->format('l, F j, Y \a\t g:i A') }}.
 
 If you have any questions, please contact {{ $inviterName }} directly.
 

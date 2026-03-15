@@ -8,7 +8,7 @@ You have successfully registered **{{ $childName }}** for **{{ $activityTitle }}
 | | |
 |:--|:--|
 @if($activityStartsAt)
-| **When** | {{ $activityStartsAt->format('l, F j, Y \a\t g:i A') }} |
+| **When** | {{ $activityStartsAt->setTimezone(config('app.display_timezone'))->format('l, F j, Y \a\t g:i A') }} |
 @endif
 @if($activityLocation)
 | **Where** | {{ $activityLocation }} |

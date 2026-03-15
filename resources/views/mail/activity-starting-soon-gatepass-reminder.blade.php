@@ -10,7 +10,7 @@ Please have your gatepass ready when you arrive. The Keeper can scan the QR code
 | | |
 |:--|:--|
 @if($activityStartsAt)
-| **Starts at** | {{ $activityStartsAt->format('l, F j, Y \a\t g:i A') }} |
+| **Starts at** | {{ $activityStartsAt->setTimezone(config('app.display_timezone'))->format('l, F j, Y \a\t g:i A') }} |
 @endif
 @if($activityLocation)
 | **Location** | {{ $activityLocation }} |
