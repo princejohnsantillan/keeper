@@ -92,6 +92,13 @@
                                     {{ $gatepass->child->full_name }}
                                 </p>
                                 <p class="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <x-filament::icon icon="heroicon-o-cake" class="h-4 w-4" />
+                                    <span>
+                                        {{ $gatepass->child->birth_date->age }}
+                                        {{ $gatepass->child->birth_date->age === 1 ? 'year' : 'years' }} old
+                                    </span>
+                                </p>
+                                <p class="mt-1 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                     <x-filament::icon :icon="$gatepass->child->gender->getIcon()" class="h-4 w-4" />
                                     <span>{{ $gatepass->child->gender->getLabel() }}</span>
                                 </p>
