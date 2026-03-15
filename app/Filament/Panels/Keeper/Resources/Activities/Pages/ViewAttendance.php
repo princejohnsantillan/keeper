@@ -6,7 +6,6 @@ namespace App\Filament\Panels\Keeper\Resources\Activities\Pages;
 
 use App\Avatar;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
-use App\Models\Activity;
 use App\Models\Attendance;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
@@ -30,9 +29,6 @@ final class ViewAttendance extends ManageRelatedRecords
 
     public function table(Table $table): Table
     {
-        /** @var Activity $activity */
-        $activity = $this->getOwnerRecord();
-
         return $table
             ->recordTitleAttribute('id')
             ->columns([
@@ -42,8 +38,6 @@ final class ViewAttendance extends ManageRelatedRecords
                 self::checkedInAtColumn(),
                 self::checkoutColumn(),
                 self::checkedOutAtColumn(),
-                TextColumn::make('notes')
-                    ->wrap(),
             ])
             ->filters([])
             ->headerActions([])
