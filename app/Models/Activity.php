@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Scopes\OrganizationScope;
+use Database\Factories\ActivityFactory;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +23,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  */
 final class Activity extends Model implements HasMedia
 {
-    /** @use HasFactory<\Database\Factories\ActivityFactory> */
+    /** @use HasFactory<ActivityFactory> */
     use HasFactory;
 
     use HasUlids;
@@ -36,6 +37,7 @@ final class Activity extends Model implements HasMedia
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
             'publish_at' => 'immutable_datetime',
+            'summary_report_sent_at' => 'immutable_datetime',
         ];
     }
 
