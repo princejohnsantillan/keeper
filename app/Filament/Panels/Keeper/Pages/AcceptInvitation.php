@@ -11,6 +11,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Panel;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -32,7 +33,10 @@ final class AcceptInvitation extends Page
 
     protected static string $layout = 'filament-panels::components.layout.simple';
 
-    protected static string|array $withoutRouteMiddleware = [Authenticate::class];
+    protected static string|array $withoutRouteMiddleware = [
+        Authenticate::class,
+        'verified',
+    ];
 
     protected string $view = 'filament-panels::pages.simple';
 
@@ -41,8 +45,15 @@ final class AcceptInvitation extends Page
     /** @var array<string, mixed>|null */
     public ?array $data = [];
 
+    public static function isEmailVerificationRequired(Panel $panel): bool
+    {
+        return false;
+    }
+
     public function mount(): void
     {
+        $this->normalizeInviteSession();
+
         $token = request()->query('token');
 
         if (! $token) {
@@ -118,6 +129,20 @@ final class AcceptInvitation extends Page
         }
 
         $this->form->fill();
+    }
+
+    private function normalizeInviteSession(): void
+    {
+        if (Auth::check()) {
+            Auth::logout();
+        }
+
+        if (! request()->hasSession()) {
+            return;
+        }
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
     }
 
     public function form(Schema $schema): Schema
