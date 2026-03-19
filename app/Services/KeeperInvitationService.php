@@ -51,13 +51,18 @@ final class KeeperInvitationService implements KeeperInvitationServiceInterface
     {
         $token = $this->generateUniqueToken();
 
-        // Create a pending Keeper record
-        Keeper::query()->create([
-            'user_id' => $user->id,
-            'organization_id' => $organization->id,
-            'role' => $role,
-            'status' => KeeperStatus::Pending,
-        ]);
+        // Create or update a pending Keeper record (handles expired invitations and soft-deleted keepers)
+        Keeper::withTrashed()->updateOrCreate(
+            [
+                'user_id' => $user->id,
+                'organization_id' => $organization->id,
+            ],
+            [
+                'role' => $role,
+                'status' => KeeperStatus::Pending,
+                'deleted_at' => null,
+            ],
+        );
 
         return KeeperInvitation::query()->create([
             'user_id' => $user->id,
