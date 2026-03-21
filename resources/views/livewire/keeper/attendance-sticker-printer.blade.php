@@ -280,14 +280,14 @@
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
-            gap: 0.45mm;
-            padding: 1.4mm 1.8mm;
+            gap: 0.1mm;
+            padding: 0.8mm 1.25mm;
             text-align: left;
             color: #111827;
         }
 
         .notes-label {
-            font-size: 2.2mm;
+            font-size: 1.9mm;
             font-weight: 700;
             line-height: 1;
         }
@@ -295,11 +295,11 @@
         .notes-content {
             max-width: 100%;
             overflow: hidden;
-            font-size: 3.1mm;
-            line-height: 1.1;
+            font-size: 2.95mm;
+            line-height: 1.04;
             display: -webkit-box;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 5;
         }
 
         .child-checkin-code {
