@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Services\AttendanceService;
+use App\Services\AttendanceStickerPrintSettingService;
 use App\Services\Contracts\AttendanceServiceInterface;
+use App\Services\Contracts\AttendanceStickerPrintSettingServiceInterface;
 use App\Services\Contracts\GatepassServiceInterface;
 use App\Services\Contracts\KeeperInvitationServiceInterface;
 use App\Services\Contracts\SubdomainInterface;
@@ -30,6 +32,7 @@ final class ServiceServiceProvider extends ServiceProvider
      */
     public array $bindings = [
         AttendanceServiceInterface::class => AttendanceService::class,
+        AttendanceStickerPrintSettingServiceInterface::class => AttendanceStickerPrintSettingService::class,
         TermAcceptanceServiceInterface::class => TermAcceptanceService::class,
         GatepassServiceInterface::class => GatepassService::class,
         KeeperInvitationServiceInterface::class => KeeperInvitationService::class,
