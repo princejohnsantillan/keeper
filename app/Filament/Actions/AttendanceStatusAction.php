@@ -20,6 +20,7 @@ final class AttendanceStatusAction
                 $attendanceState = $attendanceService->resolveGatepassActionState($record);
 
                 return match (true) {
+                    $attendanceState['reason'] === 'activity_unavailable' => 'Activity unavailable',
                     $attendanceState['reason'] === 'not_published' => 'Activity not published',
                     $attendanceState['reason'] === 'event_ended' => 'Activity ended',
                     $attendanceState['reason'] === 'checkin_closed' => 'Check-in closed',
@@ -32,7 +33,7 @@ final class AttendanceStatusAction
                 $attendanceState = $attendanceService->resolveGatepassActionState($record);
 
                 return match ($attendanceState['reason']) {
-                    'not_published', 'checkin_not_open' => 'danger',
+                    'activity_unavailable', 'not_published', 'checkin_not_open' => 'danger',
                     'event_ended', 'checkin_closed' => 'warning',
                     default => 'gray',
                 };

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Keeper\Resources\Gatepasses;
 
+use App\Facades\Subdomain;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Pages\ListGatepasses;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Schemas\GatepassForm;
 use App\Filament\Panels\Keeper\Resources\Gatepasses\Tables\GatepassesTable;
@@ -12,6 +13,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 final class GatepassResource extends Resource
@@ -40,6 +42,21 @@ final class GatepassResource extends Resource
     public static function table(Table $table): Table
     {
         return GatepassesTable::configure($table);
+    }
+
+    /** @return Builder<Gatepass> */
+    public static function getEloquentQuery(): Builder
+    {
+        $organization = Subdomain::organization();
+
+        if ($organization === null) {
+            return parent::getEloquentQuery()->whereRaw('1 = 0');
+        }
+
+        return parent::getEloquentQuery()
+            ->where('organization_id', $organization->id)
+            ->whereHas('activity')
+            ->with(['activity', 'guardian', 'child']);
     }
 
     public static function getRelations(): array

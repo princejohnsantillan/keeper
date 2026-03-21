@@ -43,7 +43,8 @@ final class GatepassesTable
     private static function activityTitleColumn(): TextColumn
     {
         return TextColumn::make('activity.title')
-            ->description(fn (Gatepass $record): ?string => $record->activity->location)
+            ->description(fn (Gatepass $record): ?string => $record->activity?->location)
+            ->placeholder('Activity unavailable')
             ->searchable()
             ->sortable();
     }
@@ -53,7 +54,13 @@ final class GatepassesTable
         return TextColumn::make('activity.starts_at')
             ->label('Event')
             ->dateTime('M d, Y h:i A')
-            ->description(fn (Gatepass $record): string => 'Ends: '.($record->activity->ends_at?->setTimezone(config('app.display_timezone'))->format('M d, Y h:i A') ?? 'No end time set'));
+            ->description(function (Gatepass $record): string {
+                if ($record->activity === null) {
+                    return 'Activity unavailable';
+                }
+
+                return 'Ends: '.($record->activity->ends_at?->setTimezone(config('app.display_timezone'))->format('M d, Y h:i A') ?? 'No end time set');
+            });
     }
 
     private static function guardianAvatarColumn(): SpatieMediaLibraryImageColumn

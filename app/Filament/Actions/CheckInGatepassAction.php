@@ -21,7 +21,7 @@ final class CheckInGatepassAction
             ->color('success')
             ->requiresConfirmation()
             ->modalHeading('Check In Child')
-            ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check in {$record->child->full_name} for {$record->activity->title}?")
+            ->modalDescription(fn (Gatepass $record): string => "Are you sure you want to check in {$record->child->full_name} for ".($record->activity?->title ?? 'this activity').'?')
             ->visible(fn (Gatepass $record, AttendanceServiceInterface $attendanceService): bool => $attendanceService->resolveGatepassActionState($record)['can_check_in'])
             ->action(function (
                 Gatepass $record,
@@ -29,6 +29,12 @@ final class CheckInGatepassAction
                 AttendanceServiceInterface $attendanceService,
                 Component $livewire,
             ): void {
+                if ($record->activity === null) {
+                    AppNotification::error('Activity unavailable.')->send();
+
+                    return;
+                }
+
                 $keeper = $getCurrentKeeper();
                 $result = $attendanceService->checkIn($record->activity, $record, $keeper);
 

@@ -55,7 +55,7 @@ interface AttendanceServiceInterface
      *     status: 'not_checked_in'|'checked_in'|'checked_out',
      *     can_check_in: bool,
      *     can_check_out: bool,
-     *     reason: null|'not_published'|'event_ended'|'checkin_not_open'|'checkin_closed'
+     *     reason: null|'activity_unavailable'|'not_published'|'event_ended'|'checkin_not_open'|'checkin_closed'
      * }
      */
     public function resolveGatepassActionState(Gatepass $gatepass): array;
