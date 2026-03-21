@@ -19,7 +19,7 @@ final class PrintAttendanceStickerController extends Controller
         $childTags = $child->organizationTags
             ->pluck('name')
             ->filter(static fn (?string $tag): bool => $tag !== null && trim($tag) !== '')
-            ->take(5)
+            ->take(4)
             ->values()
             ->all();
         $guardianNote = Str::limit(Str::squish((string) $child->notes), 50, '...');
