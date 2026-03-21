@@ -118,4 +118,12 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
     {
         return $this->hasMany(Activity::class, 'created_by');
     }
+
+    /**
+     * @return HasMany<AttendanceStickerPrintSetting, $this>
+     */
+    public function attendanceStickerPrintSettings(): HasMany
+    {
+        return $this->hasMany(AttendanceStickerPrintSetting::class);
+    }
 }
