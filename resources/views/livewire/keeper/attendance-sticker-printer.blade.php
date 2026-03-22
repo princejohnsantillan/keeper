@@ -12,7 +12,7 @@
             --print-margin-right: 1mm;
             --print-margin-bottom: 1mm;
             --print-margin-left: 1mm;
-            --preview-scale: 1.85;
+            --preview-scale: 1;
             --preview-frame-width: calc(
                 (
                     (
@@ -22,6 +22,18 @@
                     ) + 1.4rem + 4px
                 ) * var(--preview-scale)
             );
+        }
+
+        @media (min-width: 400px) {
+            .sticker-page {
+                --preview-scale: 1.3;
+            }
+        }
+
+        @media (min-width: 560px) {
+            .sticker-page {
+                --preview-scale: 1.85;
+            }
         }
 
         @media print {
@@ -90,6 +102,7 @@
         .page-shell {
             width: var(--preview-frame-width);
             max-width: 100%;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -111,8 +124,14 @@
         .controls-row {
             display: grid;
             width: 100%;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 0.75rem;
+        }
+
+        @media (min-width: 480px) {
+            .controls-row {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
         }
 
         .print-control {
@@ -235,6 +254,7 @@
             align-items: flex-start;
             justify-content: center;
             padding: 1rem 0 1.6rem;
+            overflow: hidden;
         }
 
         .preview-stage {
