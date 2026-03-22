@@ -12,7 +12,7 @@
             --print-margin-right: 1mm;
             --print-margin-bottom: 1mm;
             --print-margin-left: 1mm;
-            --preview-scale: 1;
+            --preview-scale: 0.85;
             --preview-frame-width: calc(
                 (
                     (
@@ -22,15 +22,22 @@
                     ) + 1.4rem + 4px
                 ) * var(--preview-scale)
             );
+            width: 100%;
         }
 
-        @media (min-width: 400px) {
+        @media (min-width: 430px) {
+            .sticker-page {
+                --preview-scale: 1;
+            }
+        }
+
+        @media (min-width: 500px) {
             .sticker-page {
                 --preview-scale: 1.3;
             }
         }
 
-        @media (min-width: 560px) {
+        @media (min-width: 640px) {
             .sticker-page {
                 --preview-scale: 1.85;
             }
@@ -97,6 +104,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            overflow-x: hidden;
         }
 
         .page-shell {
