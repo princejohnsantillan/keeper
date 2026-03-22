@@ -89,6 +89,19 @@
                 height: var(--print-height) !important;
                 box-shadow: none !important;
             }
+
+            .preview-label {
+                display: none !important;
+            }
+
+            .preview-canvas {
+                min-height: 0 !important;
+                padding: 0 !important;
+            }
+
+            .preview-stage {
+                transform: none !important;
+            }
         }
 
         .sticker-page * {
@@ -618,7 +631,7 @@
             </div>
         @endif
 
-        <div class="preview-shell no-print">
+        <div class="preview-shell">
             <div class="preview-label">Sticker Preview</div>
             <div class="preview-canvas">
                 <div class="preview-stage">
