@@ -53,8 +53,7 @@ final class CheckInGatepassAction
 
                 AppNotification::checkedIn($result['child_name'])->send();
 
-                $printUrl = route('filament.keeper.attendance.print', $result['attendance']);
-                $livewire->dispatch('open-print-sticker', url: $printUrl);
+                $livewire->redirect(route('filament.keeper.attendance.print', $result['attendance']));
             });
     }
 }

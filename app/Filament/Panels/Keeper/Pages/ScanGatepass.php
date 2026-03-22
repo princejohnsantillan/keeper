@@ -325,9 +325,7 @@ final class ScanGatepass extends Page
 
     private function openPrintSticker(Attendance $attendance): void
     {
-        $printUrl = route('filament.keeper.attendance.print', $attendance);
-
-        $this->dispatch('open-print-sticker', url: $printUrl);
+        $this->redirect(route('filament.keeper.attendance.print', $attendance));
     }
 
     public static function getNavigationIcon(): Heroicon

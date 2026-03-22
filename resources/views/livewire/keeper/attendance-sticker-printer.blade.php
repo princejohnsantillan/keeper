@@ -632,7 +632,7 @@
             <button type="button" class="btn btn-primary" onclick="window.print()">
                 Print Sticker
             </button>
-            <button type="button" class="btn btn-secondary" onclick="window.close()">
+            <button type="button" class="btn btn-secondary" onclick="history.back()">
                 Close
             </button>
         </div>
