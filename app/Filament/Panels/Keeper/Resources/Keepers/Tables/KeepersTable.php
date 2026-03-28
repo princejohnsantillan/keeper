@@ -22,11 +22,9 @@ final class KeepersTable
     {
         return $table
             ->columns([
-                AppTextColumn::fullName()
-                    ->state(fn ($record): string => $record->user->name),
+                AppTextColumn::fullName('user.name'),
 
-                AppTextColumn::email()
-                    ->state(fn ($record): string => $record->user->email),
+                AppTextColumn::email('user.email'),
 
                 TextColumn::make('role')
                     ->badge()
