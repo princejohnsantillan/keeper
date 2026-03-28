@@ -120,8 +120,8 @@ final class Activity extends Model implements HasMedia
     {
         $this->addMediaConversion('thumbnail')
             ->nonQueued()
-            ->width(800)
-            ->height(600)
+            ->width(960)
+            ->height(540)
             ->sharpen(10);
     }
 
