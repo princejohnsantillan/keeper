@@ -14,8 +14,6 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\HtmlString;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 final class GatepassCreated extends Mailable implements ShouldQueue
 {
@@ -47,7 +45,8 @@ final class GatepassCreated extends Mailable implements ShouldQueue
             markdown: 'mail.gatepass-created',
             with: [
                 'code' => $this->gatepass->code,
-                'qrCode' => $this->generateQrCode(),
+                'qrImageUrl' => $this->gatepass->getSignedQrImageUrl(),
+                'gatepassUrl' => $this->gatepass->getSignedUrl(),
                 'childName' => $this->gatepass->child->full_name,
                 'guardianName' => $this->gatepass->guardian->full_name,
                 'activityTitle' => $this->gatepass->activity->title,
@@ -65,16 +64,5 @@ final class GatepassCreated extends Mailable implements ShouldQueue
     public function attachments(): array
     {
         return [];
-    }
-
-    private function generateQrCode(): string
-    {
-        /** @var HtmlString|string $qrCode */
-        $qrCode = QrCode::format('png')
-            ->size(200)
-            ->margin(1)
-            ->generate($this->gatepass->code);
-
-        return 'data:image/png;base64,'.base64_encode($qrCode instanceof HtmlString ? $qrCode->toHtml() : $qrCode);
     }
 }

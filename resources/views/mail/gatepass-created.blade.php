@@ -20,14 +20,17 @@ Your Gate Pass code is:
 
 <x-mail::panel>
 <div style="text-align: center;">
-<img src="{{ $qrCode }}" alt="Gate Pass QR Code" style="width: 200px; height: 200px; margin: 0 auto 16px;">
+<a href="{{ $gatepassUrl }}" target="_blank"><img src="{{ $qrImageUrl }}" alt="Gate Pass QR Code" style="width: 200px; height: 200px; margin: 0 auto 16px;"></a>
 <div style="font-size: 24px; font-weight: bold; letter-spacing: 4px;">
-{{ $code }}
+<a href="{{ $gatepassUrl }}" target="_blank" style="color: inherit; text-decoration: none;">{{ $code }}</a>
 </div>
 </div>
 </x-mail::panel>
 
 Please keep this code safe. You can present the QR code or enter the code manually for check-in and check-out.
+
+If the QR code does not appear above, you can view your Gate Pass here:
+<{{ $gatepassUrl }}>
 
 
 @if($organizerMessage)

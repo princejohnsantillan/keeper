@@ -1,6 +1,7 @@
 <?php
 
 use App\Facades\Subdomain;
+use App\Http\Controllers\GatepassPublicController;
 use App\Http\Controllers\Keeper\PrintAttendanceStickerController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,9 @@ Route::get('/', function () {
 // Print sticker route (uses ULID attendance ID for security)
 Route::get('/admin/attendance/{attendance}/print', PrintAttendanceStickerController::class)
     ->name('filament.keeper.attendance.print');
+
+Route::get('/gatepass/{gatepass}', [GatepassPublicController::class, 'show'])
+    ->name('gatepass.show');
+
+Route::get('/gatepass/{gatepass}/qr.png', [GatepassPublicController::class, 'qrImage'])
+    ->name('gatepass.qr-image');
