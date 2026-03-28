@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Panels\Keeper\Resources\Activities\Pages;
 
 use App\Avatar;
+use App\Filament\Actions\PrintAttendanceStickerAction;
 use App\Filament\Exports\AttendanceExporter;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
 use App\Models\Attendance;
@@ -46,7 +47,9 @@ final class ViewAttendance extends ManageRelatedRecords
                 ExportAction::make()
                     ->exporter(AttendanceExporter::class),
             ])
-            ->recordActions([])
+            ->recordActions([
+                PrintAttendanceStickerAction::make(),
+            ])
             ->toolbarActions([]);
     }
 
