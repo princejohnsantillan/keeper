@@ -34,7 +34,7 @@ final class GuardianPanelProvider extends PanelProvider
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()
-            ->revealablePasswords(false)
+            ->revealablePasswords(true)
             ->viteTheme('resources/css/filament/guardian/theme.css')
             ->colors([
                 'danger' => Color::Red,

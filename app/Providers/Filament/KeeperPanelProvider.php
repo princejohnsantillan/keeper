@@ -34,7 +34,7 @@ final class KeeperPanelProvider extends PanelProvider
             ->emailVerification()
             ->emailChangeVerification()
             ->profile()
-            ->revealablePasswords(false)
+            ->revealablePasswords(true)
             ->viteTheme('resources/css/filament/keeper/theme.css')
             ->colors([
                 'danger' => Color::Red,
