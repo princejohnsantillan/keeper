@@ -40,6 +40,7 @@ final class Activity extends Model implements HasMedia
             'checkin_opened_at' => 'immutable_datetime',
             'checkin_closed_at' => 'immutable_datetime',
             'summary_report_sent_at' => 'immutable_datetime',
+            'promotion_broadcast_sent_at' => 'immutable_datetime',
         ];
     }
 
