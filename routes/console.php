@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Actions\SendActivitySummaryReportsAction;
 use App\Actions\SendEndedActivityPickupEmailsAction;
+use App\Actions\SendPublishedActivityPromotionBroadcastAction;
 use App\Actions\SendStartingSoonGatepassEmailsAction;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -33,5 +34,13 @@ Artisan::command('activities:send-summary-reports', function (SendActivitySummar
 
     $this->info("Queued {$queuedEmails} activity summary report email(s).");
 })->purpose('Queue activity summary report emails for activities that ended 1+ hour ago')
+    ->everyMinute()
+    ->withoutOverlapping();
+
+Artisan::command('activities:send-published-promotion-broadcasts', function (SendPublishedActivityPromotionBroadcastAction $sendPublishedActivityPromotionBroadcastAction): void {
+    $queuedBroadcasts = $sendPublishedActivityPromotionBroadcastAction();
+
+    $this->info("Queued {$queuedBroadcasts} activity promotion broadcast(s).");
+})->purpose('Queue promotion broadcasts for published activities that have not yet been sent')
     ->everyMinute()
     ->withoutOverlapping();
