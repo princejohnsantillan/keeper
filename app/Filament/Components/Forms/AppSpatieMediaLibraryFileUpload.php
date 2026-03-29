@@ -16,7 +16,7 @@ final class AppSpatieMediaLibraryFileUpload
             ->avatar()
             ->imageEditor()
             ->circleCropper()
-            ->maxSize(2048)
+            ->maxSize(25600)
             ->required();
     }
 
@@ -31,7 +31,7 @@ final class AppSpatieMediaLibraryFileUpload
             ->imageEditorAspectRatioOptions([
                 '16:9',
             ])
-            ->maxSize(5120)
+            ->maxSize(25600)
             ->required();
     }
 }
