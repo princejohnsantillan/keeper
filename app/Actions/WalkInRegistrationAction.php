@@ -10,6 +10,7 @@ use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
 use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\InvitationServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
@@ -19,6 +20,7 @@ final class WalkInRegistrationAction
     public function __construct(
         private CreateOwnershipAction $createOwnershipAction,
         private GatepassServiceInterface $gatepassService,
+        private InvitationServiceInterface $invitationService,
         private TermAcceptanceServiceInterface $termAcceptanceService,
     ) {}
 
@@ -26,7 +28,7 @@ final class WalkInRegistrationAction
      * Register a walk-in guardian and children for an activity.
      *
      * @param  array<string, mixed>  $guardianData
-     * @param  array<int, array{data: array<string, mixed>, relationship: RelationshipEnum}>  $childrenData
+     * @param  array<int, array{data: array<string, mixed>, relationship: RelationshipEnum, invitation_code: string|null}>  $childrenData
      * @return array<int, Gatepass>
      */
     public function __invoke(
@@ -74,6 +76,22 @@ final class WalkInRegistrationAction
                 ]);
 
                 $gatepasses[] = $this->gatepassService->create($activity, $child, $guardian, $termAcceptance);
+
+                if ($activity->isPrivate()) {
+                    $invitationCode = $entry['invitation_code'] ?? null;
+
+                    if ($invitationCode === null) {
+                        throw new InvalidArgumentException('Invitation code is required for private activities.');
+                    }
+
+                    $invitation = $this->invitationService->findValidForRegistration($invitationCode, $activity, $child);
+
+                    if ($invitation === null) {
+                        throw new InvalidArgumentException('Invalid invitation code.');
+                    }
+
+                    $this->invitationService->markAsUsed($invitation, $child);
+                }
             }
 
             return $gatepasses;
