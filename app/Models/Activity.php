@@ -34,6 +34,7 @@ final class Activity extends Model implements HasMedia
     protected function casts(): array
     {
         return [
+            'is_private' => 'boolean',
             'starts_at' => 'immutable_datetime',
             'ends_at' => 'immutable_datetime',
             'publish_at' => 'immutable_datetime',
@@ -42,6 +43,11 @@ final class Activity extends Model implements HasMedia
             'summary_report_sent_at' => 'immutable_datetime',
             'promotion_broadcast_sent_at' => 'immutable_datetime',
         ];
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->is_private;
     }
 
     public function hasCheckInOpened(): bool
@@ -107,6 +113,14 @@ final class Activity extends Model implements HasMedia
     public function attendance(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * @return HasMany<Invitation, $this>
+     */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(Invitation::class);
     }
 
     /**

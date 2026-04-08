@@ -29,9 +29,6 @@
 /vendor
 boost.json
 opencode.json
-AGENTS.md
-CLAUDE.md
-GEMINI.md
 Homestead.json
 Homestead.yaml
 Thumbs.db

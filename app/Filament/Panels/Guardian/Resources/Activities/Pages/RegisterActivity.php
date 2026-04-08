@@ -13,11 +13,14 @@ use App\Models\Activity;
 use App\Models\Child;
 use App\Models\Gatepass;
 use App\Models\Guardian;
+use App\Models\Term;
 use App\Services\Contracts\GatepassServiceInterface;
+use App\Services\Contracts\InvitationServiceInterface;
 use App\Services\Contracts\TermAcceptanceServiceInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 use Filament\Resources\Pages\Page;
@@ -88,6 +91,7 @@ final class RegisterActivity extends Page
 
         $this->form->fill([
             'agree_to_terms' => $hasAcceptance,
+            'invitation_code' => null,
             'child_id' => null,
             'guardian_id' => null,
         ]);
@@ -153,7 +157,7 @@ final class RegisterActivity extends Page
             ->live()
             ->afterStateUpdated(function (bool $state, TermAcceptanceServiceInterface $termAcceptanceService) use ($activity): void {
                 $guardian = AuthUser::guardian();
-                /** @var \App\Models\Term $term */
+                /** @var Term $term */
                 $term = $activity->term;
 
                 if ($state) {
@@ -175,13 +179,23 @@ final class RegisterActivity extends Page
             ->key('registration-section')
             ->compact()
             ->columns(2)
-            ->schema([
+            ->schema(array_filter([
+                $activity->isPrivate() ? self::invitationCodeInput()->columnSpanFull() : null,
                 self::childSelect(),
                 self::guardianSelect(),
-            ])
+            ]))
             ->footerActions([
                 self::registerAction($activity),
             ]);
+    }
+
+    private static function invitationCodeInput(): TextInput
+    {
+        return TextInput::make('invitation_code')
+            ->label('Invitation Code')
+            ->required()
+            ->placeholder('Enter your invitation code')
+            ->helperText('You need an invitation code to register for this private event.');
     }
 
     private static function childSelect(): Select
@@ -233,6 +247,7 @@ final class RegisterActivity extends Page
                 Set $schemaSet,
                 TermAcceptanceServiceInterface $termAcceptanceService,
                 GatepassServiceInterface $gatepassService,
+                InvitationServiceInterface $invitationService,
             ) use ($activity): void {
                 $agreeToTerms = $schemaGet('agree_to_terms');
                 $childId = $schemaGet('child_id');
@@ -256,6 +271,25 @@ final class RegisterActivity extends Page
 
                 if ($child === null || $checkinGuardian === null) {
                     return;
+                }
+
+                $invitation = null;
+                if ($activity->isPrivate()) {
+                    $invitationCode = $schemaGet('invitation_code');
+
+                    if (empty($invitationCode)) {
+                        AppNotification::invalidInvitationCode()->send();
+
+                        return;
+                    }
+
+                    $invitation = $invitationService->findValidForRegistration($invitationCode, $activity, $child);
+
+                    if ($invitation === null) {
+                        AppNotification::invalidInvitationCode()->send();
+
+                        return;
+                    }
                 }
 
                 $existingGatepass = $gatepassService->findExisting($activity, $child, $checkinGuardian);
@@ -282,8 +316,13 @@ final class RegisterActivity extends Page
                     $termAcceptance
                 );
 
+                if ($invitation !== null) {
+                    $invitationService->markAsUsed($invitation, $child);
+                }
+
                 $schemaSet('child_id', null);
                 $schemaSet('guardian_id', null);
+                $schemaSet('invitation_code', null);
 
                 AppNotification::registeredToActivity()->send();
 

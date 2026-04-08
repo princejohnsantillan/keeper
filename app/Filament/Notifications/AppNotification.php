@@ -227,6 +227,22 @@ final class AppNotification
             ->body('This item has been archived and can no longer be used.');
     }
 
+    public static function invalidInvitationCode(): Notification
+    {
+        return Notification::make()
+            ->danger()
+            ->title('Invalid invitation code')
+            ->body('The invitation code is invalid, not for this activity, or has already been used for a different child.');
+    }
+
+    public static function invitationSent(string $email): Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title('Invitation sent')
+            ->body("An invitation has been sent to {$email}.");
+    }
+
     public static function error(string $message): Notification
     {
         return Notification::make()

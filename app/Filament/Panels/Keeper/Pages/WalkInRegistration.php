@@ -18,6 +18,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
@@ -134,6 +135,11 @@ final class WalkInRegistration extends Page
             ->statePath('data');
     }
 
+    private function isPrivateActivity(): bool
+    {
+        return $this->getActivity()?->is_private === true;
+    }
+
     public function register(): void
     {
         $data = $this->form->getState();
@@ -162,6 +168,7 @@ final class WalkInRegistration extends Page
             'relationship' => $child['relationship'] instanceof RelationshipEnum
                 ? $child['relationship']
                 : RelationshipEnum::from($child['relationship']),
+            'invitation_code' => $child['invitation_code'] ?? null,
         ])->all();
 
         $agreedToTerms = (bool) ($data['agree_to_terms'] ?? false);
@@ -228,11 +235,18 @@ final class WalkInRegistration extends Page
 
     private function childrenSection(): Section
     {
+        $isPrivate = $this->isPrivateActivity();
+
         return Section::make('Children')
             ->icon(Heroicon::UserGroup)
             ->schema([
                 Repeater::make('children')
-                    ->schema([
+                    ->schema(array_filter([
+                        $isPrivate ? TextInput::make('invitation_code')
+                            ->label('Invitation Code')
+                            ->required()
+                            ->helperText('Enter the invitation code for this child.')
+                            ->columnSpanFull() : null,
                         AppTextInput::firstName(),
                         AppTextInput::middleName(),
                         AppTextInput::lastName(),
@@ -242,7 +256,7 @@ final class WalkInRegistration extends Page
                         AppSelect::relationship(),
                         AppTextarea::notes()
                             ->columnSpanFull(),
-                    ])
+                    ]))
                     ->columns(3)
                     ->defaultItems(1)
                     ->minItems(1)

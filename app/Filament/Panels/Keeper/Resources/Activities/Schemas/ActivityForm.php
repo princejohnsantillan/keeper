@@ -10,6 +10,7 @@ use App\Filament\Components\Forms\AppSpatieMediaLibraryFileUpload;
 use App\Filament\Components\Forms\AppTextarea;
 use App\Filament\Components\Forms\AppTextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -30,6 +31,7 @@ final class ActivityForm
                 AppDateTimePicker::startsAt(),
                 AppDateTimePicker::endsAt(),
                 AppDateTimePicker::publishAt(),
+                self::isPrivateToggle(),
                 AppSelect::term()
                     ->columnSpanFull(),
                 self::messageSelect()
@@ -37,6 +39,14 @@ final class ActivityForm
                 AppTextarea::notes()
                     ->columnSpanFull(),
             ])->columns(2);
+    }
+
+    private static function isPrivateToggle(): Toggle
+    {
+        return Toggle::make('is_private')
+            ->label('Private Event')
+            ->helperText('When enabled, guardians must enter an invitation code to register.')
+            ->default(false);
     }
 
     private static function messageSelect(): Select
