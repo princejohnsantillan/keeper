@@ -25,7 +25,10 @@ final class ActivitiesTable
     {
         return $table
             ->columns([
-                AppSpatieMediaLibraryImageColumn::thumbnail(),
+                AppSpatieMediaLibraryImageColumn::thumbnail()
+                    ->imageWidth(160)
+                    ->imageHeight(90)
+                    ->extraImgAttributes(['class' => 'rounded-lg bg-gray-50 object-cover object-center']),
                 self::titleColumn(),
                 AppTextColumn::location(),
                 self::startsAtColumn(),

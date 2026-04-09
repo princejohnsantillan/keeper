@@ -25,7 +25,8 @@ final class ViewActivityAction
             ->slideOver(false)
             ->schema([
                 AppSpatieMediaLibraryImageEntry::thumbnail()
-                    ->extraImgAttributes(['class' => 'rounded-xl object-cover w-full aspect-video'])
+                    ->extraImgAttributes(['class' => 'rounded-xl bg-gray-50 object-cover object-center w-full'])
+                    ->imageHeight('16rem')
                     ->columnSpanFull(),
 
                 AppTextEntry::title()

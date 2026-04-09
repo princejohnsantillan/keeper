@@ -27,10 +27,9 @@ final class AppSpatieMediaLibraryFileUpload
             ->image()
             ->imageEditor()
             ->imageEditorMode(2)
-            ->imageCropAspectRatio('16:9')
-            ->imageEditorAspectRatioOptions([
-                '16:9',
-            ])
+            ->imageAspectRatio('16:9')
+            ->automaticallyOpenImageEditorForAspectRatio()
+            ->imageEditorAspectRatioOptions(['16:9'])
             ->maxSize(25600)
             ->required();
     }
