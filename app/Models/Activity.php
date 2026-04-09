@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -135,8 +136,7 @@ final class Activity extends Model implements HasMedia
     {
         $this->addMediaConversion('thumbnail')
             ->nonQueued()
-            ->width(960)
-            ->height(540)
+            ->fit(Fit::Crop, 960, 540)
             ->sharpen(10);
     }
 
