@@ -62,6 +62,7 @@ final class ActivityStartingSoonGatepassReminderMail extends Mailable implements
                 'guardianName' => $this->gatepass->guardian->full_name,
                 'activityTitle' => $this->gatepass->activity->title,
                 'activityStartsAt' => $this->gatepass->activity->starts_at,
+                'activityEndsAt' => $this->gatepass->activity->ends_at,
                 'activityLocation' => $this->gatepass->activity->location,
             ],
         );
@@ -72,5 +73,4 @@ final class ActivityStartingSoonGatepassReminderMail extends Mailable implements
     {
         return [];
     }
-
 }

@@ -5,12 +5,24 @@ Hi {{ $guardianName }},
 
 Please have your gatepass ready when you arrive. The Keeper can scan the QR code or use the gatepass code manually.
 
+@php
+    $displayTimezone = config('app.display_timezone');
+    $displayStartsAt = $activityStartsAt?->setTimezone($displayTimezone);
+    $displayEndsAt = $activityEndsAt?->setTimezone($displayTimezone);
+    $showActivityEndsAt = $displayStartsAt !== null
+        && $displayEndsAt !== null
+        && ! $displayStartsAt->isSameDay($displayEndsAt);
+@endphp
+
 @if($activityStartsAt || $activityLocation)
 <x-mail::table>
 | | |
 |:--|:--|
 @if($activityStartsAt)
-| **Starts at** | {{ $activityStartsAt->setTimezone(config('app.display_timezone'))->format('l, F j, Y \a\t g:i A') }} |
+| **Starts at** | {{ $displayStartsAt?->format('l, F j, Y \a\t g:i A') }} |
+@endif
+@if($showActivityEndsAt)
+| **Ends at** | {{ $displayEndsAt?->format('l, F j, Y \a\t g:i A') }} |
 @endif
 @if($activityLocation)
 | **Location** | {{ $activityLocation }} |

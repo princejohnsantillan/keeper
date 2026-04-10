@@ -53,6 +53,7 @@ final class ActivityPublishedPromotionBroadcastMail extends Mailable implements 
                 'activityTitle' => $this->activity->title,
                 'activityDescription' => $this->activity->description,
                 'activityStartsAt' => $this->activity->starts_at,
+                'activityEndsAt' => $this->activity->ends_at,
                 'activityLocation' => $this->activity->location,
                 'registerUrl' => route('filament.guardian.resources.activities.register', $this->activity),
                 'signupUrl' => route('filament.guardian.auth.register'),
