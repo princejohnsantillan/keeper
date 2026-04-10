@@ -47,6 +47,7 @@ final class InvitationCreated extends Mailable implements ShouldQueue
                 'inviteeName' => $this->invitation->invitee_fullname,
                 'activityTitle' => $this->invitation->activity->title,
                 'activityStartsAt' => $this->invitation->activity->starts_at,
+                'activityEndsAt' => $this->invitation->activity->ends_at,
                 'activityLocation' => $this->invitation->activity->location,
                 'invitationCode' => $this->invitation->code,
                 'organizationName' => $this->invitation->organization->name,
