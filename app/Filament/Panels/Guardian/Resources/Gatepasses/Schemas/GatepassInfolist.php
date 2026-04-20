@@ -58,6 +58,16 @@ final class GatepassInfolist
                     ->dateTime('M d, Y \a\t h:i A')
                     ->icon(Heroicon::Calendar)
                     ->color('gray'),
+                TextEntry::make('activity.ends_at')
+                    ->hiddenLabel()
+                    ->formatStateUsing(fn (Gatepass $record): string => 'Ends '.$record->activity->ends_at
+                        ->setTimezone(config('app.display_timezone'))
+                        ->format('M d, Y \a\t h:i A'))
+                    ->icon(Heroicon::Calendar)
+                    ->color('gray')
+                    ->visible(fn (Gatepass $record): bool => ! $record->activity->starts_at
+                        ->setTimezone(config('app.display_timezone'))
+                        ->isSameDay($record->activity->ends_at->setTimezone(config('app.display_timezone')))),
                 TextEntry::make('activity.location')
                     ->hiddenLabel()
                     ->icon(Heroicon::MapPin)

@@ -89,8 +89,16 @@
 
         <dl class="details">
             @if($gatepass->activity->starts_at)
+                @php
+                    $startsAt = $gatepass->activity->starts_at->setTimezone(config('app.display_timezone'));
+                    $endsAt = $gatepass->activity->ends_at?->setTimezone(config('app.display_timezone'));
+                @endphp
                 <dt>When</dt>
-                <dd>{{ $gatepass->activity->starts_at->setTimezone(config('app.display_timezone'))->format('l, F j, Y \a\t g:i A') }}</dd>
+                <dd>{{ $startsAt->format('l, F j, Y \a\t g:i A') }}</dd>
+                @if($endsAt && ! $startsAt->isSameDay($endsAt))
+                    <dt>Ends</dt>
+                    <dd>{{ $endsAt->format('l, F j, Y \a\t g:i A') }}</dd>
+                @endif
             @endif
             @if($gatepass->activity->location)
                 <dt>Where</dt>
