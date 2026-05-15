@@ -18,12 +18,21 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 final class ActivitiesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort(function (Builder $query): Builder {
+                $now = now();
+
+                return $query
+                    ->orderByRaw('CASE WHEN ends_at >= ? THEN 0 ELSE 1 END', [$now])
+                    ->orderByRaw('CASE WHEN ends_at >= ? THEN starts_at END ASC', [$now])
+                    ->orderByRaw('CASE WHEN ends_at < ? THEN starts_at END DESC', [$now]);
+            })
             ->columns([
                 AppSpatieMediaLibraryImageColumn::thumbnail()
                     ->imageWidth(160)
