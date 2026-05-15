@@ -13,6 +13,7 @@ use App\Models\Gatepass;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -32,6 +33,9 @@ final class GatepassesTable
                 self::childAvatarColumn(),
                 self::childGenderColumn(),
                 self::childFullNameColumn(),
+            ])
+            ->filters([
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 CheckInGatepassAction::make(),
