@@ -6,6 +6,7 @@ use App\Actions\SendActivitySummaryReportsAction;
 use App\Actions\SendEndedActivityPickupEmailsAction;
 use App\Actions\SendPublishedActivityPromotionBroadcastAction;
 use App\Actions\SendStartingSoonGatepassEmailsAction;
+use App\Actions\TrashExpiredGatepassesAction;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -42,5 +43,13 @@ Artisan::command('activities:send-published-promotion-broadcasts', function (Sen
 
     $this->info("Queued {$queuedBroadcasts} activity promotion broadcast(s).");
 })->purpose('Queue promotion broadcasts for published activities that have not yet been sent')
+    ->everyMinute()
+    ->withoutOverlapping();
+
+Artisan::command('gatepasses:trash-expired', function (TrashExpiredGatepassesAction $trashExpiredGatepassesAction): void {
+    $trashed = $trashExpiredGatepassesAction();
+
+    $this->info("Trashed {$trashed} expired gatepass(es).");
+})->purpose('Soft-delete gatepasses whose activity ended more than 24 hours ago')
     ->everyMinute()
     ->withoutOverlapping();
