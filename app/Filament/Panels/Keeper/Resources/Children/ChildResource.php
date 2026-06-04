@@ -56,8 +56,12 @@ final class ChildResource extends Resource
             ->where(function (Builder $query) use ($organization): void {
                 $query
                     ->ownedBy($organization)
-                    ->orWhereHas('gatepasses.activity', function (Builder $activityQuery) use ($organization): void {
-                        $activityQuery->where('organization_id', $organization->id);
+                    ->orWhereHas('gatepasses', function (Builder $gatepassQuery) use ($organization): void {
+                        $gatepassQuery
+                            ->withTrashed()
+                            ->whereHas('activity', function (Builder $activityQuery) use ($organization): void {
+                                $activityQuery->where('organization_id', $organization->id);
+                            });
                     });
             })
             ->with('guardians');
