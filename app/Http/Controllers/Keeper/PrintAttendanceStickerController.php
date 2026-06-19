@@ -26,6 +26,7 @@ final class PrintAttendanceStickerController extends Controller
         $checkinCode = (string) ($attendance->checkinGatepass?->code ?? '-');
 
         return view('keeper.attendance-sticker', [
+            'attendanceId' => $attendance->id,
             'childKnownAs' => Str::upper($child->known_as),
             'childLastName' => $child->last_name,
             'checkinCode' => $checkinCode,

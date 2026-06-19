@@ -8,6 +8,7 @@
 </head>
 <body>
     <livewire:keeper.attendance-sticker-printer
+        :attendance-id="$attendanceId"
         :child-known-as="$childKnownAs"
         :child-last-name="$childLastName"
         :checkin-code="$checkinCode"
