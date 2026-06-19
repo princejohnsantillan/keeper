@@ -34,6 +34,7 @@ final class Attendance extends Pivot
         return [
             'checked_in_at' => 'datetime',
             'checked_out_at' => 'datetime',
+            'last_printed_at' => 'datetime',
         ];
     }
 

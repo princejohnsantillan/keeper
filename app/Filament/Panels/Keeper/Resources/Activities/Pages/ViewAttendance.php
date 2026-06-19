@@ -41,6 +41,7 @@ final class ViewAttendance extends ManageRelatedRecords
                 self::checkedInAtColumn(),
                 self::checkoutColumn(),
                 self::checkedOutAtColumn(),
+                self::lastPrintedAtColumn(),
             ])
             ->filters([])
             ->headerActions([
@@ -112,6 +113,15 @@ final class ViewAttendance extends ManageRelatedRecords
             ->label('Checked Out')
             ->dateTime('h:i A')
             ->description(fn (Attendance $record): ?string => $record->checkoutKeeper?->user?->name)
+            ->sortable();
+    }
+
+    private static function lastPrintedAtColumn(): TextColumn
+    {
+        return TextColumn::make('last_printed_at')
+            ->label('Printed')
+            ->since()
+            ->placeholder('Not printed')
             ->sortable();
     }
 }

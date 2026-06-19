@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Livewire\Keeper;
 
+use App\Actions\RecordAttendanceStickerPrintedAction;
+use App\Models\Attendance;
 use App\Models\AttendanceStickerPrintSetting;
 use App\Models\User;
 use App\Services\Contracts\AttendanceStickerPrintSettingServiceInterface;
@@ -20,6 +22,8 @@ final class AttendanceStickerPrinter extends Component
 
     /** @var array<int, array{id: string, name: string}> */
     public array $savedPrintSettings = [];
+
+    public string $attendanceId = '';
 
     public string $childKnownAs = '';
 
@@ -59,12 +63,14 @@ final class AttendanceStickerPrinter extends Component
      * @param  list<string>  $childTags
      */
     public function mount(
+        string $attendanceId,
         string $childKnownAs,
         string $childLastName,
         string $checkinCode,
         array $childTags,
         string $guardianNote,
     ): void {
+        $this->attendanceId = $attendanceId;
         $this->childKnownAs = $childKnownAs;
         $this->childLastName = $childLastName;
         $this->checkinCode = $checkinCode;
@@ -73,6 +79,17 @@ final class AttendanceStickerPrinter extends Component
 
         $this->loadSavedPrintSettings();
         $this->restoreSessionState();
+    }
+
+    public function printSticker(RecordAttendanceStickerPrintedAction $recordPrinted): void
+    {
+        $attendance = Attendance::query()->find($this->attendanceId);
+
+        if ($attendance instanceof Attendance) {
+            $recordPrinted($attendance);
+        }
+
+        $this->js('window.print()');
     }
 
     public function updatedSaveExistingSettingId(string $settingId): void
