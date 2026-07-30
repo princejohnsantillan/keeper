@@ -56,10 +56,15 @@ final class Attendance extends Pivot
         return $this->belongsTo(Keeper::class, 'checkin_keeper_id');
     }
 
-    /** @return BelongsTo<Gatepass, $this> */
+    /**
+     * Expired gatepasses are soft-deleted, but attendance records keep
+     * referencing them as an audit trail.
+     *
+     * @return BelongsTo<Gatepass, $this>
+     */
     public function checkinGatepass(): BelongsTo
     {
-        return $this->belongsTo(Gatepass::class, 'checkin_gatepass_id');
+        return $this->belongsTo(Gatepass::class, 'checkin_gatepass_id')->withTrashed();
     }
 
     /** @return BelongsTo<Keeper, $this> */
@@ -68,10 +73,15 @@ final class Attendance extends Pivot
         return $this->belongsTo(Keeper::class, 'checkout_keeper_id');
     }
 
-    /** @return BelongsTo<Gatepass, $this> */
+    /**
+     * Expired gatepasses are soft-deleted, but attendance records keep
+     * referencing them as an audit trail.
+     *
+     * @return BelongsTo<Gatepass, $this>
+     */
     public function checkoutGatepass(): BelongsTo
     {
-        return $this->belongsTo(Gatepass::class, 'checkout_gatepass_id');
+        return $this->belongsTo(Gatepass::class, 'checkout_gatepass_id')->withTrashed();
     }
 
     /** @return BelongsTo<Organization, $this> */
