@@ -58,7 +58,18 @@ final class GatepassResource extends Resource
     }
 
     /**
-     * @param  \App\Models\Gatepass  $record
+     * Expired gatepasses are soft-deleted, but they remain viewable from the
+     * Expired tab so guardians keep access to their history.
+     *
+     * @return Builder<Gatepass>
+     */
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return self::getEloquentQuery()->withTrashed();
+    }
+
+    /**
+     * @param  Gatepass  $record
      */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
