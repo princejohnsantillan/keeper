@@ -8,6 +8,7 @@ use App\Avatar;
 use App\Filament\Actions\PrintAttendanceStickerAction;
 use App\Filament\Exports\AttendanceExporter;
 use App\Filament\Panels\Keeper\Resources\Activities\ActivityResource;
+use App\Filament\Panels\Keeper\Resources\Activities\Widgets\ActivityTagCountsWidget;
 use App\Models\Attendance;
 use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -15,6 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
 
 final class ViewAttendance extends ManageRelatedRecords
@@ -28,6 +30,31 @@ final class ViewAttendance extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema->components([]);
+    }
+
+    /**
+     * @return array<class-string<Widget>>
+     */
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ActivityTagCountsWidget::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int
+    {
+        return 1;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getWidgetData(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
     }
 
     public function table(Table $table): Table
