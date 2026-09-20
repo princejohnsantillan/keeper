@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Panels\Guardian\Resources\History\Tables;
 
-use App\Filament\Components\Tables\AppTextColumn;
 use App\Models\Attendance;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -18,7 +17,7 @@ final class HistoriesTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 self::activityColumn(),
-                AppTextColumn::fullName('child.full_name', 'Child'),
+                self::childColumn(),
                 self::checkedInAtColumn(),
                 self::checkedOutAtColumn(),
             ])
@@ -36,6 +35,14 @@ final class HistoriesTable
             ])->filter()->implode(' · '))
             ->searchable()
             ->sortable();
+    }
+
+    private static function childColumn(): TextColumn
+    {
+        return TextColumn::make('child.full_name')
+            ->label('Child')
+            ->searchable(['first_name', 'middle_name', 'last_name'])
+            ->sortable(['last_name', 'middle_name', 'first_name']);
     }
 
     private static function checkedInAtColumn(): TextColumn

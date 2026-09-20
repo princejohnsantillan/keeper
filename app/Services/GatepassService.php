@@ -14,7 +14,9 @@ use App\Models\Scopes\OrganizationScope;
 use App\Models\TermAcceptance;
 use App\ReadableCode;
 use App\Services\Contracts\GatepassServiceInterface;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 final class GatepassService implements GatepassServiceInterface
 {
@@ -22,16 +24,19 @@ final class GatepassService implements GatepassServiceInterface
     {
         /** @var Organization $organization */
         $organization = Organization::query()->findOrFail($activity->organization_id);
-        $code = $this->generateUniqueCode($organization);
+        $gatepass = retry(5, function () use ($organization, $activity, $child, $guardian, $termAcceptance): Gatepass {
+            $code = $this->generateUniqueCode($organization);
 
-        $gatepass = Gatepass::query()->create([
-            'organization_id' => $organization->id,
-            'child_id' => $child->id,
-            'guardian_id' => $guardian->id,
-            'activity_id' => $activity->id,
-            'code' => $code,
-            'term_acceptance_id' => $termAcceptance?->id,
-        ]);
+            return Gatepass::query()->withSavepointIfNeeded(fn (): Gatepass => Gatepass::query()->create([
+                'organization_id' => $organization->id,
+                'child_id' => $child->id,
+                'guardian_id' => $guardian->id,
+                'activity_id' => $activity->id,
+                'code' => $code,
+                'term_acceptance_id' => $termAcceptance?->id,
+            ]));
+        }, when: fn (Throwable $exception): bool => $exception instanceof UniqueConstraintViolationException
+            && str_contains($exception->getMessage(), 'gatepasses_organization_id_code_unique'));
 
         $this->sendCreatedEmail($gatepass);
 
@@ -54,6 +59,7 @@ final class GatepassService implements GatepassServiceInterface
         do {
             $code = ReadableCode::generate();
         } while (Gatepass::query()
+            ->withTrashed()
             ->where('organization_id', $organization->id)
             ->where('code', $code)
             ->exists());
