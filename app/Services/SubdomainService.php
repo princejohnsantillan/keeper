@@ -9,6 +9,7 @@ use App\Models\Organization;
 use App\Services\Contracts\SubdomainInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 final class SubdomainService implements SubdomainInterface
@@ -45,7 +46,20 @@ final class SubdomainService implements SubdomainInterface
             : rescue(fn (): ?Organization => Organization::query()->where('slug', $this->slug)->first());
         $this->resolved = true;
 
+        $this->registerUrlDefault();
+
         return $this->organization;
+    }
+
+    /**
+     * In path mode every keeper route needs the {organization} segment; register the resolved
+     * slug as the URL default so route() calls fill it in automatically.
+     */
+    private function registerUrlDefault(): void
+    {
+        if ($this->routing() === OrganizationRouting::Path && $this->organization !== null) {
+            URL::defaults([self::ROUTE_PARAMETER => $this->organization->slug]);
+        }
     }
 
     public function defined(): bool
@@ -55,6 +69,13 @@ final class SubdomainService implements SubdomainInterface
         }
 
         return $this->slug !== null;
+    }
+
+    public function onRootDomain(Request $request): bool
+    {
+        $domain = Config::string('app.domain');
+
+        return in_array($request->host(), [$domain, 'www.'.$domain], true);
     }
 
     public function adminPath(string $path = ''): string
@@ -101,11 +122,7 @@ final class SubdomainService implements SubdomainInterface
         $domain = Config::string('app.domain');
         $host = $request->host();
 
-        if (in_array($host, [$domain, 'www.'.$domain], true)) {
-            return null;
-        }
-
-        if (! Str::endsWith($host, '.'.$domain)) {
+        if ($this->onRootDomain($request) || ! Str::endsWith($host, '.'.$domain)) {
             return null;
         }
 

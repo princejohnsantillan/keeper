@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static Organization|null organization()
  * @method static Organization|null resolve(Request $request)
  * @method static bool defined()
+ * @method static bool onRootDomain(Request $request)
  * @method static string adminPath(string $path = '')
  * @method static string url(Organization $organization, string $path = '')
  *

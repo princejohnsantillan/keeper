@@ -31,6 +31,11 @@ interface SubdomainInterface
     public function defined(): bool;
 
     /**
+     * Check if the request is on the root application domain (no organization subdomain).
+     */
+    public function onRootDomain(Request $request): bool;
+
+    /**
      * Route URI for the admin panel, optionally with a sub-path appended.
      *
      * Returns "admin" in subdomain mode and "{organization}/admin" in path mode.

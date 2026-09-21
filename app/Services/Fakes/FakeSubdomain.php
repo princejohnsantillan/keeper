@@ -9,12 +9,17 @@ use App\Models\Organization;
 use App\Services\Contracts\SubdomainInterface;
 use App\Services\SubdomainService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 final class FakeSubdomain implements SubdomainInterface
 {
     public function __construct(
         private ?Organization $organization = null,
-    ) {}
+    ) {
+        if ($this->organization !== null && $this->routing() === OrganizationRouting::Path) {
+            URL::defaults(['organization' => $this->organization->slug]);
+        }
+    }
 
     public function routing(): OrganizationRouting
     {
@@ -34,6 +39,11 @@ final class FakeSubdomain implements SubdomainInterface
     public function defined(): bool
     {
         return $this->organization !== null;
+    }
+
+    public function onRootDomain(Request $request): bool
+    {
+        return $this->organization === null;
     }
 
     public function adminPath(string $path = ''): string
