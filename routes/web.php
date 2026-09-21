@@ -1,8 +1,11 @@
 <?php
 
+use App\Enums\OrganizationRouting;
 use App\Facades\Subdomain;
 use App\Http\Controllers\GatepassPublicController;
 use App\Http\Controllers\Keeper\PrintAttendanceStickerController;
+use App\Http\Middleware\RequireOrganizationSubdomain;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/print', function () {
@@ -21,7 +24,8 @@ Route::get('/', function () {
 });
 
 // Print sticker route (uses ULID attendance ID for security)
-Route::get('/admin/attendance/{attendance}/print', PrintAttendanceStickerController::class)
+Route::get(Subdomain::adminPath('attendance/{attendance}/print'), PrintAttendanceStickerController::class)
+    ->middleware(RequireOrganizationSubdomain::class)
     ->name('filament.keeper.attendance.print');
 
 Route::get('/gatepass/{gatepass}', [GatepassPublicController::class, 'show'])
@@ -29,3 +33,10 @@ Route::get('/gatepass/{gatepass}', [GatepassPublicController::class, 'show'])
 
 Route::get('/gatepass/{gatepass}/qr.png', [GatepassPublicController::class, 'qrImage'])
     ->name('gatepass.qr-image');
+
+// In path mode, keeper.test/{org} mirrors {org}.keeper.test/ and redirects to the admin panel.
+if (Subdomain::routing() === OrganizationRouting::Path) {
+    Route::get('/{organization}', fn (): RedirectResponse => redirect()->route('filament.keeper.home'))
+        ->middleware(RequireOrganizationSubdomain::class)
+        ->name('organization.home');
+}

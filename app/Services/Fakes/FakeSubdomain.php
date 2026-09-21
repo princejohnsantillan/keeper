@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Fakes;
 
+use App\Enums\OrganizationRouting;
 use App\Models\Organization;
 use App\Services\Contracts\SubdomainInterface;
+use App\Services\SubdomainService;
+use Illuminate\Http\Request;
 
 final class FakeSubdomain implements SubdomainInterface
 {
@@ -13,7 +16,17 @@ final class FakeSubdomain implements SubdomainInterface
         private ?Organization $organization = null,
     ) {}
 
+    public function routing(): OrganizationRouting
+    {
+        return $this->real()->routing();
+    }
+
     public function organization(): ?Organization
+    {
+        return $this->organization;
+    }
+
+    public function resolve(Request $request): ?Organization
     {
         return $this->organization;
     }
@@ -21,5 +34,20 @@ final class FakeSubdomain implements SubdomainInterface
     public function defined(): bool
     {
         return $this->organization !== null;
+    }
+
+    public function adminPath(string $path = ''): string
+    {
+        return $this->real()->adminPath($path);
+    }
+
+    public function url(Organization $organization, string $path = ''): string
+    {
+        return $this->real()->url($organization, $path);
+    }
+
+    private function real(): SubdomainService
+    {
+        return new SubdomainService;
     }
 }

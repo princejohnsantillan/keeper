@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Enums\RateLimiterName;
+use App\Facades\Subdomain;
 use App\Models\KeeperInvitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -42,13 +43,7 @@ final class KeeperInvitationMail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         $organization = $this->invitation->organization;
-        $acceptUrl = sprintf(
-            '%s://%s.%s/admin/invitation/accept?token=%s',
-            config('app.url_scheme', 'https'),
-            $organization->slug,
-            config('app.domain'),
-            $this->invitation->token
-        );
+        $acceptUrl = Subdomain::url($organization, 'invitation/accept?token='.$this->invitation->token);
 
         return new Content(
             markdown: 'mail.keeper-invitation',

@@ -4,22 +4,38 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\OrganizationRouting;
 use App\Facades\Subdomain;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Resolves the organization from the request (subdomain or path segment, depending on
+ * config "organization.routing") and aborts with 404 when none matches.
+ *
+ * The organization is resolved from the request passed to the middleware rather than the
+ * global request so that Livewire's persistent middleware (which replays panel middleware
+ * against a copy of the original page request) can identify the organization on updates.
+ */
 final class RequireOrganizationSubdomain
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Subdomain::organization() === null) {
+        $organization = Subdomain::resolve($request);
+
+        if ($organization === null) {
             abort(404);
+        }
+
+        if (Subdomain::routing() === OrganizationRouting::Path) {
+            URL::defaults(['organization' => $organization->slug]);
         }
 
         return $next($request);
