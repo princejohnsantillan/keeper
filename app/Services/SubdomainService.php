@@ -131,6 +131,11 @@ final class SubdomainService implements SubdomainInterface
 
     private function slugFromRoute(Request $request): ?string
     {
+        // In path mode organizations only exist on the root domain; a stray subdomain must not resolve.
+        if (! $this->onRootDomain($request)) {
+            return null;
+        }
+
         $slug = $request->route()?->parameter(self::ROUTE_PARAMETER);
 
         return is_string($slug) && $slug !== '' ? $slug : null;
