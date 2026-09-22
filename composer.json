@@ -13,6 +13,7 @@
         "laravel/horizon": "^5.41",
         "laravel/nightwatch": "^1.22",
         "laravel/tinker": "^2.10.1",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "owenvoke/blade-entypo": "^2.3",
         "owenvoke/blade-fontawesome": "^2.9",
         "resend/resend-php": "^1.1",
