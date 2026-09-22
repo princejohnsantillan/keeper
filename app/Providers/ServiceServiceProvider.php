@@ -42,11 +42,12 @@ final class ServiceServiceProvider extends ServiceProvider
     ];
 
     /**
-     * All of the container singletons that should be registered.
-     *
-     * @var array<class-string, class-string>
+     * Register any application services.
      */
-    public array $singletons = [
-        SubdomainInterface::class => SubdomainService::class,
-    ];
+    public function register(): void
+    {
+        // Scoped (not singleton) so the resolved organization never leaks between
+        // requests under long-running workers such as Octane.
+        $this->app->scoped(SubdomainInterface::class, SubdomainService::class);
+    }
 }

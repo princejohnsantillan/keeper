@@ -27,8 +27,8 @@ final class KeeperPanelProvider extends PanelProvider
     {
         return $panel
             ->id('keeper')
-            ->path('admin')
-            ->brandName(Subdomain::organization()?->name ?: 'Keeper')
+            ->path(Subdomain::adminPath())
+            ->brandName(fn (): string => Subdomain::organization()?->name ?: 'Keeper')
             ->login(Login::class)
             ->passwordReset()
             ->emailVerification()
@@ -62,6 +62,9 @@ final class KeeperPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->persistentMiddleware([
+                RequireOrganizationSubdomain::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
