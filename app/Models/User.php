@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Facades\Subdomain;
+use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -22,7 +23,7 @@ use Illuminate\Notifications\Notifiable;
  */
 final class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, HasUlids, Notifiable;
 
     protected $keyType = 'string';
@@ -125,5 +126,13 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
     public function attendanceStickerPrintSettings(): HasMany
     {
         return $this->hasMany(AttendanceStickerPrintSetting::class);
+    }
+
+    /**
+     * @return BelongsTo<AttendanceStickerPrintSetting, $this>
+     */
+    public function defaultAttendanceStickerPrintSetting(): BelongsTo
+    {
+        return $this->belongsTo(AttendanceStickerPrintSetting::class);
     }
 }

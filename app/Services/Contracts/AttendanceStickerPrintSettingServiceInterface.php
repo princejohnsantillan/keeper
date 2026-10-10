@@ -17,6 +17,10 @@ interface AttendanceStickerPrintSettingServiceInterface
 
     public function findForUser(User $user, string $settingId): ?AttendanceStickerPrintSetting;
 
+    public function defaultForUser(User $user): ?AttendanceStickerPrintSetting;
+
+    public function setDefaultForUser(User $user, string $settingId): ?AttendanceStickerPrintSetting;
+
     /**
      * @param  array{
      *     width_mm: float,

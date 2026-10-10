@@ -30,6 +30,27 @@ final class AttendanceStickerPrintSettingService implements AttendanceStickerPri
             ->first();
     }
 
+    public function defaultForUser(User $user): ?AttendanceStickerPrintSetting
+    {
+        return $user->defaultAttendanceStickerPrintSetting()
+            ->where('user_id', $user->id)
+            ->first();
+    }
+
+    public function setDefaultForUser(User $user, string $settingId): ?AttendanceStickerPrintSetting
+    {
+        $printSetting = $this->findForUser($user, $settingId);
+
+        if (! $printSetting instanceof AttendanceStickerPrintSetting) {
+            return null;
+        }
+
+        $user->defaultAttendanceStickerPrintSetting()->associate($printSetting);
+        $user->save();
+
+        return $printSetting;
+    }
+
     /**
      * @param  array{
      *     width_mm: float,
