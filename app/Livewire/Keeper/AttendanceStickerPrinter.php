@@ -79,7 +79,10 @@ final class AttendanceStickerPrinter extends Component
 
         $this->loadSavedPrintSettings();
 
-        $defaultPrintSetting = $this->printSettingService()->defaultForUser($this->authenticatedUser());
+        $user = Auth::user();
+        $defaultPrintSetting = $user instanceof User
+            ? $this->printSettingService()->defaultForUser($user)
+            : null;
 
         if ($defaultPrintSetting instanceof AttendanceStickerPrintSetting) {
             $this->applyPrintSetting($defaultPrintSetting);
