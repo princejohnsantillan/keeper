@@ -232,6 +232,7 @@
 
         .modal-actions {
             display: flex;
+            flex-wrap: wrap;
             justify-content: flex-end;
             gap: 0.75rem;
         }
@@ -579,13 +580,19 @@
                         <select id="load-print-setting" wire:model="loadPrintSettingId">
                             <option value="">Select a saved setting...</option>
                             @foreach ($savedPrintSettings as $savedPrintSetting)
-                                <option value="{{ $savedPrintSetting['id'] }}">{{ $savedPrintSetting['name'] }}</option>
+                                <option value="{{ $savedPrintSetting['id'] }}">
+                                    {{ $savedPrintSetting['name'] }}{{ $savedPrintSetting['is_default'] ? ' (Default)' : '' }}
+                                </option>
                             @endforeach
                         </select>
+                        <span class="modal-help">Your default loads automatically whenever you open this page.</span>
                     </div>
                     <div class="modal-actions">
                         <button type="button" class="btn btn-secondary" wire:click="closeLoadSettingsModal">Cancel</button>
                         <button type="button" class="btn btn-primary" wire:click="loadPrintSetting">Load</button>
+                        <button type="button" class="btn btn-primary" wire:click="loadPrintSetting(true)" wire:loading.attr="disabled">
+                            Load and set as default
+                        </button>
                     </div>
                 </div>
             </div>

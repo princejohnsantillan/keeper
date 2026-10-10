@@ -20,7 +20,7 @@ final class AttendanceStickerPrinter extends Component
     /** @var list<string> */
     public array $childTags = [];
 
-    /** @var array<int, array{id: string, name: string}> */
+    /** @var array<int, array{id: string, name: string, is_default: bool}> */
     public array $savedPrintSettings = [];
 
     public string $attendanceId = '';
@@ -78,6 +78,18 @@ final class AttendanceStickerPrinter extends Component
         $this->guardianNote = $guardianNote;
 
         $this->loadSavedPrintSettings();
+
+        $user = Auth::user();
+        $defaultPrintSetting = $user instanceof User
+            ? $this->printSettingService()->defaultForUser($user)
+            : null;
+
+        if ($defaultPrintSetting instanceof AttendanceStickerPrintSetting) {
+            $this->applyPrintSetting($defaultPrintSetting);
+
+            return;
+        }
+
         $this->restoreSessionState();
     }
 
@@ -135,7 +147,7 @@ final class AttendanceStickerPrinter extends Component
         $this->showLoadSettingsModal = false;
     }
 
-    public function loadPrintSetting(): void
+    public function loadPrintSetting(bool $setAsDefault = false): void
     {
         if ($this->loadPrintSettingId === '') {
             $this->statusMessage = 'Select a saved setting to load.';
@@ -143,10 +155,10 @@ final class AttendanceStickerPrinter extends Component
             return;
         }
 
-        $printSetting = $this->printSettingService()->findForUser(
-            $this->authenticatedUser(),
-            $this->loadPrintSettingId,
-        );
+        $user = $this->authenticatedUser();
+        $printSetting = $setAsDefault
+            ? $this->printSettingService()->setDefaultForUser($user, $this->loadPrintSettingId)
+            : $this->printSettingService()->findForUser($user, $this->loadPrintSettingId);
 
         if (! $printSetting instanceof AttendanceStickerPrintSetting) {
             $this->statusMessage = 'Saved print setting not found.';
@@ -155,11 +167,16 @@ final class AttendanceStickerPrinter extends Component
         }
 
         $this->applyPrintSetting($printSetting);
-        $this->selectedPrintSettingId = $printSetting->id;
-        $this->saveSettingName = $printSetting->name;
+
+        if ($setAsDefault) {
+            $this->loadSavedPrintSettings();
+        }
+
         $this->showLoadSettingsModal = false;
         $this->persistSessionState();
-        $this->statusMessage = sprintf('Loaded "%s".', $printSetting->name);
+        $this->statusMessage = $setAsDefault
+            ? sprintf('Loaded "%s" and set it as your default.', $printSetting->name)
+            : sprintf('Loaded "%s".', $printSetting->name);
     }
 
     public function openSaveSettingsModal(): void
@@ -262,13 +279,17 @@ final class AttendanceStickerPrinter extends Component
             ->map(fn (AttendanceStickerPrintSetting $printSetting): array => [
                 'id' => $printSetting->id,
                 'name' => $printSetting->name,
+                'is_default' => $printSetting->id === $user->default_attendance_sticker_print_setting_id,
             ])
             ->all();
     }
 
     private function applyPrintSetting(AttendanceStickerPrintSetting $printSetting): void
     {
+        $this->selectedPrintSettingId = $printSetting->id;
         $this->loadPrintSettingId = $printSetting->id;
+        $this->saveExistingSettingId = $printSetting->id;
+        $this->saveSettingName = $printSetting->name;
         $this->printWidth = $this->formatMeasurement($printSetting->width_mm);
         $this->printHeight = $this->formatMeasurement($printSetting->height_mm);
         $this->marginTop = $this->formatMeasurement($printSetting->margin_top_mm);
@@ -313,9 +334,6 @@ final class AttendanceStickerPrinter extends Component
             );
 
             if ($printSetting instanceof AttendanceStickerPrintSetting) {
-                $this->selectedPrintSettingId = $printSetting->id;
-                $this->saveExistingSettingId = $printSetting->id;
-                $this->saveSettingName = $printSetting->name;
                 $this->applyPrintSetting($printSetting);
 
                 return;
