@@ -18,6 +18,10 @@ use Illuminate\Support\Facades\Mail;
 
 final class SendActivitySummaryReportsAction
 {
+    public function __construct(
+        private GetActivityTagCountsAction $getActivityTagCounts,
+    ) {}
+
     public function __invoke(): int
     {
         $cutoff = now()->subHour();
@@ -103,12 +107,9 @@ final class SendActivitySummaryReportsAction
         $firstCheckout = $checkedOut->sortBy('checked_out_at')->first();
         $lastCheckout = $checkedOut->sortByDesc('checked_out_at')->first();
 
-        $organizationId = $activity->organization_id;
-        $tagCounts = $checkedIn
-            ->flatMap(fn (Attendance $a): Collection => $a->child?->organizationTags ?? collect())
-            ->where('organization_id', $organizationId)
-            ->countBy('name')
-            ->sortDesc()
+        $tagCounts = collect(($this->getActivityTagCounts)($activity, $attendances))
+            ->map(fn (array $counts): int => $counts['attended'])
+            ->filter()
             ->all();
 
         $uniqueGuardianIds = $attendances

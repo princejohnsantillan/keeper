@@ -8,6 +8,7 @@ use App\Filament\Panels\Keeper\Resources\Activities\Pages\ListActivities;
 use App\Filament\Panels\Keeper\Resources\Activities\Pages\ViewAttendance;
 use App\Filament\Panels\Keeper\Resources\Activities\Schemas\ActivityForm;
 use App\Filament\Panels\Keeper\Resources\Activities\Tables\ActivitiesTable;
+use App\Filament\Panels\Keeper\Resources\Activities\Widgets\ActivityTagCountsWidget;
 use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -50,6 +51,13 @@ final class ActivityResource extends Resource
         return [
             'index' => ListActivities::route('/'),
             'attendance' => ViewAttendance::route('/{record}/attendance'),
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ActivityTagCountsWidget::class,
         ];
     }
 }
